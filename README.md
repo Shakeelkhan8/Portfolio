@@ -58,7 +58,7 @@ I enjoy solving complex engineering problems through thoughtful architecture, cl
 
 ## Engineering Principles
 
-Engineering is more than writing code—it's designing systems that remain reliable, maintainable, and scalable as they grow.
+Engineering is more than writing code. It's designing systems that remain reliable, maintainable, and scalable as they grow.
 
 Every project in this repository reflects the same principles:
 
@@ -87,5 +87,6 @@ This repository includes projects and case studies covering:
 
 - GitHub — https://github.com/Shakeelkhan8
 - LinkedIn — https://linkedin.com/in/shakeel-khan-47888a288
+- Email - shakeelkhan4147@gmail.com
 
 > *"Great engineering is measured not by the complexity of the code, but by the simplicity, reliability, and scalability of the systems it enables."*
