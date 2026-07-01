@@ -85,8 +85,8 @@ This repository includes projects and case studies covering:
 
 ## Connect
 
-- GitHub — https://github.com/Shakeelkhan8
-- LinkedIn — https://linkedin.com/in/shakeel-khan-47888a288
-- Email - shakeelkhan4147@gmail.com
+- GitHub: https://github.com/Shakeelkhan8
+- LinkedIn: https://linkedin.com/in/shakeel-khan-47888a288
+- Email: shakeelkhan4147@gmail.com
 
 > *"Great engineering is measured not by the complexity of the code, but by the simplicity, reliability, and scalability of the systems it enables."*
