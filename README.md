@@ -25,29 +25,34 @@ I enjoy solving complex engineering problems through thoughtful architecture, cl
 
 ## Technology Stack
 
-**Languages**
-
+### Languages
 - PHP
 - JavaScript
 - SQL
 
-**Framework**
-
+### Backend
 - Laravel
+- Node.js
+- Express.js
 
-**Databases**
+### Frontend
+- React
+- Next.js
+- Vue.js
 
+### Databases
 - PostgreSQL
 - MySQL
 
-**Infrastructure & Tools**
-
+### Infrastructure & Tools
 - Redis
 - Docker
 - Linux
 - Git
 - GitHub
 - Postman
+- CI/CD
+- AWS
 
 ---
 
