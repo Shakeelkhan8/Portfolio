@@ -234,6 +234,15 @@
   padding-block: 6rem;
 }
 
-@utility section-spacing-sm {
-  padding-block: 4rem;
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
 }

@@ -7,15 +7,13 @@ import { FadeIn } from "@/components/motion/fade-in";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppLink } from "@/components/shared/app-link";
+import { ExpertiseGrid } from "@/components/home/expertise-grid";
+import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
+import { WritingPreviewList } from "@/components/home/writing-preview-list";
+import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
+import { ContactCTA } from "@/components/home/contact-cta";
 import { siteConfig } from "@/config/site";
 import { routes } from "@/config/navigation";
 
@@ -56,7 +54,9 @@ export default function Home() {
               </Button>
             </div>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-              <Badge variant="secondary">{siteConfig.yearsOfExperience}+ years</Badge>
+              <Badge variant="secondary">
+                {siteConfig.yearsOfExperience}+ years
+              </Badge>
               <Badge variant="secondary">{siteConfig.location}</Badge>
               {siteConfig.expertise.slice(0, 3).map((item) => (
                 <Badge key={item} variant="outline">
@@ -68,46 +68,88 @@ export default function Home() {
         </Container>
       </Section>
 
+      <Section spacing="sm" className="border-t border-border">
+        <Container>
+          <SectionHeader
+            title="Expertise"
+            description="Areas where I deliver the most impact."
+            align="center"
+          />
+          <ExpertiseGrid />
+        </Container>
+      </Section>
+
       <Section spacing="sm" className="border-t border-border bg-muted/30">
         <Container>
           <SectionHeader
-            title="Engineering Philosophy"
-            description="How I approach building production systems."
+            title="Selected Projects"
+            description="Engineering case studies from production systems."
+            action={
+              <AppLink
+                href={routes.projects}
+                showExternalIcon={false}
+                className="text-sm font-medium text-primary"
+              >
+                View all
+                <ArrowRight className="ml-1 inline size-4" />
+              </AppLink>
+            }
+          />
+          <ProjectPreviewGrid />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="border-t border-border">
+        <Container>
+          <SectionHeader
+            title="How I Think"
+            description="Principles that guide my engineering decisions."
             align="center"
           />
           <div className="grid gap-4 md:grid-cols-2">
             {siteConfig.philosophy.map((item, index) => (
               <FadeIn key={item.title} delay={index * 0.05}>
-                <Card className="h-full border-border/60 bg-surface shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base">{item.title}</CardTitle>
-                    <CardDescription className="leading-relaxed">
-                      {item.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
+                <div className="rounded-xl border border-border bg-surface p-6">
+                  <Text className="mb-2 font-medium">{item.title}</Text>
+                  <Text size="sm" muted leading="relaxed">
+                    {item.description}
+                  </Text>
+                </div>
               </FadeIn>
             ))}
           </div>
         </Container>
       </Section>
 
-      <Section spacing="sm">
+      <Section spacing="sm" className="border-t border-border bg-muted/30">
         <Container>
           <SectionHeader
-            title="Design System Preview"
-            description="Phase 2 components are ready. Pages will be built in Phase 3."
+            title="Latest Writing"
+            action={
+              <AppLink
+                href={routes.writing}
+                showExternalIcon={false}
+                className="text-sm font-medium text-primary"
+              >
+                View all
+                <ArrowRight className="ml-1 inline size-4" />
+              </AppLink>
+            }
           />
-          <FadeIn>
-            <Card className="border-dashed">
-              <CardContent className="py-10 text-center">
-                <Text muted>
-                  Layout shell, navigation, typography, motion, and shadcn/ui
-                  primitives are in place.
-                </Text>
-              </CardContent>
-            </Card>
-          </FadeIn>
+          <WritingPreviewList />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="border-t border-border">
+        <Container>
+          <SectionHeader title="Experience" />
+          <ExperienceSnapshot />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="border-t border-border bg-muted/30">
+        <Container>
+          <ContactCTA />
         </Container>
       </Section>
     </>
