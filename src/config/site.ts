@@ -15,6 +15,7 @@ export const siteConfig = {
     github: "https://github.com/Shakeelkhan8",
     linkedin: "https://www.linkedin.com/in/shakeel-khan-47888a288/",
   },
+  githubUsername: "Shakeelkhan8",
   languages: [
     { name: "Urdu", level: "Native" },
     { name: "Pashto", level: "Native" },

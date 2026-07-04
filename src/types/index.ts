@@ -78,3 +78,65 @@ export type Education = {
 export type Accomplishment = {
   text: string;
 };
+
+export type DiagramNodeType =
+  | "frontend"
+  | "api"
+  | "service"
+  | "database"
+  | "cache"
+  | "queue"
+  | "external";
+
+export type DiagramNode = {
+  id: string;
+  label: string;
+  type: DiagramNodeType;
+  layer: number;
+};
+
+export type DiagramEdge = {
+  from: string;
+  to: string;
+  label?: string;
+};
+
+export type ArchitectureDiagramData = {
+  title: string;
+  nodes: DiagramNode[];
+  edges: DiagramEdge[];
+};
+
+export type GitHubProfile = {
+  login: string;
+  name: string | null;
+  bio: string | null;
+  avatarUrl: string;
+  htmlUrl: string;
+  publicRepos: number;
+  followers: number;
+  following: number;
+  createdAt: string;
+};
+
+export type GitHubRepo = {
+  id: number;
+  name: string;
+  fullName: string;
+  description: string | null;
+  htmlUrl: string;
+  homepage: string | null;
+  language: string | null;
+  stargazersCount: number;
+  forksCount: number;
+  updatedAt: string;
+  topics: string[];
+};
+
+export type SearchResult = {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  type: "page" | "project" | "article";
+};
