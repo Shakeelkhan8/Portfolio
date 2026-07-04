@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProjectCard } from "@/components/projects/project-card";
 import { FadeIn } from "@/components/motion/fade-in";
 import { searchContent } from "@/lib/search";
+import { cn } from "@/lib/utils";
 import type { Project } from "@/types";
 
 type ProjectListProps = {
@@ -41,7 +42,10 @@ export function ProjectList({ projects }: ProjectListProps) {
   return (
     <div className="space-y-8">
       <div className="relative">
-        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Search
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -51,38 +55,53 @@ export function ProjectList({ projects }: ProjectListProps) {
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Badge
+      <div
+        role="group"
+        aria-label="Filter projects by category"
+        className="flex flex-wrap gap-2"
+      >
+        <Button
+          type="button"
+          size="sm"
           variant={activeTag === null ? "default" : "outline"}
-          className="cursor-pointer"
           onClick={() => setActiveTag(null)}
+          aria-pressed={activeTag === null}
         >
           All
-        </Badge>
+        </Button>
         {tags.map((tag) => (
-          <Badge
+          <Button
             key={tag}
+            type="button"
+            size="sm"
             variant={activeTag === tag ? "default" : "outline"}
-            className="cursor-pointer"
             onClick={() => setActiveTag(tag)}
+            aria-pressed={activeTag === tag}
           >
             {tag}
-          </Badge>
+          </Button>
         ))}
       </div>
 
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {filteredProjects.length} project
+        {filteredProjects.length === 1 ? "" : "s"} found
+      </p>
+
       {filteredProjects.length === 0 ? (
-        <p className="py-12 text-center text-sm text-muted-foreground">
+        <p className="py-12 text-center text-sm text-muted-foreground" role="status">
           No projects match your filters.
         </p>
       ) : (
-        <div className="grid gap-6">
+        <ul className={cn("grid list-none gap-6")}>
           {filteredProjects.map((project, index) => (
-            <FadeIn key={project.slug} delay={index * 0.05}>
-              <ProjectCard project={project} />
-            </FadeIn>
+            <li key={project.slug}>
+              <FadeIn delay={index * 0.05}>
+                <ProjectCard project={project} />
+              </FadeIn>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

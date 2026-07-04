@@ -14,7 +14,7 @@ export function Footer({ className }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={cn("mt-auto border-t border-border", className)}>
+    <footer role="contentinfo" className={cn("mt-auto border-t border-border", className)}>
       <Container className="py-10">
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">

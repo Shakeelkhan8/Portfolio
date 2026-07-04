@@ -39,6 +39,21 @@ export const defaultMetadata = {
   },
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  keywords: [
+    "Backend Engineer",
+    "Senior Backend Engineer",
+    "Software Engineer",
+    "Portfolio",
+    ...siteConfig.expertise,
+  ],
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     type: "website" as const,
     locale: "en_US",
@@ -55,5 +70,18 @@ export const defaultMetadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large" as const,
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: siteConfig.url,
+    types: {
+      "application/rss+xml": `${siteConfig.url}/rss.xml`,
+    },
   },
 };

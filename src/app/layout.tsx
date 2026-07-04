@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { AppProviders } from "@/components/providers/app-providers";
 import { SiteShell } from "@/components/layout/site-shell";
+import { JsonLd } from "@/components/seo/json-ld";
 import { defaultMetadata, fontVariables } from "@/config/fonts";
+import {
+  getPersonSchema,
+  getProfilePageSchema,
+  getWebSiteSchema,
+} from "@/lib/structured-data";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -15,6 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={cn("h-full", fontVariables)}>
       <body className="min-h-full flex flex-col">
+        <JsonLd
+          data={[getPersonSchema(), getWebSiteSchema(), getProfilePageSchema()]}
+        />
         <AppProviders>
           <SiteShell>{children}</SiteShell>
         </AppProviders>
