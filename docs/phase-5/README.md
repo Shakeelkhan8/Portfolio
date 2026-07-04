@@ -61,4 +61,4 @@ No new environment variables required for Phase 5.
 
 ## Next Step
 
-**Phase 6** — Deployment, CI/CD, monitoring (Sentry), analytics (Plausible), domain setup.
+**Phase 6** — Deployment, CI/CD, monitoring (Sentry), analytics (Plausible), domain setup. See `docs/phase-6/README.md`.
