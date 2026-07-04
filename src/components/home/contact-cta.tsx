@@ -1,5 +1,4 @@
-import { AppLink } from "@/components/shared/app-link";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/shared/button-link";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { siteConfig } from "@/config/site";
@@ -17,26 +16,16 @@ export function ContactCTA() {
           {siteConfig.availability.message}
         </Text>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button
-            size="lg"
-            render={
-              <AppLink href={routes.contact} showExternalIcon={false} />
-            }
-          >
+          <ButtonLink href={routes.contact} size="lg">
             Contact me
-          </Button>
-          <Button
+          </ButtonLink>
+          <ButtonLink
+            href={`mailto:${siteConfig.email}`}
             variant="outline"
             size="lg"
-            render={
-              <AppLink
-                href={`mailto:${siteConfig.email}`}
-                showExternalIcon={false}
-              />
-            }
           >
             {siteConfig.email}
-          </Button>
+          </ButtonLink>
         </div>
       </div>
     </FadeIn>

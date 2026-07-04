@@ -1,12 +1,12 @@
 import { ArrowRight } from "lucide-react";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
+import { ButtonLink } from "@/components/shared/button-link";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { SectionHeader } from "@/components/layout/section-header";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppLink } from "@/components/shared/app-link";
 import { ExpertiseGrid } from "@/components/home/expertise-grid";
@@ -34,24 +34,13 @@ export default function Home() {
               {siteConfig.description}
             </Text>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button
-                render={
-                  <AppLink href={routes.projects} showExternalIcon={false} />
-                }
-                size="lg"
-              >
+              <ButtonLink href={routes.projects} size="lg">
                 View Projects
                 <ArrowRight className="size-4" data-icon="inline-end" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                render={
-                  <AppLink href={routes.contact} showExternalIcon={false} />
-                }
-              >
+              </ButtonLink>
+              <ButtonLink href={routes.contact} variant="outline" size="lg">
                 Get in Touch
-              </Button>
+              </ButtonLink>
             </div>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
               <Badge variant="secondary">

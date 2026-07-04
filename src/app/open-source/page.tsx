@@ -9,8 +9,7 @@ import {
   GitHubStats,
 } from "@/components/github/github-stats";
 import { RepoCard } from "@/components/github/repo-card";
-import { Button } from "@/components/ui/button";
-import { AppLink } from "@/components/shared/app-link";
+import { ButtonLink } from "@/components/shared/button-link";
 import { createMetadata } from "@/lib/metadata";
 import { getGitHubData } from "@/services/github";
 import { siteConfig } from "@/config/site";
@@ -49,17 +48,9 @@ export default async function OpenSourcePage() {
               title="Unable to load GitHub data"
               description="GitHub API is temporarily unavailable or rate-limited. Visit the profile directly or try again later."
               action={
-                <Button
-                  render={
-                    <AppLink
-                      href={siteConfig.links.github}
-                      external
-                      showExternalIcon={false}
-                    />
-                  }
-                >
+                <ButtonLink href={siteConfig.links.github} external>
                   View GitHub Profile
-                </Button>
+                </ButtonLink>
               }
             />
           </Container>
