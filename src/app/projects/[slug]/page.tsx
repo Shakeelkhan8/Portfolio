@@ -7,11 +7,17 @@ import { ProjectHero } from "@/components/projects/project-hero";
 import { ProjectSection } from "@/components/projects/project-section";
 import { MetricGrid } from "@/components/projects/metric-grid";
 import { FadeIn } from "@/components/motion/fade-in";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ArchitectureDiagram } from "@/components/architecture/architecture-diagram";
 import { getArchitectureDiagram } from "@/content/architecture";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/content";
 import { createMetadata } from "@/lib/metadata";
+import {
+  getBreadcrumbSchema,
+  getProjectSchema,
+} from "@/lib/structured-data";
 import { routes } from "@/config/navigation";
+import { siteConfig } from "@/config/site";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -43,9 +49,20 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   if (!project) notFound();
 
   const diagram = getArchitectureDiagram(slug);
+  const projectUrl = `${siteConfig.url}${routes.project(slug)}`;
+
+  const structuredData = [
+    getProjectSchema(project),
+    getBreadcrumbSchema([
+      { name: "Home", url: siteConfig.url },
+      { name: "Projects", url: `${siteConfig.url}${routes.projects}` },
+      { name: project.title, url: projectUrl },
+    ]),
+  ];
 
   return (
     <>
+      <JsonLd data={structuredData} />
       <Section spacing="sm" className="pt-16 pb-8 md:pt-20">
         <Container className="max-w-3xl">
           <Breadcrumbs

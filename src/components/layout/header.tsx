@@ -15,6 +15,8 @@ type HeaderProps = {
 export function Header({ className }: HeaderProps) {
   return (
     <header
+      role="banner"
+      aria-label="Site header"
       className={cn(
         "sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/70",
         className,

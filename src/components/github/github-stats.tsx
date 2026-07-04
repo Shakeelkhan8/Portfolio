@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { GitHubIcon } from "@/components/shared/brand-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import type { GitHubProfile } from "@/types";
@@ -39,11 +40,13 @@ type GitHubProfileCardProps = {
 export function GitHubProfileCard({ profile }: GitHubProfileCardProps) {
   return (
     <div className="flex flex-col gap-6 rounded-xl border border-border bg-surface p-6 sm:flex-row sm:items-center">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={profile.avatarUrl}
         alt={`${profile.login} GitHub avatar`}
+        width={80}
+        height={80}
         className="size-20 rounded-full border border-border"
+        unoptimized
       />
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-2">
