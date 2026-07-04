@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppProviders } from "@/components/providers/app-providers";
+import { PlausibleAnalytics } from "@/components/analytics/plausible-analytics";
 import { SiteShell } from "@/components/layout/site-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { defaultMetadata, fontVariables } from "@/config/fonts";
@@ -27,6 +28,7 @@ export default function RootLayout({
         <AppProviders>
           <SiteShell>{children}</SiteShell>
         </AppProviders>
+        <PlausibleAnalytics />
       </body>
     </html>
   );

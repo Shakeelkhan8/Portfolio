@@ -43,9 +43,18 @@ export default function PrivacyPage() {
 
           <h2>Analytics</h2>
           <p>
-            Analytics may be added in a future update (Plausible Analytics).
-            If enabled, analytics will be privacy-focused and cookieless. This
-            page will be updated accordingly.
+            This site may use Plausible Analytics, a privacy-focused and
+            cookieless analytics service. Plausible does not use cookies and
+            does not collect personal data for advertising. Analytics are only
+            enabled when configured for production deployment.
+          </p>
+
+          <h2>Error Monitoring</h2>
+          <p>
+            Error monitoring may be provided by Sentry to help diagnose
+            production issues. When enabled, Sentry may collect error details,
+            browser information, and session replays around errors. No payment
+            or sensitive form data is intentionally sent to Sentry.
           </p>
 
           <h2>Cookies</h2>

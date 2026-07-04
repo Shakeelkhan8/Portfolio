@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import { Resend } from "resend";
 import { siteConfig } from "@/config/site";
 
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
   });
 
   if (error) {
+    Sentry.captureException(error);
     return NextResponse.json(
       { error: "Failed to send message. Please try again later." },
       { status: 500 },

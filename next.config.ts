@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -13,6 +14,10 @@ const securityHeaders = [
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
+  },
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
 ];
 
@@ -46,4 +51,22 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+const analyzedConfig = withBundleAnalyzer(nextConfig);
+
+const sentryOrg = process.env.SENTRY_ORG;
+const sentryProject = process.env.SENTRY_PROJECT;
+const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
+
+const config =
+  sentryOrg && sentryProject && sentryAuthToken
+    ? withSentryConfig(analyzedConfig, {
+        org: sentryOrg,
+        project: sentryProject,
+        authToken: sentryAuthToken,
+        silent: !process.env.CI,
+        tunnelRoute: "/monitoring",
+        widenClientFileUpload: true,
+      })
+    : analyzedConfig;
+
+export default config;

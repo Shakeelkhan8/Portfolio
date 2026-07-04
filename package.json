@@ -6,6 +6,9 @@
   "engines": {
     "node": ">=20"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@sentry/cli"]
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -22,6 +25,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@sentry/nextjs": "^10.63.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
