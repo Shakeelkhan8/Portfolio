@@ -1,7 +1,10 @@
+"use client";
+
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ContentSearch } from "@/components/search/content-search";
 import { getArticles } from "@/lib/content";
 
 export default function WritingPage() {
@@ -14,7 +17,12 @@ export default function WritingPage() {
         description="Technical articles on backend systems, architecture, and engineering decisions."
       />
       <Section spacing="sm" className="border-t border-border pt-0">
-        <Container>
+        <Container className="space-y-8">
+          <ContentSearch
+            types={["article"]}
+            placeholder="Search articles..."
+          />
+
           {articles.length === 0 ? (
             <EmptyState
               title="Articles in progress"

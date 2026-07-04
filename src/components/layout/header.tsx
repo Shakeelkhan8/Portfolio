@@ -2,6 +2,7 @@ import { AppLink } from "@/components/shared/app-link";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { NavBar } from "@/components/navigation/nav-bar";
 import { MobileNav } from "@/components/navigation/mobile-nav";
+import { SearchTrigger } from "@/components/search/search-trigger";
 import { Container } from "@/components/layout/container";
 import { siteConfig } from "@/config/site";
 import { routes } from "@/config/navigation";
@@ -28,6 +29,7 @@ export function Header({ className }: HeaderProps) {
         </AppLink>
 
         <div className="flex items-center gap-2">
+          <SearchTrigger />
           <NavBar />
           <ThemeToggle />
           <MobileNav />

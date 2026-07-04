@@ -7,6 +7,8 @@ import { ProjectHero } from "@/components/projects/project-hero";
 import { ProjectSection } from "@/components/projects/project-section";
 import { MetricGrid } from "@/components/projects/metric-grid";
 import { FadeIn } from "@/components/motion/fade-in";
+import { ArchitectureDiagram } from "@/components/architecture/architecture-diagram";
+import { getArchitectureDiagram } from "@/content/architecture";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/content";
 import { createMetadata } from "@/lib/metadata";
 import { routes } from "@/config/navigation";
@@ -39,6 +41,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const project = getProjectBySlug(slug);
 
   if (!project) notFound();
+
+  const diagram = getArchitectureDiagram(slug);
 
   return (
     <>
@@ -97,6 +101,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <FadeIn>
             <ProjectSection id="architecture" title="Architecture">
               <p>{project.architecture}</p>
+              {diagram ? (
+                <div className="mt-6 not-prose">
+                  <ArchitectureDiagram diagram={diagram} />
+                </div>
+              ) : null}
             </ProjectSection>
           </FadeIn>
 

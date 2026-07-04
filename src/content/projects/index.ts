@@ -64,7 +64,6 @@ export const projects: Project[] = [
       "Financial modules require idempotent webhook handling from day one — payment retries are inevitable.",
     ],
     futureImprovements: [
-      "Interactive architecture diagram (Phase 4).",
       "Event-driven dispatch for time-critical assignments.",
       "Read replica for reporting queries at scale.",
     ],
