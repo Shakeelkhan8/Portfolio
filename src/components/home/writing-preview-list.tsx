@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
+import { ButtonLink } from "@/components/shared/button-link";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Button } from "@/components/ui/button";
 import { getFeaturedArticles } from "@/lib/content";
 import { routes } from "@/config/navigation";
 import { formatDate } from "@/lib/content";
@@ -15,12 +15,9 @@ export function WritingPreviewList() {
         title="Articles in progress"
         description="Technical writing on backend systems and architecture is coming soon."
         action={
-          <Button
-            variant="outline"
-            render={<AppLink href={routes.writing} showExternalIcon={false} />}
-          >
+          <ButtonLink href={routes.writing} variant="outline">
             View Writing
-          </Button>
+          </ButtonLink>
         }
       />
     );

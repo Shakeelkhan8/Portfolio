@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/shared/button-link";
 import { routes } from "@/config/navigation";
 
 export default function NotFound() {
@@ -20,13 +19,13 @@ export default function NotFound() {
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </Text>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button render={<Link href={routes.home} />}>Go Home</Button>
-          <Button variant="outline" render={<Link href={routes.projects} />}>
+          <ButtonLink href={routes.home}>Go Home</ButtonLink>
+          <ButtonLink href={routes.projects} variant="outline">
             View Projects
-          </Button>
-          <Button variant="outline" render={<Link href={routes.contact} />}>
+          </ButtonLink>
+          <ButtonLink href={routes.contact} variant="outline">
             Contact
-          </Button>
+          </ButtonLink>
         </div>
       </Container>
     </Section>

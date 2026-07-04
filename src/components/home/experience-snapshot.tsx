@@ -1,6 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { AppLink } from "@/components/shared/app-link";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/shared/button-link";
 import { Text } from "@/components/typography/text";
 import { Heading } from "@/components/typography/heading";
 import { formatDateRange, getFeaturedExperience } from "@/lib/content";
@@ -27,15 +26,10 @@ export function ExperienceSnapshot() {
       <Text size="sm" muted leading="relaxed" className="mb-6">
         {current.highlights[0]}
       </Text>
-      <Button
-        variant="outline"
-        render={
-          <AppLink href={routes.experience} showExternalIcon={false} />
-        }
-      >
+      <ButtonLink href={routes.experience} variant="outline">
         View full timeline
         <ArrowRight className="size-4" data-icon="inline-end" />
-      </Button>
+      </ButtonLink>
     </div>
   );
 }
