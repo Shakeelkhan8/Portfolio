@@ -36,4 +36,11 @@ test.describe("Portfolio smoke tests", () => {
     await expect(page.getByText("Page not found")).toBeVisible();
     await expect(page.getByRole("link", { name: "Go Home" })).toBeVisible();
   });
+
+  test("admin login page is reachable", async ({ page }) => {
+    await page.goto("/admin/login");
+    await expect(
+      page.getByRole("heading", { name: "Admin sign in" }),
+    ).toBeVisible();
+  });
 });
