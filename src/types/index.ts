@@ -61,6 +61,7 @@ export type Article = {
   slug: string;
   title: string;
   excerpt: string;
+  content?: string;
   date: string;
   readingTime: number;
   tags: string[];

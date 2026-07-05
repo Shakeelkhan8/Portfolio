@@ -51,16 +51,3 @@ export function ContentSearch({
     </div>
   );
 }
-
-export function useContentSearch(
-  types?: Array<"page" | "project" | "article">,
-) {
-  const [query, setQuery] = useState("");
-
-  const results = useMemo(() => {
-    const items = searchContent(query);
-    return types ? items.filter((item) => types.includes(item.type)) : items;
-  }, [query, types]);
-
-  return { query, setQuery, results };
-}
