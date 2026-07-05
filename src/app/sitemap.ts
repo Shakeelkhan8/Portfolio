@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/site";
 import { routes } from "@/config/navigation";
-import { getProjectSlugs } from "@/lib/content";
+import { getProjectSlugs, getArticleSlugs } from "@/lib/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = siteConfig.url;
@@ -19,8 +19,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const projectPages = getProjectSlugs().map((slug) => routes.project(slug));
+  const articlePages = getArticleSlugs().map((slug) => routes.article(slug));
 
-  return [...staticPages, ...projectPages].map((path) => ({
+  return [...staticPages, ...projectPages, ...articlePages].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
     changeFrequency: path === routes.home ? "weekly" : "monthly",

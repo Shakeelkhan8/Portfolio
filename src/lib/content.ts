@@ -33,6 +33,10 @@ export function getArticleBySlug(slug: string): Article | undefined {
   return articles.find((a) => a.slug === slug && a.published);
 }
 
+export function getArticleSlugs(): string[] {
+  return getArticles().map((a) => a.slug);
+}
+
 export function getExperience(): ExperienceEntry[] {
   return experience;
 }
@@ -67,9 +71,4 @@ export function formatDate(date: string): string {
     day: "numeric",
     year: "numeric",
   });
-}
-
-export function estimateReadingTime(text: string): number {
-  const words = text.trim().split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 200));
 }

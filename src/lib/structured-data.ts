@@ -1,5 +1,5 @@
 import { siteConfig } from "@/config/site";
-import { mainNav, routes } from "@/config/navigation";
+import { routes } from "@/config/navigation";
 
 export function getPersonSchema() {
   return {
@@ -85,8 +85,22 @@ export function getProfilePageSchema() {
   };
 }
 
-/** Navigation pages for sitemap-adjacent structured hints */
-export const sitePages = mainNav.map((item) => ({
-  name: item.title,
-  url: `${siteConfig.url}${item.href}`,
-}));
+export function getArticleSchema(article: {
+  title: string;
+  excerpt: string;
+  slug: string;
+  date: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    url: `${siteConfig.url}${routes.article(article.slug)}`,
+    datePublished: article.date,
+    author: {
+      "@type": "Person",
+      name: siteConfig.name,
+    },
+  };
+}
