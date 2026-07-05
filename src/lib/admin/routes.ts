@@ -9,6 +9,7 @@ import {
   Image,
   LayoutDashboard,
   Mail,
+  Menu,
   MessageSquareQuote,
   Settings,
   Sparkles,
@@ -37,6 +38,7 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     label: "Content",
     items: [
+      { title: "Navigation", href: "/admin/navigation", icon: Menu },
       { title: "Projects", href: "/admin/projects", icon: FolderKanban },
       { title: "Blog", href: "/admin/blog", icon: BookOpen },
       { title: "Pages", href: "/admin/pages", icon: FileText },
@@ -54,6 +56,7 @@ export const adminNavGroups: AdminNavGroup[] = [
         icon: MessageSquareQuote,
       },
       { title: "Services", href: "/admin/services", icon: Wrench },
+      { title: "Achievements", href: "/admin/achievements", icon: Award },
     ],
   },
   {

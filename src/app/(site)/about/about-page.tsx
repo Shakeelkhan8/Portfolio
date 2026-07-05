@@ -7,22 +7,31 @@ import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { aboutIntro, skillGroups } from "@/content/skills";
-import { siteConfig } from "@/config/site";
+import {
+  getAboutContent,
+  getSiteConfig,
+  getSkillGroups,
+} from "@/lib/content";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [site, about, skillGroups] = await Promise.all([
+    getSiteConfig(),
+    getAboutContent(),
+    getSkillGroups(),
+  ]);
+
   return (
     <>
       <PageHeader
         title="About"
         description="Senior backend engineer focused on scalable systems, production SaaS, and engineering excellence."
       >
-        <AvailabilityBadge className="mt-4" />
+        <AvailabilityBadge site={site} className="mt-4" />
       </PageHeader>
 
       <Section spacing="sm" className="border-t border-border pt-0">
         <Container className="max-w-3xl space-y-6">
-          {aboutIntro.map((paragraph) => (
+          {about.paragraphs.map((paragraph) => (
             <FadeIn key={paragraph.slice(0, 30)}>
               <Text leading="relaxed" muted>
                 {paragraph}
@@ -38,7 +47,7 @@ export default function AboutPage() {
             Engineering Philosophy
           </Heading>
           <div className="grid gap-4 md:grid-cols-2">
-            {siteConfig.philosophy.map((item, index) => (
+            {site.philosophy.map((item, index) => (
               <FadeIn key={item.title} delay={index * 0.05}>
                 <Card className="h-full">
                   <CardHeader>
@@ -87,19 +96,19 @@ export default function AboutPage() {
             <div>
               <dt className="text-sm font-medium">Location</dt>
               <dd className="text-sm text-muted-foreground">
-                {siteConfig.location} ({siteConfig.timezone})
+                {site.location} ({site.timezone})
               </dd>
             </div>
             <div>
               <dt className="text-sm font-medium">Availability</dt>
               <dd className="text-sm text-muted-foreground">
-                {siteConfig.availability.message}
+                {site.availability.message}
               </dd>
             </div>
             <div className="sm:col-span-2">
               <dt className="text-sm font-medium">Languages</dt>
               <dd className="text-sm text-muted-foreground">
-                {siteConfig.languages
+                {site.languages
                   .map((lang) => `${lang.name} (${lang.level})`)
                   .join(" · ")}
               </dd>

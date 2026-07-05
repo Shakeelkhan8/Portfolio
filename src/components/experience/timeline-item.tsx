@@ -1,4 +1,4 @@
-import { formatDateRange } from "@/lib/content";
+import { formatDateRange } from "@/lib/formatters";
 import type { ExperienceEntry } from "@/types";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/components/typography/heading";

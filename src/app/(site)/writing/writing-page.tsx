@@ -4,8 +4,8 @@ import { PageHeader } from "@/components/shared/page-header";
 import { ArticleList } from "@/components/writing/article-list";
 import { getArticles } from "@/lib/content";
 
-export default function WritingPage() {
-  const articles = getArticles();
+export default async function WritingPage() {
+  const articles = await getArticles();
 
   return (
     <>

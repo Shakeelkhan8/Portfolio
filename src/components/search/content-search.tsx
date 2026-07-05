@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { searchContent } from "@/lib/search";
+import { useSiteDataSafe } from "@/components/providers/site-data-provider";
+import { filterSearchIndex } from "@/lib/search-utils";
 import { cn } from "@/lib/utils";
 
 type ContentSearchProps = {
@@ -19,14 +20,16 @@ export function ContentSearch({
   className,
   onQueryChange,
 }: ContentSearchProps) {
+  const siteData = useSiteDataSafe();
   const [query, setQuery] = useState("");
 
   const resultCount = useMemo(() => {
-    const results = searchContent(query);
+    const index = siteData?.searchIndex ?? [];
+    const results = filterSearchIndex(index, query);
     return types
       ? results.filter((item) => types.includes(item.type)).length
       : results.length;
-  }, [query, types]);
+  }, [query, siteData?.searchIndex, types]);
 
   function handleChange(value: string) {
     setQuery(value);

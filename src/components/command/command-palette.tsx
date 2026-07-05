@@ -21,7 +21,6 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { buildSearchIndex } from "@/lib/search";
 import { routes } from "@/config/navigation";
 import { useCommandMenu } from "@/components/command/command-menu-provider";
 import type { SearchResult } from "@/types";
@@ -41,10 +40,13 @@ const navigationItems = [
   { label: "Contact", href: routes.contact, icon: Mail, shortcut: "G C" },
 ];
 
-export function CommandPalette() {
+type CommandPaletteProps = {
+  searchIndex: SearchResult[];
+};
+
+export function CommandPalette({ searchIndex }: CommandPaletteProps) {
   const router = useRouter();
   const { commandOpen, setCommandOpen } = useCommandMenu();
-  const searchIndex = buildSearchIndex();
 
   const grouped = {
     pages: searchIndex.filter((item) => item.type === "page"),

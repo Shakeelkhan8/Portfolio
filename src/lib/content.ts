@@ -1,74 +1,34 @@
-import { projects } from "@/content/projects";
-import { articles } from "@/content/writing";
-import { experience } from "@/content/experience";
-import type { Project, Article, ExperienceEntry } from "@/types";
+export {
+  getProjects,
+  getFeaturedProjects,
+  getProjectBySlug,
+  getProjectSlugs,
+  getArchitectureDiagram,
+} from "@/lib/db/queries/projects";
 
-export function getProjects(): Project[] {
-  return projects;
-}
+export {
+  getArticles,
+  getFeaturedArticles,
+  getArticleBySlug,
+  getArticleSlugs,
+} from "@/lib/db/queries/articles";
 
-export function getFeaturedProjects(): Project[] {
-  return projects.filter((p) => p.featured);
-}
+export {
+  getExperience,
+  getFeaturedExperience,
+  getEducationRecords,
+  getPrimaryEducation,
+  getAchievements,
+  getResumeSummary,
+} from "@/lib/db/queries/experience";
 
-export function getProjectBySlug(slug: string): Project | undefined {
-  return projects.find((p) => p.slug === slug);
-}
+export { getSkillGroups, getSkillCategories, getAboutContent } from "@/lib/db/queries/skills";
 
-export function getProjectSlugs(): string[] {
-  return projects.map((p) => p.slug);
-}
+export {
+  formatDateRange,
+  formatMonthYear,
+  formatDate,
+} from "@/lib/formatters";
 
-export function getArticles(): Article[] {
-  return articles.filter((a) => a.published);
-}
-
-export function getFeaturedArticles(limit = 3): Article[] {
-  return getArticles()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, limit);
-}
-
-export function getArticleBySlug(slug: string): Article | undefined {
-  return articles.find((a) => a.slug === slug && a.published);
-}
-
-export function getArticleSlugs(): string[] {
-  return getArticles().map((a) => a.slug);
-}
-
-export function getExperience(): ExperienceEntry[] {
-  return experience;
-}
-
-export function getFeaturedExperience(): ExperienceEntry | undefined {
-  return experience.find((e) => e.featured) ?? experience[0];
-}
-
-export function formatDateRange(
-  startDate: string,
-  endDate: string | null,
-): string {
-  const start = formatMonthYear(startDate);
-  const end = endDate ? formatMonthYear(endDate) : "Present";
-  return `${start} – ${end}`;
-}
-
-export function formatMonthYear(date: string): string {
-  const [year, month] = date.split("-");
-  const dateObj = new Date(Number(year), Number(month) - 1);
-  return dateObj.toLocaleDateString("en-US", {
-    month: "short",
-    year: "numeric",
-  });
-}
-
-export function formatDate(date: string): string {
-  const [year, month, day] = date.split("-");
-  const dateObj = new Date(Number(year), Number(month) - 1, Number(day ?? 1));
-  return dateObj.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+export { getSiteConfig, getHomeContent, getSectionHeader, getCtaSection } from "@/lib/db/queries/site";
+export { getNavigation } from "@/lib/db/queries/navigation";

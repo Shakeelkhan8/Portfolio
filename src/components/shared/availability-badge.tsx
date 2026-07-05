@@ -1,13 +1,14 @@
 import { Badge } from "@/components/ui/badge";
-import { siteConfig } from "@/config/site";
+import type { SiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
 type AvailabilityBadgeProps = {
+  site: SiteConfig;
   className?: string;
 };
 
-export function AvailabilityBadge({ className }: AvailabilityBadgeProps) {
-  const isAvailable = siteConfig.availability.status === "available";
+export function AvailabilityBadge({ site, className }: AvailabilityBadgeProps) {
+  const isAvailable = site.availability.status === "available";
 
   return (
     <Badge

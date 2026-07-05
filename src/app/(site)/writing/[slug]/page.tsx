@@ -10,7 +10,7 @@ import { Heading } from "@/components/typography/heading";
 import { Prose } from "@/components/typography/prose";
 import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
+import { getSiteConfig } from "@/lib/db/queries/site";
 import {
   formatDate,
   getArticleBySlug,
@@ -27,14 +27,15 @@ type PageProps = {
 };
 
 export async function generateStaticParams() {
-  return getArticleSlugs().map((slug) => ({ slug }));
+  const slugs = await getArticleSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) return {};
 
@@ -47,16 +48,19 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const [article, site] = await Promise.all([
+    getArticleBySlug(slug),
+    getSiteConfig(),
+  ]);
 
   if (!article) notFound();
 
-  const articleUrl = `${siteConfig.url}${routes.article(slug)}`;
+  const articleUrl = `${site.url}${routes.article(slug)}`;
   const structuredData = [
     getArticleSchema(article),
     getBreadcrumbSchema([
-      { name: "Home", url: siteConfig.url },
-      { name: "Writing", url: `${siteConfig.url}${routes.writing}` },
+      { name: "Home", url: site.url },
+      { name: "Writing", url: `${site.url}${routes.writing}` },
       { name: article.title, url: articleUrl },
     ]),
   ];

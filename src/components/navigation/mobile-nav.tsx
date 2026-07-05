@@ -11,11 +11,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { mainNav, utilityNav } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
 import { SocialLinks } from "@/components/shared/social-links";
+import type { NavigationData, SiteConfig } from "@/types/cms";
 
-export function MobileNav() {
+type MobileNavProps = {
+  site: SiteConfig;
+  navigation: NavigationData;
+};
+
+export function MobileNav({ site, navigation }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -34,13 +38,13 @@ export function MobileNav() {
       />
       <SheetContent side="right" className="flex w-full flex-col sm:max-w-sm">
         <SheetHeader>
-          <SheetTitle>{siteConfig.name}</SheetTitle>
+          <SheetTitle>{site.name}</SheetTitle>
         </SheetHeader>
         <nav
           aria-label="Mobile navigation"
           className="mt-8 flex flex-col gap-4"
         >
-          {[...mainNav, ...utilityNav].map((item) => (
+          {[...navigation.mainNav, ...navigation.utilityNav].map((item) => (
             <NavLink
               key={item.href}
               item={item}
@@ -50,7 +54,7 @@ export function MobileNav() {
           ))}
         </nav>
         <div className="mt-auto border-t border-border pt-6">
-          <SocialLinks />
+          <SocialLinks navigation={navigation} />
         </div>
       </SheetContent>
     </Sheet>

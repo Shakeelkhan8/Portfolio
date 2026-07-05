@@ -4,16 +4,18 @@ import { PageHeader } from "@/components/shared/page-header";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { ContactForm } from "@/components/contact/contact-form";
 import { Text } from "@/components/typography/text";
-import { siteConfig } from "@/config/site";
+import { getSiteConfig } from "@/lib/content";
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const site = await getSiteConfig();
+
   return (
     <>
       <PageHeader
         title="Contact"
-        description={siteConfig.availability.message}
+        description={site.availability.message}
       >
-        <AvailabilityBadge className="mt-4" />
+        <AvailabilityBadge site={site} className="mt-4" />
       </PageHeader>
       <Section spacing="sm" className="border-t border-border pt-0">
         <Container className="grid max-w-4xl gap-12 lg:grid-cols-5">
@@ -27,10 +29,10 @@ export default function ContactPage() {
               </Text>
               <Text size="sm" muted>
                 <a
-                  href={`mailto:${siteConfig.email}`}
+                  href={`mailto:${site.email}`}
                   className="text-primary hover:underline"
                 >
-                  {siteConfig.email}
+                  {site.email}
                 </a>
               </Text>
             </div>
@@ -39,7 +41,7 @@ export default function ContactPage() {
                 Location
               </Text>
               <Text size="sm" muted>
-                {siteConfig.location} ({siteConfig.timezone})
+                {site.location} ({site.timezone})
               </Text>
             </div>
             <div>
@@ -47,7 +49,7 @@ export default function ContactPage() {
                 Response time
               </Text>
               <Text size="sm" muted>
-                Usually within 24–48 hours.
+                {site.responseTimeText}
               </Text>
             </div>
           </div>

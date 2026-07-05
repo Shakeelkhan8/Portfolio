@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProjectCard } from "@/components/projects/project-card";
 import { FadeIn } from "@/components/motion/fade-in";
-import { searchContent } from "@/lib/search";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types";
 
@@ -19,16 +18,15 @@ export function ProjectList({ projects }: ProjectListProps) {
   const [query, setQuery] = useState("");
 
   const filteredProjects = useMemo(() => {
-    const searchResults = searchContent(query).filter(
-      (item) => item.type === "project",
-    );
-    const matchingSlugs = new Set(
-      searchResults.map((result) => result.href.replace("/projects/", "")),
-    );
+    const normalizedQuery = query.trim().toLowerCase();
 
     return projects.filter((project) => {
       const matchesTag = !activeTag || project.tags.includes(activeTag);
-      const matchesSearch = !query.trim() || matchingSlugs.has(project.slug);
+      const matchesSearch =
+        !normalizedQuery ||
+        `${project.title} ${project.summary} ${project.tags.join(" ")}`
+          .toLowerCase()
+          .includes(normalizedQuery);
       return matchesTag && matchesSearch;
     });
   }, [projects, activeTag, query]);

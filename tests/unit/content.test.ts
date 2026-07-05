@@ -1,11 +1,8 @@
 import { describe, expect, it } from "vitest";
-import {
-  getFeaturedProjects,
-  getProjectBySlug,
-  getProjectSlugs,
-  formatDateRange,
-} from "@/lib/content";
-import { searchContent, buildSearchIndex } from "@/lib/search";
+import { routes } from "@/config/navigation";
+import { getFallbackProjects } from "@/lib/db/fallback";
+import { formatDateRange } from "@/lib/formatters";
+import { filterSearchIndex } from "@/lib/search-utils";
 import {
   getPersonSchema,
   getWebSiteSchema,
@@ -13,17 +10,20 @@ import {
 } from "@/lib/structured-data";
 
 describe("content helpers", () => {
-  it("returns all project slugs", () => {
-    expect(getProjectSlugs().length).toBeGreaterThan(0);
+  it("returns all project slugs from fallback content", () => {
+    const slugs = getFallbackProjects().map((project) => project.slug);
+    expect(slugs.length).toBeGreaterThan(0);
   });
 
-  it("finds project by slug", () => {
-    const project = getProjectBySlug("dispatch-management-saas");
+  it("finds project by slug in fallback content", () => {
+    const project = getFallbackProjects().find(
+      (item) => item.slug === "dispatch-management-saas",
+    );
     expect(project?.title).toBe("Dispatch Management SaaS");
   });
 
-  it("returns featured projects", () => {
-    const featured = getFeaturedProjects();
+  it("returns featured projects from fallback content", () => {
+    const featured = getFallbackProjects().filter((project) => project.featured);
     expect(featured.every((project) => project.featured)).toBe(true);
   });
 
@@ -34,17 +34,40 @@ describe("content helpers", () => {
 });
 
 describe("search", () => {
-  it("builds a non-empty search index", () => {
-    expect(buildSearchIndex().length).toBeGreaterThan(5);
-  });
+  it("filters a search index by query", () => {
+    const index = [
+      {
+        id: "project-dispatch",
+        title: "Dispatch Management SaaS",
+        description: "Operations platform",
+        href: routes.project("dispatch-management-saas"),
+        type: "project" as const,
+      },
+      {
+        id: "home",
+        title: "Home",
+        description: "Portfolio homepage",
+        href: routes.home,
+        type: "page" as const,
+      },
+    ];
 
-  it("finds projects by query", () => {
-    const results = searchContent("dispatch");
+    const results = filterSearchIndex(index, "dispatch");
     expect(results.some((item) => item.type === "project")).toBe(true);
   });
 
-  it("returns all items for empty query", () => {
-    expect(searchContent("").length).toBe(buildSearchIndex().length);
+  it("returns the full index for an empty query", () => {
+    const index = [
+      {
+        id: "home",
+        title: "Home",
+        description: "Portfolio homepage",
+        href: routes.home,
+        type: "page" as const,
+      },
+    ];
+
+    expect(filterSearchIndex(index, "")).toHaveLength(1);
   });
 });
 

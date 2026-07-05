@@ -2,26 +2,36 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
-import {
-  accomplishments,
-  education,
-  experience,
-  resumeSummary,
-} from "@/content/experience";
-import { skillGroups } from "@/content/skills";
-import { siteConfig } from "@/config/site";
-import { formatDateRange } from "@/lib/content";
+import { formatDateRange } from "@/lib/formatters";
+import type { SiteConfig } from "@/types/cms";
+import type { Education, ExperienceEntry, SkillGroup } from "@/types";
 
-export function ResumeView() {
+type ResumeViewProps = {
+  site: SiteConfig;
+  resumeSummary: string;
+  skillGroups: SkillGroup[];
+  experience: ExperienceEntry[];
+  education: Education;
+  accomplishments: Array<{ text: string }>;
+};
+
+export function ResumeView({
+  site,
+  resumeSummary,
+  skillGroups,
+  experience,
+  education,
+  accomplishments,
+}: ResumeViewProps) {
   return (
     <div className="space-y-10">
       <header className="space-y-2 border-b border-border pb-8">
         <Heading as="h2" size="lg" balance={false}>
-          {siteConfig.legalName}
+          {site.legalName}
         </Heading>
-        <Text className="font-medium">{siteConfig.title}</Text>
+        <Text className="font-medium">{site.title}</Text>
         <Text size="sm" muted>
-          {siteConfig.email} · {siteConfig.phone} · {siteConfig.location}
+          {site.email} · {site.phone} · {site.location}
         </Text>
       </header>
 
@@ -114,7 +124,7 @@ export function ResumeView() {
           Languages
         </Heading>
         <Text size="sm" muted>
-          {siteConfig.languages
+          {site.languages
             .map((lang) => `${lang.name} (${lang.level})`)
             .join(" · ")}
         </Text>

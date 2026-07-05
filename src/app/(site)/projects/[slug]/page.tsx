@@ -9,29 +9,29 @@ import { MetricGrid } from "@/components/projects/metric-grid";
 import { FadeIn } from "@/components/motion/fade-in";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ArchitectureDiagram } from "@/components/architecture/architecture-diagram";
-import { getArchitectureDiagram } from "@/content/architecture";
-import { getProjectBySlug, getProjectSlugs } from "@/lib/content";
+import { getArchitectureDiagram, getProjectBySlug, getProjectSlugs } from "@/lib/content";
 import { createMetadata } from "@/lib/metadata";
 import {
   getBreadcrumbSchema,
   getProjectSchema,
 } from "@/lib/structured-data";
 import { routes } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
+import { getSiteConfig } from "@/lib/db/queries/site";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  return getProjectSlugs().map((slug) => ({ slug }));
+  const slugs = await getProjectSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project) return {};
 
@@ -44,18 +44,21 @@ export async function generateMetadata({
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const [project, site] = await Promise.all([
+    getProjectBySlug(slug),
+    getSiteConfig(),
+  ]);
 
   if (!project) notFound();
 
-  const diagram = getArchitectureDiagram(slug);
-  const projectUrl = `${siteConfig.url}${routes.project(slug)}`;
+  const diagram = await getArchitectureDiagram(slug);
+  const projectUrl = `${site.url}${routes.project(slug)}`;
 
   const structuredData = [
     getProjectSchema(project),
     getBreadcrumbSchema([
-      { name: "Home", url: siteConfig.url },
-      { name: "Projects", url: `${siteConfig.url}${routes.projects}` },
+      { name: "Home", url: site.url },
+      { name: "Projects", url: `${site.url}${routes.projects}` },
       { name: project.title, url: projectUrl },
     ]),
   ];

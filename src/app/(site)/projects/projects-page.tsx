@@ -4,8 +4,8 @@ import { PageHeader } from "@/components/shared/page-header";
 import { ProjectList } from "@/components/projects/project-list";
 import { getProjects } from "@/lib/content";
 
-export default function ProjectsPage() {
-  const projects = getProjects();
+export default async function ProjectsPage() {
+  const projects = await getProjects();
 
   return (
     <>

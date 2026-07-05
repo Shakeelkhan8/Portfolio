@@ -2,16 +2,19 @@ import { AppLink } from "@/components/shared/app-link";
 import { SocialLinks } from "@/components/shared/social-links";
 import { Container } from "@/components/layout/container";
 import { Separator } from "@/components/ui/separator";
-import { footerNav } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
+import type { NavigationData, SiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
 type FooterProps = {
+  site: SiteConfig;
+  navigation: NavigationData;
   className?: string;
 };
 
-export function Footer({ className }: FooterProps) {
+export function Footer({ site, navigation, className }: FooterProps) {
   const year = new Date().getFullYear();
+  const copyright =
+    site.copyrightText || `© ${year} ${site.name}. All rights reserved.`;
 
   return (
     <footer role="contentinfo" className={cn("mt-auto border-t border-border", className)}>
@@ -19,22 +22,22 @@ export function Footer({ className }: FooterProps) {
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <p className="font-heading text-sm font-semibold text-foreground">
-              {siteConfig.name}
+              {site.name}
             </p>
             <p className="text-sm text-muted-foreground">
-              {siteConfig.title} · {siteConfig.location}
+              {site.title} · {site.location}
             </p>
           </div>
 
-          <SocialLinks />
+          <SocialLinks navigation={navigation} />
         </div>
 
         <Separator className="my-8" />
 
         <div className="flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} {siteConfig.name}. All rights reserved.</p>
+          <p>{copyright.replace(String(year), String(year))}</p>
           <nav aria-label="Footer navigation" className="flex gap-4">
-            {footerNav.map((item) => (
+            {navigation.footerNav.map((item) => (
               <AppLink
                 key={item.href}
                 href={item.href}

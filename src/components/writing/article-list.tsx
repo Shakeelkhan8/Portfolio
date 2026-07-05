@@ -5,8 +5,9 @@ import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ContentSearch } from "@/components/search/content-search";
-import { formatDate } from "@/lib/content";
-import { searchContent } from "@/lib/search";
+import { useSiteDataSafe } from "@/components/providers/site-data-provider";
+import { formatDate } from "@/lib/formatters";
+import { filterSearchIndex } from "@/lib/search-utils";
 import { routes } from "@/config/navigation";
 import type { Article } from "@/types";
 
@@ -15,19 +16,21 @@ type ArticleListProps = {
 };
 
 export function ArticleList({ articles }: ArticleListProps) {
+  const siteData = useSiteDataSafe();
   const [query, setQuery] = useState("");
 
   const filteredArticles = useMemo(() => {
     if (!query.trim()) return articles;
 
+    const index = siteData?.searchIndex ?? [];
     const matchingSlugs = new Set(
-      searchContent(query)
+      filterSearchIndex(index, query)
         .filter((item) => item.type === "article")
         .map((item) => item.href.replace("/writing/", "")),
     );
 
     return articles.filter((article) => matchingSlugs.has(article.slug));
-  }, [articles, query]);
+  }, [articles, query, siteData?.searchIndex]);
 
   if (articles.length === 0) {
     return (

@@ -1,10 +1,15 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/config/site";
 import { routes } from "@/config/navigation";
 import { getProjectSlugs, getArticleSlugs } from "@/lib/content";
+import { getSiteConfig } from "@/lib/db/queries/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = siteConfig.url;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [site, projectSlugs, articleSlugs] = await Promise.all([
+    getSiteConfig(),
+    getProjectSlugs(),
+    getArticleSlugs(),
+  ]);
+  const baseUrl = site.url;
 
   const staticPages = [
     routes.home,
@@ -18,8 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     routes.privacy,
   ];
 
-  const projectPages = getProjectSlugs().map((slug) => routes.project(slug));
-  const articlePages = getArticleSlugs().map((slug) => routes.article(slug));
+  const projectPages = projectSlugs.map((slug) => routes.project(slug));
+  const articlePages = articleSlugs.map((slug) => routes.article(slug));
 
   return [...staticPages, ...projectPages, ...articlePages].map((path) => ({
     url: `${baseUrl}${path}`,
