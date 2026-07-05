@@ -6,9 +6,6 @@
   "engines": {
     "node": ">=20"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["@sentry/cli"]
-  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
