@@ -15,8 +15,10 @@ export function revalidatePublicPages() {
   revalidatePath("/experience");
   revalidatePath("/resume");
   revalidatePath("/projects");
+  revalidatePath("/writing");
   revalidatePath("/contact");
   revalidatePath("/sitemap.xml");
+  revalidatePath("/rss.xml");
 }
 
 export function revalidateAfterContentChange(...tags: CacheTag[]) {
@@ -41,4 +43,19 @@ export function revalidateAfterProjectChange(options?: {
 
 export function revalidateAfterMediaChange() {
   revalidateTag(CACHE_TAGS.media, "max");
+}
+
+export function revalidateAfterArticleChange(options?: {
+  slug?: string;
+  previousSlug?: string;
+}) {
+  revalidateAfterContentChange(CACHE_TAGS.articles);
+
+  if (options?.previousSlug && options.previousSlug !== options.slug) {
+    revalidatePath(`/writing/${options.previousSlug}`);
+  }
+
+  if (options?.slug) {
+    revalidatePath(`/writing/${options.slug}`);
+  }
 }

@@ -14,6 +14,7 @@ import {
 } from "@/content/experience";
 import { aboutIntro, skillGroups } from "@/content/skills";
 import { projects } from "@/content/projects";
+import { articles } from "@/content/writing";
 import { parseMonthDate, slugify } from "@/lib/seed/helpers";
 
 export const SEED_META_KEY = "seed_completed";
@@ -234,6 +235,18 @@ export function getSeedPayload() {
       lessons: project.lessons,
       futureImprovements: project.futureImprovements ?? [],
       diagram: architectureDiagrams[project.slug] ?? null,
+    })),
+    articles: articles.map((article) => ({
+      slug: article.slug,
+      title: article.title,
+      excerpt: article.excerpt,
+      content_html: article.content ?? "",
+      status: "published" as const,
+      reading_time_minutes: article.readingTime,
+      published_at: article.date,
+      meta_title: article.title,
+      meta_description: article.excerpt,
+      tags: article.tags,
     })),
     privacyPage: {
       slug: "privacy",

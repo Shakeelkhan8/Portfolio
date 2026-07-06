@@ -37,11 +37,16 @@ async function getMediaReferenceCount(
   supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"],
   id: string,
 ) {
-  const [projectRefs, galleryItems, resumeVersions] = await Promise.all([
+  const [projectRefs, articleRefs, galleryItems, resumeVersions] =
+    await Promise.all([
     supabase
       .from("projects")
       .select("id", { count: "exact", head: true })
       .or(`thumbnail_media_id.eq.${id},og_image_id.eq.${id}`),
+    supabase
+      .from("articles")
+      .select("id", { count: "exact", head: true })
+      .eq("og_image_id", id),
     supabase
       .from("project_gallery")
       .select("id", { count: "exact", head: true })
@@ -54,6 +59,7 @@ async function getMediaReferenceCount(
 
   return (
     (projectRefs.count ?? 0) +
+    (articleRefs.count ?? 0) +
     (galleryItems.count ?? 0) +
     (resumeVersions.count ?? 0)
   );
@@ -184,7 +190,7 @@ export async function deleteMediaAction(formData: FormData) {
   if (referenceCount > 0) {
     return {
       error:
-        "This file is still referenced by a project or resume. Remove references before deleting.",
+        "This file is still referenced by a project, article, or resume. Remove references before deleting.",
     };
   }
 

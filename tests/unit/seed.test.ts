@@ -20,6 +20,7 @@ describe("seed content payload", () => {
 
     expect(payload.siteSettings.site_name).toBe("Shakeel Khan");
     expect(payload.projects).toHaveLength(3);
+    expect(payload.articles).toHaveLength(2);
     expect(payload.experience).toHaveLength(5);
     expect(payload.skillGroups).toHaveLength(6);
     expect(payload.navigation.length).toBeGreaterThan(0);

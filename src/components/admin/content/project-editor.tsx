@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { upsertProjectAction } from "@/lib/admin/actions/projects";
 import { projectToFormDefaults } from "@/lib/admin/project-form-utils";
+import { MediaSelect } from "@/components/admin/shared/media-select";
 import { FormMessage } from "@/components/admin/shared/form-message";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Input } from "@/components/ui/input";
@@ -15,41 +16,6 @@ type ProjectEditorProps = {
   project?: ProjectRecord | null;
   mediaFiles: MediaFileRecord[];
 };
-
-function MediaSelect({
-  id,
-  name,
-  label,
-  value,
-  mediaFiles,
-}: {
-  id: string;
-  name: string;
-  label: string;
-  value: string;
-  mediaFiles: MediaFileRecord[];
-}) {
-  const images = mediaFiles.filter((file) => file.mimeType.startsWith("image/"));
-
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      <select
-        id={id}
-        name={name}
-        defaultValue={value}
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-      >
-        <option value="">None</option>
-        {images.map((file) => (
-          <option key={file.id} value={file.id}>
-            {file.originalFilename}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
 
 export function ProjectEditor({ project, mediaFiles }: ProjectEditorProps) {
   const defaults = projectToFormDefaults(project);

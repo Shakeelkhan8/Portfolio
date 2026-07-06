@@ -10,6 +10,7 @@ export {
   getArticles,
   getFeaturedArticles,
   getArticleBySlug,
+  getArticleDetailBySlug,
   getArticleSlugs,
 } from "@/lib/db/queries/articles";
 

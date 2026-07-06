@@ -190,3 +190,20 @@ export type ProjectRecord = {
   futureImprovements: string[];
   diagram: ProjectArchitectureRecord | null;
 };
+
+export type ArticleRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  contentHtml: string | null;
+  status: "draft" | "published";
+  readingTimeMinutes: number;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImageId: string | null;
+  canonicalUrl: string | null;
+  robots: string | null;
+  publishedAt: string | null;
+  tags: string[];
+};

@@ -13,7 +13,7 @@ import { routes } from "@/config/navigation";
 import { getSiteConfig } from "@/lib/db/queries/site";
 import {
   formatDate,
-  getArticleBySlug,
+  getArticleDetailBySlug,
   getArticleSlugs,
 } from "@/lib/content";
 import { createMetadata } from "@/lib/metadata";
@@ -35,21 +35,24 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleDetailBySlug(slug);
 
   if (!article) return {};
 
   return createMetadata({
-    title: article.title,
-    description: article.excerpt,
+    title: article.metaTitle ?? article.title,
+    description: article.metaDescription ?? article.excerpt,
     path: routes.article(slug),
+    ogImage: article.ogImageUrl,
+    canonicalUrl: article.canonicalUrl,
+    robots: article.robots,
   });
 }
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
   const [article, site] = await Promise.all([
-    getArticleBySlug(slug),
+    getArticleDetailBySlug(slug),
     getSiteConfig(),
   ]);
 
@@ -101,9 +104,15 @@ export default async function ArticlePage({ params }: PageProps) {
       <Section spacing="sm">
         <Container className="max-w-3xl">
           <FadeIn delay={0.1}>
-            <Prose>
-              <p>{article.content ?? article.excerpt}</p>
-            </Prose>
+            {article.content ? (
+              <Prose
+                dangerouslySetInnerHTML={{ __html: article.content }}
+              />
+            ) : (
+              <Prose>
+                <p>{article.excerpt}</p>
+              </Prose>
+            )}
           </FadeIn>
         </Container>
       </Section>

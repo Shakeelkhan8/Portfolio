@@ -68,6 +68,14 @@ export type Article = {
   published: boolean;
 };
 
+export type ArticleDetail = Article & {
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImageUrl: string | null;
+  canonicalUrl: string | null;
+  robots: string | null;
+};
+
 export type Education = {
   degree: string;
   institution: string;

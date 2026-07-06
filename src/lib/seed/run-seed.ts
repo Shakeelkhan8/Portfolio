@@ -377,6 +377,42 @@ export async function runSeed(
     }
   }
 
+  for (const article of payload.articles) {
+    const { data: articleRow, error: articleError } = await supabase
+      .from("articles")
+      .insert({
+        slug: article.slug,
+        title: article.title,
+        excerpt: article.excerpt,
+        content_html: article.content_html,
+        status: article.status,
+        reading_time_minutes: article.reading_time_minutes,
+        published_at: article.published_at,
+        meta_title: article.meta_title,
+        meta_description: article.meta_description,
+      })
+      .select("id")
+      .single();
+
+    if (articleError || !articleRow) {
+      throw new Error(`Failed to seed article: ${articleError?.message}`);
+    }
+
+    if (article.tags.length) {
+      const { error: tagsError } = await supabase.from("article_tags").insert(
+        article.tags.map((tag, index) => ({
+          article_id: articleRow.id,
+          tag,
+          display_order: index,
+        })),
+      );
+
+      if (tagsError) {
+        throw new Error(`Failed to seed article tags: ${tagsError.message}`);
+      }
+    }
+  }
+
   await supabase.from("audit_logs").insert({
     actor_id: adminUserId,
     action: "seed_completed",
