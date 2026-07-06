@@ -36,9 +36,9 @@ export default function PrivacyPage() {
 
           <h2>Contact Form</h2>
           <p>
-            Contact form submissions are processed via Resend email delivery
-            service. Messages are sent directly to my email inbox and are not
-            stored in a database.
+            Contact form submissions are stored securely in the site database
+            and may also be delivered to my email inbox via Resend so I can
+            respond quickly.
           </p>
 
           <h2>Analytics</h2>

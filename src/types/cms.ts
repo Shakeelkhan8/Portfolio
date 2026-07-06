@@ -207,3 +207,15 @@ export type ArticleRecord = {
   publishedAt: string | null;
   tags: string[];
 };
+
+export type ContactSubmissionRecord = {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  status: "unread" | "read" | "archived";
+  ipHash: string | null;
+  userAgent: string | null;
+  readAt: string | null;
+  createdAt: string;
+};

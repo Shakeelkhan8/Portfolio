@@ -29,6 +29,7 @@ export function ContactForm() {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       message: formData.get("message") as string,
+      company: formData.get("company") as string,
     };
 
     try {
@@ -104,6 +105,17 @@ export function ContactForm() {
           required
           placeholder="Tell me about the opportunity or project..."
           rows={6}
+          maxLength={5000}
+        />
+      </div>
+
+      <div className="hidden" aria-hidden="true">
+        <Label htmlFor="company">Company</Label>
+        <Input
+          id="company"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
         />
       </div>
 

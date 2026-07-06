@@ -11,6 +11,10 @@ const serverEnvSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   ADMIN_EMAIL: z.email().default("shakeelkhan4147@gmail.com"),
   ADMIN_PASSWORD: z.string().min(12).optional(),
+  RESEND_API_KEY: z.string().min(1).optional(),
+  RESEND_FROM: z.string().min(1).optional(),
+  CONTACT_EMAIL: z.email().optional(),
+  CONTACT_IP_SALT: z.string().min(8).optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
@@ -46,6 +50,10 @@ export function getServerEnv(): ServerEnv {
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_FROM: process.env.RESEND_FROM,
+    CONTACT_EMAIL: process.env.CONTACT_EMAIL,
+    CONTACT_IP_SALT: process.env.CONTACT_IP_SALT,
   });
 
   return cachedServerEnv;
@@ -114,4 +122,15 @@ export function isSupabaseConfigured(): boolean {
       (env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
         env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
   );
+}
+
+export function getContactEnv() {
+  const serverEnv = getServerEnv();
+  return {
+    resendApiKey: serverEnv.RESEND_API_KEY,
+    resendFrom:
+      serverEnv.RESEND_FROM ?? "Portfolio Contact <onboarding@resend.dev>",
+    contactEmail: serverEnv.CONTACT_EMAIL,
+    ipSalt: serverEnv.CONTACT_IP_SALT ?? "portfolio-contact-default-salt",
+  };
 }
