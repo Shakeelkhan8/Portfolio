@@ -1,5 +1,4 @@
 import { Geist, Geist_Mono, Inter, JetBrains_Mono } from "next/font/google";
-import { siteConfig } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,57 +30,3 @@ export const fontVariables = [
   geistMono.variable,
   jetbrainsMono.variable,
 ].join(" ");
-
-export const defaultMetadata = {
-  title: {
-    default: `${siteConfig.name} — ${siteConfig.title}`,
-    template: `%s — ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  metadataBase: new URL(siteConfig.url),
-  applicationName: siteConfig.name,
-  authors: [{ name: siteConfig.name, url: siteConfig.url }],
-  creator: siteConfig.name,
-  keywords: [
-    "Backend Engineer",
-    "Senior Backend Engineer",
-    "Software Engineer",
-    "Portfolio",
-    ...siteConfig.expertise,
-  ],
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  openGraph: {
-    type: "website" as const,
-    locale: "en_US",
-    url: siteConfig.url,
-    siteName: siteConfig.name,
-    title: `${siteConfig.name} — ${siteConfig.title}`,
-    description: siteConfig.description,
-  },
-  twitter: {
-    card: "summary_large_image" as const,
-    title: `${siteConfig.name} — ${siteConfig.title}`,
-    description: siteConfig.description,
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large" as const,
-      "max-snippet": -1,
-    },
-  },
-  alternates: {
-    canonical: siteConfig.url,
-    types: {
-      "application/rss+xml": `${siteConfig.url}/rss.xml`,
-    },
-  },
-};

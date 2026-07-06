@@ -16,7 +16,7 @@ import {
   getArticleDetailBySlug,
   getArticleSlugs,
 } from "@/lib/content";
-import { createMetadata } from "@/lib/metadata";
+import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
 import {
   getArticleSchema,
   getBreadcrumbSchema,
@@ -35,11 +35,14 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleDetailBySlug(slug);
+  const [ctx, article] = await Promise.all([
+    getMetadataContext(),
+    getArticleDetailBySlug(slug),
+  ]);
 
   if (!article) return {};
 
-  return createMetadata({
+  return buildPageMetadata(ctx, {
     title: article.metaTitle ?? article.title,
     description: article.metaDescription ?? article.excerpt,
     path: routes.article(slug),
@@ -60,7 +63,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   const articleUrl = `${site.url}${routes.article(slug)}`;
   const structuredData = [
-    getArticleSchema(article),
+    getArticleSchema(site, article),
     getBreadcrumbSchema([
       { name: "Home", url: site.url },
       { name: "Writing", url: `${site.url}${routes.writing}` },

@@ -1,40 +1,139 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site";
+import { getSeoDefaults } from "@/lib/db/queries/settings";
+import { getSiteConfig } from "@/lib/db/queries/site";
+import { parseRobotsDirective } from "@/lib/seo/robots";
+import type { SeoDefaultsRecord, SiteConfig } from "@/types/cms";
 
-export function createMetadata({
-  title,
-  description,
-  path = "",
-  ogImage,
-  canonicalUrl,
-  robots,
-}: {
-  title: string;
-  description?: string;
-  path?: string;
-  ogImage?: string | null;
-  canonicalUrl?: string | null;
-  robots?: string | null;
-}): Metadata {
-  const url = canonicalUrl ?? `${siteConfig.url}${path}`;
-  const metaDescription = description ?? siteConfig.description;
-  const openGraphImages = ogImage ? [{ url: ogImage }] : undefined;
+export type MetadataContext = {
+  site: SiteConfig;
+  seo: SeoDefaultsRecord;
+};
+
+export async function getMetadataContext(): Promise<MetadataContext> {
+  const [site, seo] = await Promise.all([getSiteConfig(), getSeoDefaults()]);
+  return { site, seo };
+}
+
+function resolveTwitterCard(
+  cardType: string,
+): "summary" | "summary_large_image" | "app" | "player" {
+  if (cardType === "summary") return "summary";
+  if (cardType === "app") return "app";
+  if (cardType === "player") return "player";
+  return "summary_large_image";
+}
+
+export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
+  const { site, seo } = ctx;
+  const defaultTitle = seo.defaultTitle || `${site.name} — ${site.title}`;
+  const defaultDescription = seo.defaultDescription || site.description;
+  const defaultOgImage = seo.defaultOgImageUrl
+    ? [{ url: seo.defaultOgImageUrl }]
+    : [{ url: "/opengraph-image" }];
+
+  return {
+    title: {
+      default: defaultTitle,
+      template: `%s — ${site.name}`,
+    },
+    description: defaultDescription,
+    metadataBase: new URL(site.url),
+    applicationName: site.name,
+    authors: [{ name: site.name, url: site.url }],
+    creator: site.name,
+    keywords: [
+      "Backend Engineer",
+      "Senior Backend Engineer",
+      "Software Engineer",
+      "Portfolio",
+      ...site.expertise,
+    ],
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: site.url,
+      siteName: site.name,
+      title: defaultTitle,
+      description: defaultDescription,
+      images: defaultOgImage,
+    },
+    twitter: {
+      card: resolveTwitterCard(seo.twitterCardType),
+      title: defaultTitle,
+      description: defaultDescription,
+      images: seo.defaultOgImageUrl ? [seo.defaultOgImageUrl] : undefined,
+    },
+    robots:
+      parseRobotsDirective(seo.defaultRobots) ??
+      ({
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      } satisfies Metadata["robots"]),
+    alternates: {
+      canonical: site.url,
+      types: {
+        "application/rss+xml": `${site.url}/rss.xml`,
+      },
+    },
+  };
+}
+
+export function buildPageMetadata(
+  ctx: MetadataContext,
+  {
+    title,
+    description,
+    path = "",
+    ogImage,
+    canonicalUrl,
+    robots,
+  }: {
+    title: string;
+    description?: string;
+    path?: string;
+    ogImage?: string | null;
+    canonicalUrl?: string | null;
+    robots?: string | null;
+  },
+): Metadata {
+  const { site, seo } = ctx;
+  const url = canonicalUrl ?? `${site.url}${path}`;
+  const metaDescription =
+    description ?? seo.defaultDescription ?? site.description;
+  const openGraphImages = ogImage
+    ? [{ url: ogImage }]
+    : seo.defaultOgImageUrl
+      ? [{ url: seo.defaultOgImageUrl }]
+      : undefined;
+  const parsedRobots = parseRobotsDirective(robots);
 
   return {
     title,
     description: metaDescription,
     alternates: { canonical: url },
-    robots: robots ?? undefined,
+    ...(parsedRobots ? { robots: parsedRobots } : {}),
     openGraph: {
-      title: `${title} — ${siteConfig.name}`,
+      title: `${title} — ${site.name}`,
       description: metaDescription,
       url,
-      siteName: siteConfig.name,
+      siteName: site.name,
       images: openGraphImages,
     },
     twitter: {
-      card: "summary_large_image",
-      title: `${title} — ${siteConfig.name}`,
+      card: resolveTwitterCard(seo.twitterCardType),
+      title: `${title} — ${site.name}`,
       description: metaDescription,
       images: ogImage ? [ogImage] : undefined,
     },

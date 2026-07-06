@@ -29,6 +29,70 @@ export type SiteConfig = {
   resumeSummary: string;
   responseTimeText: string;
   copyrightText: string;
+  maintenanceEnabled: boolean;
+  maintenanceMessage: string | null;
+};
+
+export type SeoDefaultsRecord = {
+  id: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultOgImageId: string | null;
+  defaultOgImageUrl: string | null;
+  defaultRobots: string;
+  twitterCardType: string;
+};
+
+export type ThemeSettingsRecord = {
+  id: string;
+  logoMediaId: string | null;
+  faviconMediaId: string | null;
+  primaryColor: string;
+  accentColor: string | null;
+  backgroundColor: string | null;
+  foregroundColor: string | null;
+  fontHeading: string;
+  fontBody: string;
+  fontMono: string;
+  customCss: string | null;
+};
+
+export type AnalyticsSettingsRecord = {
+  id: string;
+  plausibleDomain: string | null;
+  plausibleEnabled: boolean;
+  ga4MeasurementId: string | null;
+  ga4Enabled: boolean;
+};
+
+export type CustomScriptRecord = {
+  id: string;
+  name: string;
+  scriptContent: string;
+  placement: "head" | "body_end";
+  enabled: boolean;
+};
+
+export type GitHubSettingsRecord = {
+  id: string;
+  username: string;
+  showLiveStats: boolean;
+};
+
+export type PageRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  contentHtml: string | null;
+  status: "draft" | "published";
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImageId: string | null;
+  ogImageUrl: string | null;
+  canonicalUrl: string | null;
+  robots: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
 };
 
 export type NavigationData = {

@@ -2,73 +2,47 @@ import type { Metadata } from "next";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { Prose } from "@/components/typography/prose";
-import { createMetadata } from "@/lib/metadata";
-import { siteConfig } from "@/config/site";
+import { routes } from "@/config/navigation";
+import { getPageBySlug } from "@/lib/content";
+import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
 
-export const metadata: Metadata = createMetadata({
-  title: "Privacy Policy",
-  description: "Privacy policy for this portfolio website.",
-  path: "/privacy",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const [ctx, page] = await Promise.all([
+    getMetadataContext(),
+    getPageBySlug("privacy"),
+  ]);
 
-export default function PrivacyPage() {
+  return buildPageMetadata(ctx, {
+    title: page?.metaTitle ?? page?.title ?? "Privacy Policy",
+    description:
+      page?.metaDescription ?? "Privacy policy for this portfolio website.",
+    path: routes.privacy,
+    ogImage: page?.ogImageUrl,
+    canonicalUrl: page?.canonicalUrl,
+    robots: page?.robots,
+  });
+}
+
+export default async function PrivacyPage() {
+  const page = await getPageBySlug("privacy");
+
+  if (!page?.contentHtml) {
+    return null;
+  }
+
+  const lastUpdated = new Date(page.updatedAt).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <>
       <PageHeader
-        title="Privacy Policy"
-        description={`Last updated: ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}`}
+        title={page.title}
+        description={`Last updated: ${lastUpdated}`}
       />
       <Section spacing="sm" className="border-t border-border pt-0">
-        <Prose>
-          <h2>Overview</h2>
-          <p>
-            This privacy policy explains how {siteConfig.name} (&quot;I&quot;,
-            &quot;me&quot;) handles information when you visit this portfolio
-            website at {siteConfig.url}.
-          </p>
-
-          <h2>Information I Collect</h2>
-          <p>
-            If you use the contact form, I collect your name, email address,
-            and message content solely to respond to your inquiry. I do not sell
-            or share this information with third parties.
-          </p>
-
-          <h2>Contact Form</h2>
-          <p>
-            Contact form submissions are stored securely in the site database
-            and may also be delivered to my email inbox via Resend so I can
-            respond quickly.
-          </p>
-
-          <h2>Analytics</h2>
-          <p>
-            This site may use Plausible Analytics, a privacy-focused and
-            cookieless analytics service. Plausible does not use cookies and
-            does not collect personal data for advertising. Analytics are only
-            enabled when configured for production deployment.
-          </p>
-
-          <h2>Error Monitoring</h2>
-          <p>
-            Error monitoring may be provided by Sentry to help diagnose
-            production issues. When enabled, Sentry may collect error details,
-            browser information, and session replays around errors. No payment
-            or sensitive form data is intentionally sent to Sentry.
-          </p>
-
-          <h2>Cookies</h2>
-          <p>
-            This site uses minimal local storage for theme preference (light/dark
-            mode). No tracking cookies are used at this time.
-          </p>
-
-          <h2>Contact</h2>
-          <p>
-            Questions about this policy? Email{" "}
-            <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
-          </p>
-        </Prose>
+        <Prose dangerouslySetInnerHTML={{ __html: page.contentHtml }} />
       </Section>
     </>
   );

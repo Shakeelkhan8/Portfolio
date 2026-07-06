@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import { AppProviders } from "@/components/providers/app-providers";
-import { PlausibleAnalytics } from "@/components/analytics/plausible-analytics";
-import { JsonLd } from "@/components/seo/json-ld";
-import { defaultMetadata, fontVariables } from "@/config/fonts";
+import { CustomScripts } from "@/components/seo/custom-scripts";
+import { RootJsonLd } from "@/components/seo/root-json-ld";
+import { SiteAnalytics } from "@/components/seo/site-analytics";
+import { ThemeVariables } from "@/components/seo/theme-variables";
+import { fontVariables } from "@/config/fonts";
 import {
-  getPersonSchema,
-  getProfilePageSchema,
-  getWebSiteSchema,
-} from "@/lib/structured-data";
+  buildDefaultMetadata,
+  getMetadataContext,
+} from "@/lib/metadata";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-export const metadata: Metadata = defaultMetadata;
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getMetadataContext();
+  return buildDefaultMetadata(ctx);
+}
 
 export default function RootLayout({
   children,
@@ -20,12 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("h-full", fontVariables)}>
+      <head>
+        <ThemeVariables />
+      </head>
       <body className="min-h-full flex flex-col">
-        <JsonLd
-          data={[getPersonSchema(), getWebSiteSchema(), getProfilePageSchema()]}
-        />
+        <RootJsonLd />
         <AppProviders>{children}</AppProviders>
-        <PlausibleAnalytics />
+        <SiteAnalytics />
+        <CustomScripts />
       </body>
     </html>
   );

@@ -9,8 +9,12 @@ import { MetricGrid } from "@/components/projects/metric-grid";
 import { FadeIn } from "@/components/motion/fade-in";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ArchitectureDiagram } from "@/components/architecture/architecture-diagram";
-import { getArchitectureDiagram, getProjectBySlug, getProjectSlugs } from "@/lib/content";
-import { createMetadata } from "@/lib/metadata";
+import {
+  getArchitectureDiagram,
+  getProjectDetailBySlug,
+  getProjectSlugs,
+} from "@/lib/content";
+import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
 import {
   getBreadcrumbSchema,
   getProjectSchema,
@@ -31,21 +35,27 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const [ctx, project] = await Promise.all([
+    getMetadataContext(),
+    getProjectDetailBySlug(slug),
+  ]);
 
   if (!project) return {};
 
-  return createMetadata({
-    title: project.title,
-    description: project.summary,
+  return buildPageMetadata(ctx, {
+    title: project.metaTitle ?? project.title,
+    description: project.metaDescription ?? project.summary,
     path: routes.project(slug),
+    ogImage: project.ogImageUrl,
+    canonicalUrl: project.canonicalUrl,
+    robots: project.robots,
   });
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const [project, site] = await Promise.all([
-    getProjectBySlug(slug),
+    getProjectDetailBySlug(slug),
     getSiteConfig(),
   ]);
 
@@ -55,7 +65,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const projectUrl = `${site.url}${routes.project(slug)}`;
 
   const structuredData = [
-    getProjectSchema(project),
+    getProjectSchema(site, project),
     getBreadcrumbSchema([
       { name: "Home", url: site.url },
       { name: "Projects", url: `${site.url}${routes.projects}` },

@@ -1,5 +1,4 @@
 import type { GitHubProfile, GitHubRepo } from "@/types";
-import { siteConfig } from "@/config/site";
 
 const GITHUB_API = "https://api.github.com";
 const REVALIDATE_SECONDS = 3600;
@@ -87,16 +86,17 @@ function mapRepo(data: GitHubRepoResponse): GitHubRepo {
   };
 }
 
-export async function getGitHubProfile(): Promise<GitHubProfile> {
-  const data = await githubFetch<GitHubUserResponse>(
-    `/users/${siteConfig.githubUsername}`,
-  );
+export async function getGitHubProfile(username: string): Promise<GitHubProfile> {
+  const data = await githubFetch<GitHubUserResponse>(`/users/${username}`);
   return mapProfile(data);
 }
 
-export async function getGitHubRepos(limit = 12): Promise<GitHubRepo[]> {
+export async function getGitHubRepos(
+  username: string,
+  limit = 12,
+): Promise<GitHubRepo[]> {
   const data = await githubFetch<GitHubRepoResponse[]>(
-    `/users/${siteConfig.githubUsername}/repos?sort=updated&per_page=${limit}`,
+    `/users/${username}/repos?sort=updated&per_page=${limit}`,
   );
 
   return data
@@ -105,13 +105,13 @@ export async function getGitHubRepos(limit = 12): Promise<GitHubRepo[]> {
     .sort((a, b) => b.stargazersCount - a.stargazersCount);
 }
 
-export async function getGitHubData(): Promise<{
+export async function getGitHubData(username: string): Promise<{
   profile: GitHubProfile;
   repos: GitHubRepo[];
 }> {
   const [profile, repos] = await Promise.all([
-    getGitHubProfile(),
-    getGitHubRepos(),
+    getGitHubProfile(username),
+    getGitHubRepos(username),
   ]);
 
   return { profile, repos };

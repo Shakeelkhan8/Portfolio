@@ -10,7 +10,7 @@ import {
   mapArchitectureDiagram,
   mapProject,
 } from "@/lib/db/mappers/content";
-import type { ArchitectureDiagramData, Project } from "@/types";
+import type { ArchitectureDiagramData, Project, ProjectDetail } from "@/types";
 
 async function fetchProjectsFromDb(): Promise<Project[] | null> {
   const supabase = await createClient();
@@ -163,6 +163,186 @@ export async function getFeaturedProjects(): Promise<Project[]> {
 export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
   const projects = await getProjects();
   return projects.find((project) => project.slug === slug);
+}
+
+async function fetchProjectDetailFromDb(
+  slug: string,
+): Promise<ProjectDetail | null> {
+  const supabase = await createClient();
+
+  const { data: project, error } = await supabase
+    .from("projects")
+    .select(
+      "id, slug, title, summary, problem, role, context, overview, architecture_text, featured, demo_url, github_url, display_order, meta_title, meta_description, canonical_url, robots, og_image_id",
+    )
+    .eq("slug", slug)
+    .eq("status", "published")
+    .is("deleted_at", null)
+    .maybeSingle();
+
+  if (error || !project) {
+    return null;
+  }
+
+  const [
+    tagsResult,
+    stackResult,
+    linksResult,
+    metricsResult,
+    challengesResult,
+    decisionsResult,
+    resultsResult,
+    lessonsResult,
+    futureResult,
+    ogImageResult,
+  ] = await Promise.all([
+    supabase
+      .from("project_tags")
+      .select("tag, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_technologies")
+      .select("technology, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_links")
+      .select("label, href, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_metrics")
+      .select("label, value, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_challenges")
+      .select("text, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_decisions")
+      .select("decision, rationale, tradeoff, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_results")
+      .select("text, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_lessons")
+      .select("text, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    supabase
+      .from("project_future_improvements")
+      .select("text, display_order")
+      .eq("project_id", project.id)
+      .order("display_order", { ascending: true }),
+    project.og_image_id
+      ? supabase
+          .from("media_files")
+          .select("public_url")
+          .eq("id", project.og_image_id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+
+  const links = (linksResult.data ?? []).map((link) => ({
+    label: link.label,
+    href: link.href,
+  }));
+
+  if (project.demo_url) {
+    links.unshift({ label: "Live demo", href: project.demo_url });
+  }
+
+  if (project.github_url) {
+    links.push({ label: "GitHub", href: project.github_url });
+  }
+
+  const mapped = mapProject(
+    {
+      slug: project.slug,
+      title: project.title,
+      summary: project.summary,
+      problem: project.problem,
+      role: project.role,
+      context: project.context,
+      overview: project.overview,
+      architecture_text: project.architecture_text,
+      featured: project.featured,
+      demo_url: project.demo_url,
+      github_url: project.github_url,
+    },
+    {
+      tags: (tagsResult.data ?? []).map((row) => row.tag),
+      stack: (stackResult.data ?? []).map((row) => row.technology),
+      links,
+      metrics: (metricsResult.data ?? []).map((row) => ({
+        label: row.label,
+        value: row.value,
+      })),
+      challenges: (challengesResult.data ?? []).map((row) => row.text),
+      decisions: (decisionsResult.data ?? []).map((row) => ({
+        decision: row.decision,
+        rationale: row.rationale,
+        tradeoff: row.tradeoff,
+      })),
+      results: (resultsResult.data ?? []).map((row) => row.text),
+      lessons: (lessonsResult.data ?? []).map((row) => row.text),
+      futureImprovements: (futureResult.data ?? []).map((row) => row.text),
+    },
+  );
+
+  return {
+    ...mapped,
+    metaTitle: project.meta_title,
+    metaDescription: project.meta_description,
+    ogImageUrl: ogImageResult.data?.public_url ?? null,
+    canonicalUrl: project.canonical_url,
+    robots: project.robots,
+  };
+}
+
+const getCachedProjectDetail = unstable_cache(
+  async (slug: string) => fetchProjectDetailFromDb(slug),
+  ["cms-project-detail"],
+  { tags: [CACHE_TAGS.projects] },
+);
+
+function mapFallbackProjectDetail(project: Project): ProjectDetail {
+  return {
+    ...project,
+    metaTitle: null,
+    metaDescription: null,
+    ogImageUrl: null,
+    canonicalUrl: null,
+    robots: null,
+  };
+}
+
+export async function getProjectDetailBySlug(
+  slug: string,
+): Promise<ProjectDetail | undefined> {
+  const fallback = getFallbackProjects().find((project) => project.slug === slug);
+
+  if (!isSupabaseConfigured()) {
+    return fallback ? mapFallbackProjectDetail(fallback) : undefined;
+  }
+
+  try {
+    const project = await getCachedProjectDetail(slug);
+    if (project) {
+      return project;
+    }
+
+    return fallback ? mapFallbackProjectDetail(fallback) : undefined;
+  } catch {
+    return fallback ? mapFallbackProjectDetail(fallback) : undefined;
+  }
 }
 
 export async function getProjectSlugs(): Promise<string[]> {

@@ -1,12 +1,14 @@
 import { ImageResponse } from "next/og";
-import { siteConfig } from "@/config/site";
+import { getSiteConfig } from "@/lib/content";
 
 export const runtime = "edge";
-export const alt = `${siteConfig.name} — ${siteConfig.title}`;
+export const alt = "Portfolio Open Graph image";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const site = await getSiteConfig();
+
   return new ImageResponse(
     (
       <div
@@ -30,7 +32,7 @@ export default function OpenGraphImage() {
             marginBottom: 16,
           }}
         >
-          {siteConfig.title}
+          {site.title}
         </div>
         <div
           style={{
@@ -41,7 +43,7 @@ export default function OpenGraphImage() {
             marginBottom: 24,
           }}
         >
-          {siteConfig.name}
+          {site.name}
         </div>
         <div
           style={{
@@ -51,7 +53,7 @@ export default function OpenGraphImage() {
             lineHeight: 1.4,
           }}
         >
-          {siteConfig.description}
+          {site.description}
         </div>
       </div>
     ),

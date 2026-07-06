@@ -1,39 +1,39 @@
-import { siteConfig } from "@/config/site";
 import { routes } from "@/config/navigation";
+import type { SiteConfig } from "@/types/cms";
 
-export function getPersonSchema() {
+export function getPersonSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: siteConfig.name,
-    alternateName: siteConfig.legalName,
-    jobTitle: siteConfig.title,
-    description: siteConfig.description,
-    email: siteConfig.email,
-    url: siteConfig.url,
+    name: site.name,
+    alternateName: site.legalName,
+    jobTitle: site.title,
+    description: site.description,
+    email: site.email,
+    url: site.url,
     address: {
       "@type": "PostalAddress",
-      addressCountry: siteConfig.location,
+      addressCountry: site.location,
     },
-    sameAs: [siteConfig.links.github, siteConfig.links.linkedin],
-    knowsAbout: siteConfig.expertise,
+    sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
+    knowsAbout: site.expertise,
   };
 }
 
-export function getWebSiteSchema() {
+export function getWebSiteSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: `${siteConfig.name} — Portfolio`,
-    url: siteConfig.url,
-    description: siteConfig.description,
+    name: `${site.name} — Portfolio`,
+    url: site.url,
+    description: site.description,
     author: {
       "@type": "Person",
-      name: siteConfig.name,
+      name: site.name,
     },
     potentialAction: {
       "@type": "SearchAction",
-      target: `${siteConfig.url}${routes.projects}?q={search_term_string}`,
+      target: `${site.url}${routes.projects}?q={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };
@@ -54,53 +54,59 @@ export function getBreadcrumbSchema(
   };
 }
 
-export function getProjectSchema(project: {
-  title: string;
-  summary: string;
-  slug: string;
-  stack: string[];
-  role: string;
-}) {
+export function getProjectSchema(
+  site: SiteConfig,
+  project: {
+    title: string;
+    summary: string;
+    slug: string;
+    stack: string[];
+    role: string;
+  },
+) {
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     name: project.title,
     description: project.summary,
-    url: `${siteConfig.url}${routes.project(project.slug)}`,
+    url: `${site.url}${routes.project(project.slug)}`,
     author: {
       "@type": "Person",
-      name: siteConfig.name,
+      name: site.name,
     },
     keywords: project.stack.join(", "),
     about: project.role,
   };
 }
 
-export function getProfilePageSchema() {
+export function getProfilePageSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
-    mainEntity: getPersonSchema(),
-    url: siteConfig.url,
+    mainEntity: getPersonSchema(site),
+    url: site.url,
   };
 }
 
-export function getArticleSchema(article: {
-  title: string;
-  excerpt: string;
-  slug: string;
-  date: string;
-}) {
+export function getArticleSchema(
+  site: SiteConfig,
+  article: {
+    title: string;
+    excerpt: string;
+    slug: string;
+    date: string;
+  },
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.excerpt,
-    url: `${siteConfig.url}${routes.article(article.slug)}`,
+    url: `${site.url}${routes.article(article.slug)}`,
     datePublished: article.date,
     author: {
       "@type": "Person",
-      name: siteConfig.name,
+      name: site.name,
     },
   };
 }

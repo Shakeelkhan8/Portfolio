@@ -29,6 +29,8 @@ export function mapSiteConfig(input: {
     availability_message: string;
     github_username: string | null;
     resume_summary: string | null;
+    maintenance_enabled: boolean;
+    maintenance_message: string | null;
     response_time_text: string | null;
     copyright_text: string | null;
   };
@@ -75,6 +77,8 @@ export function mapSiteConfig(input: {
     copyrightText:
       input.site.copyright_text ??
       `© ${new Date().getFullYear()} ${input.site.site_name}. All rights reserved.`,
+    maintenanceEnabled: input.site.maintenance_enabled,
+    maintenanceMessage: input.site.maintenance_message,
   };
 }
 

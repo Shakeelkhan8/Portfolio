@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { createMetadata } from "@/lib/metadata";
+import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
+import { routes } from "@/config/navigation";
 
-export const metadata: Metadata = createMetadata({
-  title: "Projects",
-  description:
-    "Engineering case studies from production systems — SaaS platforms, automation, and API-driven architectures.",
-  path: "/projects",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getMetadataContext();
+  return buildPageMetadata(ctx, {
+    title: "Projects",
+    description:
+      "Case studies and technical deep-dives into backend systems, APIs, and platform engineering work.",
+    path: routes.projects,
+  });
+}
 
 export { default } from "./projects-page";

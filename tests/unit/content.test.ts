@@ -8,6 +8,9 @@ import {
   getWebSiteSchema,
   getBreadcrumbSchema,
 } from "@/lib/structured-data";
+import { getFallbackSiteConfig } from "@/lib/db/fallback";
+
+const site = getFallbackSiteConfig();
 
 describe("content helpers", () => {
   it("returns all project slugs from fallback content", () => {
@@ -73,13 +76,13 @@ describe("search", () => {
 
 describe("structured data", () => {
   it("generates valid person schema", () => {
-    const schema = getPersonSchema();
+    const schema = getPersonSchema(site);
     expect(schema["@type"]).toBe("Person");
     expect(schema.name).toBeTruthy();
   });
 
   it("generates website schema with search action", () => {
-    const schema = getWebSiteSchema();
+    const schema = getWebSiteSchema(site);
     expect(schema["@type"]).toBe("WebSite");
     expect(schema.potentialAction).toBeTruthy();
   });

@@ -63,6 +63,52 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
     }
+
+    return supabaseResponse;
+  }
+
+  const { data: maintenanceSettings } = await supabase
+    .from("site_settings")
+    .select("maintenance_enabled, maintenance_message")
+    .limit(1)
+    .maybeSingle();
+
+  if (maintenanceSettings?.maintenance_enabled) {
+    const message =
+      maintenanceSettings.maintenance_message?.trim() ||
+      "This site is temporarily down for maintenance. Please check back soon.";
+
+    return new NextResponse(
+      `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Maintenance</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; min-height: 100vh; display: grid; place-items: center; background: #fafafa; color: #171717; }
+      main { max-width: 36rem; padding: 2rem; text-align: center; }
+      h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+      p { line-height: 1.6; color: #525252; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Under maintenance</h1>
+      <p>${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+    </main>
+  </body>
+</html>`,
+      {
+        status: 503,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Retry-After": "3600",
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   }
 
   return supabaseResponse;

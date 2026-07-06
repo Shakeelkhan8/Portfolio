@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { createMetadata } from "@/lib/metadata";
+import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
+import { routes } from "@/config/navigation";
 
-export const metadata: Metadata = createMetadata({
-  title: "Experience",
-  description:
-    "5+ years building production backend systems, SaaS platforms, and enterprise automation.",
-  path: "/experience",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getMetadataContext();
+  return buildPageMetadata(ctx, {
+    title: "Experience",
+    description:
+      "Professional experience, education, and career highlights as a Senior Backend Engineer.",
+    path: routes.experience,
+  });
+}
 
 export { default } from "./experience-page";

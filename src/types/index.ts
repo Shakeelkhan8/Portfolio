@@ -76,6 +76,14 @@ export type ArticleDetail = Article & {
   robots: string | null;
 };
 
+export type ProjectDetail = Project & {
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImageUrl: string | null;
+  canonicalUrl: string | null;
+  robots: string | null;
+};
+
 export type Education = {
   degree: string;
   institution: string;

@@ -59,3 +59,11 @@ export function revalidateAfterArticleChange(options?: {
     revalidatePath(`/writing/${options.slug}`);
   }
 }
+
+export function revalidateAfterSettingsChange() {
+  revalidateAfterContentChange(CACHE_TAGS.site, CACHE_TAGS.pages);
+  revalidatePath("/privacy");
+  revalidatePath("/manifest.webmanifest");
+  revalidatePath("/opengraph-image");
+  revalidatePath("/robots.txt");
+}

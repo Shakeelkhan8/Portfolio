@@ -10,81 +10,72 @@ import {
 } from "@/components/github/github-stats";
 import { RepoCard } from "@/components/github/repo-card";
 import { ButtonLink } from "@/components/shared/button-link";
-import { createMetadata } from "@/lib/metadata";
+import { routes } from "@/config/navigation";
+import { getGitHubSettings, getSiteConfig } from "@/lib/content";
+import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
 import { getGitHubData } from "@/services/github";
-import { siteConfig } from "@/config/site";
 import type { GitHubProfile, GitHubRepo } from "@/types";
 
-export const metadata: Metadata = createMetadata({
-  title: "Open Source",
-  description: "Open source contributions and GitHub activity.",
-  path: "/open-source",
-});
-
-async function loadGitHubData(): Promise<{
-  profile: GitHubProfile;
-  repos: GitHubRepo[];
-} | null> {
-  try {
-    return await getGitHubData();
-  } catch {
-    return null;
-  }
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getMetadataContext();
+  return buildPageMetadata(ctx, {
+    title: "Open Source",
+    description: "Open source contributions and GitHub activity.",
+    path: routes.openSource,
+  });
 }
 
 export default async function OpenSourcePage() {
-  const data = await loadGitHubData();
+  const [site, githubSettings] = await Promise.all([
+    getSiteConfig(),
+    getGitHubSettings(),
+  ]);
 
-  if (!data) {
-    return (
-      <>
-        <PageHeader
-          title="Open Source"
-          description="Contributions and projects on GitHub."
-        />
-        <Section spacing="sm" className="border-t border-border pt-0">
-          <Container>
-            <EmptyState
-              title="Unable to load GitHub data"
-              description="GitHub API is temporarily unavailable or rate-limited. Visit the profile directly or try again later."
-              action={
-                <ButtonLink href={siteConfig.links.github} external>
-                  View GitHub Profile
-                </ButtonLink>
-              }
-            />
-          </Container>
-        </Section>
-      </>
-    );
+  let profile: GitHubProfile | null = null;
+  let repos: GitHubRepo[] = [];
+
+  if (githubSettings.showLiveStats) {
+    try {
+      const data = await getGitHubData(githubSettings.username);
+      profile = data.profile;
+      repos = data.repos;
+    } catch {
+      profile = null;
+      repos = [];
+    }
   }
 
-  const { profile, repos } = data;
+  const githubUrl = site.links.github || `https://github.com/${githubSettings.username}`;
 
   return (
     <>
       <PageHeader
         title="Open Source"
-        description="Public repositories and GitHub activity."
+        description="Selected repositories and public GitHub activity."
       />
       <Section spacing="sm" className="border-t border-border pt-0">
-        <Container className="space-y-10">
-          <FadeIn>
-            <GitHubProfileCard profile={profile} />
-          </FadeIn>
-          <GitHubStats profile={profile} />
-          <div>
-            <h2 className="mb-6 text-lg font-semibold tracking-tight">
-              Repositories
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {repos.map((repo, index) => (
-                <FadeIn key={repo.id} delay={index * 0.05}>
-                  <RepoCard repo={repo} />
-                </FadeIn>
-              ))}
-            </div>
-          </div>
+        <Container>
+          {profile ? (
+            <FadeIn className="space-y-10">
+              <GitHubProfileCard profile={profile} />
+              <GitHubStats profile={profile} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                {repos.map((repo) => (
+                  <RepoCard key={repo.id} repo={repo} />
+                ))}
+              </div>
+            </FadeIn>
+          ) : (
+            <EmptyState
+              title="GitHub stats unavailable"
+              description="Live GitHub data could not be loaded right now."
+              action={
+                <ButtonLink href={githubUrl} external>
+                  View GitHub profile
+                </ButtonLink>
+              }
+            />
+          )}
         </Container>
       </Section>
     </>

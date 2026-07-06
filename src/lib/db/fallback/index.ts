@@ -48,6 +48,8 @@ export function getFallbackSiteConfig(): SiteConfig {
     resumeSummary,
     responseTimeText: "Usually within 24–48 hours.",
     copyrightText: `© ${new Date().getFullYear()} ${defaultSiteConfig.name}. All rights reserved.`,
+    maintenanceEnabled: false,
+    maintenanceMessage: null,
   };
 }
 
