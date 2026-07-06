@@ -23,3 +23,22 @@ export function revalidateAfterContentChange(...tags: CacheTag[]) {
   revalidateContent(...tags);
   revalidatePublicPages();
 }
+
+export function revalidateAfterProjectChange(options?: {
+  slug?: string;
+  previousSlug?: string;
+}) {
+  revalidateAfterContentChange(CACHE_TAGS.projects);
+
+  if (options?.previousSlug && options.previousSlug !== options.slug) {
+    revalidatePath(`/projects/${options.previousSlug}`);
+  }
+
+  if (options?.slug) {
+    revalidatePath(`/projects/${options.slug}`);
+  }
+}
+
+export function revalidateAfterMediaChange() {
+  revalidateTag(CACHE_TAGS.media, "max");
+}

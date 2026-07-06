@@ -1,15 +1,25 @@
-import {
-  AdminPlaceholderPage,
-  createAdminPlaceholderMetadata,
-} from "@/components/admin/shared/admin-placeholder-page";
+import type { Metadata } from "next";
+import { ProjectsList } from "@/components/admin/content/projects-list";
+import { Heading } from "@/components/typography/heading";
+import { Text } from "@/components/typography/text";
+import { getProjectRecords } from "@/lib/db/queries/admin/projects";
 
-export const metadata = createAdminPlaceholderMetadata("Projects");
+export const metadata: Metadata = { title: "Projects" };
 
-export default function AdminProjectsPage() {
+export default async function AdminProjectsPage() {
+  const projects = await getProjectRecords();
+
   return (
-    <AdminPlaceholderPage
-      title="Projects"
-      description="Manage portfolio case studies, categories, media, and SEO."
-    />
+    <div className="space-y-6">
+      <div>
+        <Heading as="h1" size="lg" balance={false}>
+          Projects
+        </Heading>
+        <Text muted className="mt-1">
+          Manage portfolio case studies, publish state, and project content.
+        </Text>
+      </div>
+      <ProjectsList projects={projects} />
+    </div>
   );
 }

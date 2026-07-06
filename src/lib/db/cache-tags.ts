@@ -6,6 +6,7 @@ export const CACHE_TAGS = {
   education: "cms:education",
   achievements: "cms:achievements",
   projects: "cms:projects",
+  media: "cms:media",
   articles: "cms:articles",
   pages: "cms:pages",
   search: "cms:search",

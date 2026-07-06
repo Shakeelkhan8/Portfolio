@@ -121,3 +121,72 @@ export type NavigationItemRecord = {
 export type AboutContent = {
   paragraphs: string[];
 };
+
+export type MediaFileRecord = {
+  id: string;
+  filename: string;
+  originalFilename: string;
+  mimeType: string;
+  sizeBytes: number;
+  storageBucket: string;
+  storagePath: string;
+  publicUrl: string;
+  altText: string | null;
+  width: number | null;
+  height: number | null;
+  createdAt: string;
+};
+
+export type ProjectArchitectureRecord = {
+  title: string;
+  nodes: Array<{
+    id: string;
+    label: string;
+    type: string;
+    layer: number;
+  }>;
+  edges: Array<{
+    from: string;
+    to: string;
+    label?: string;
+  }>;
+};
+
+export type ProjectRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  problem: string;
+  role: string;
+  context: string;
+  overview: string;
+  architectureText: string;
+  status: "draft" | "published";
+  featured: boolean;
+  displayOrder: number;
+  completionDate: string | null;
+  demoUrl: string | null;
+  githubUrl: string | null;
+  thumbnailMediaId: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImageId: string | null;
+  canonicalUrl: string | null;
+  robots: string | null;
+  publishedAt: string | null;
+  tags: string[];
+  stack: string[];
+  links: Array<{ label: string; href: string }>;
+  metrics: Array<{ label: string; value: string }>;
+  challenges: string[];
+  decisions: Array<{
+    decision: string;
+    rationale: string;
+    tradeoff: string;
+  }>;
+  results: string[];
+  lessons: string[];
+  futureImprovements: string[];
+  diagram: ProjectArchitectureRecord | null;
+};
