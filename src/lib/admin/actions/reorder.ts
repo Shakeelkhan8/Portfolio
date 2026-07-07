@@ -84,6 +84,26 @@ const REORDER_CONFIG: Record<ReorderEntity, ReorderConfig> = {
     cacheTags: [CACHE_TAGS.skills],
     revalidate: () => revalidateAfterContentChange(CACHE_TAGS.skills),
   },
+  expertise: {
+    table: "expertise_items",
+    cacheTags: [CACHE_TAGS.site],
+    revalidate: () => revalidateAfterContentChange(CACHE_TAGS.site),
+  },
+  philosophy: {
+    table: "philosophy_items",
+    cacheTags: [CACHE_TAGS.site],
+    revalidate: () => revalidateAfterContentChange(CACHE_TAGS.site),
+  },
+  languages: {
+    table: "languages",
+    cacheTags: [CACHE_TAGS.site],
+    revalidate: () => revalidateAfterContentChange(CACHE_TAGS.site),
+  },
+  "social-links": {
+    table: "social_links",
+    cacheTags: [CACHE_TAGS.site],
+    revalidate: () => revalidateAfterContentChange(CACHE_TAGS.site),
+  },
 };
 
 async function logReorder(

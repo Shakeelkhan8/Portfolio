@@ -13,6 +13,10 @@ export const reorderEntitySchema = z.enum([
   "achievements",
   "skill-categories",
   "skills",
+  "expertise",
+  "philosophy",
+  "languages",
+  "social-links",
 ]);
 
 export const moveDisplayOrderSchema = z.object({

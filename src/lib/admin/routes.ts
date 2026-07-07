@@ -8,12 +8,16 @@ import {
   GitBranch,
   GraduationCap,
   Image,
+  Languages,
   LayoutDashboard,
+  Lightbulb,
+  Link2,
   Mail,
   Menu,
   MessageSquareQuote,
   Settings,
   Sparkles,
+  Target,
   Wrench,
 } from "lucide-react";
 
@@ -44,6 +48,9 @@ export const adminNavGroups: AdminNavGroup[] = [
       { title: "Blog", href: "/admin/blog", icon: BookOpen },
       { title: "Pages", href: "/admin/pages", icon: FileText },
       { title: "Skills", href: "/admin/skills", icon: Sparkles },
+      { title: "Expertise", href: "/admin/expertise", icon: Target },
+      { title: "Philosophy", href: "/admin/philosophy", icon: Lightbulb },
+      { title: "Languages", href: "/admin/languages", icon: Languages },
       { title: "Experience", href: "/admin/experience", icon: Briefcase },
       { title: "Education", href: "/admin/education", icon: GraduationCap },
       {
@@ -63,6 +70,7 @@ export const adminNavGroups: AdminNavGroup[] = [
         href: "/admin/curated-repos",
         icon: GitBranch,
       },
+      { title: "Social Links", href: "/admin/social-links", icon: Link2 },
     ],
   },
   {

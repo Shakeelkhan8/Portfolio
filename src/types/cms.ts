@@ -139,6 +139,36 @@ export type ServiceRecord = {
   visible: boolean;
 };
 
+export type ExpertiseItemRecord = {
+  id: string;
+  title: string;
+  displayOrder: number;
+};
+
+export type PhilosophyItemRecord = {
+  id: string;
+  title: string;
+  description: string;
+  displayOrder: number;
+};
+
+export type LanguageRecord = {
+  id: string;
+  name: string;
+  level: string;
+  displayOrder: number;
+};
+
+export type SocialLinkRecord = {
+  id: string;
+  platform: string;
+  label: string;
+  url: string;
+  icon: string | null;
+  displayOrder: number;
+  visible: boolean;
+};
+
 export type ResumeVersionRecord = {
   id: string;
   title: string;
