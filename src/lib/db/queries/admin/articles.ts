@@ -1,6 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
-import type { ArticleRecord } from "@/types/cms";
+import {
+  buildPaginatedResult,
+  getRange,
+  type PaginatedResult,
+} from "@/lib/admin/pagination";
+import type { ArticleListRecord, ArticleRecord } from "@/types/cms";
 
 function mapArticleRecord(
   article: {
@@ -114,4 +119,44 @@ export async function getArticleRecordById(
     article,
     tags.filter((tag) => tag.article_id === article.id).map((tag) => tag.tag),
   );
+}
+
+type ArticleListOptions = {
+  page: number;
+  pageSize: number;
+};
+
+export async function getArticleListRecords(
+  options: ArticleListOptions,
+): Promise<PaginatedResult<ArticleListRecord>> {
+  if (!isSupabaseConfigured()) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const supabase = await createClient();
+  const { from, to } = getRange(options.page, options.pageSize);
+  const { data, count, error } = await supabase
+    .from("articles")
+    .select(
+      "id, slug, title, status, reading_time_minutes, published_at",
+      { count: "exact" },
+    )
+    .is("deleted_at", null)
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .range(from, to);
+
+  if (error || !data) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const items: ArticleListRecord[] = data.map((article) => ({
+    id: article.id,
+    slug: article.slug,
+    title: article.title,
+    status: article.status,
+    readingTimeMinutes: article.reading_time_minutes,
+    publishedAt: article.published_at,
+  }));
+
+  return buildPaginatedResult(items, count ?? 0, options.page, options.pageSize);
 }

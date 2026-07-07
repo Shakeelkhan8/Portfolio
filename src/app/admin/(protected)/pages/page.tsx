@@ -2,12 +2,22 @@ import type { Metadata } from "next";
 import { PagesList } from "@/components/admin/content/pages-list";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
-import { getPageRecords } from "@/lib/db/queries/admin/pages";
+import { ADMIN_PAGE_SIZE, parsePageParam } from "@/lib/admin/pagination";
+import { getPageListRecords } from "@/lib/db/queries/admin/pages";
 
 export const metadata: Metadata = { title: "Pages" };
 
-export default async function AdminPagesPage() {
-  const pages = await getPageRecords();
+type AdminPagesPageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function AdminPagesPage({ searchParams }: AdminPagesPageProps) {
+  const params = await searchParams;
+  const page = parsePageParam(params.page);
+  const result = await getPageListRecords({
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  });
 
   return (
     <div className="space-y-6">
@@ -19,7 +29,7 @@ export default async function AdminPagesPage() {
           Create and publish custom pages with HTML content and SEO controls.
         </Text>
       </div>
-      <PagesList pages={pages} />
+      <PagesList result={result} />
     </div>
   );
 }

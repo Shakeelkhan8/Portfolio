@@ -1,24 +1,31 @@
 "use client";
 
 import { deleteArticleAction } from "@/lib/admin/actions/articles";
+import { AdminPagination } from "@/components/admin/shared/admin-pagination";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Badge } from "@/components/ui/badge";
 import { routes } from "@/config/navigation";
 import { formatDate } from "@/lib/formatters";
-import type { ArticleRecord } from "@/types/cms";
+import type { PaginatedResult } from "@/lib/admin/pagination";
+import type { ArticleListRecord } from "@/types/cms";
 
 type ArticlesListProps = {
-  articles: ArticleRecord[];
+  result: PaginatedResult<ArticleListRecord>;
 };
 
-export function ArticlesList({ articles }: ArticlesListProps) {
+export function ArticlesList({ result }: ArticlesListProps) {
+  const { items: articles } = result;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground">
-          {articles.length} article{articles.length === 1 ? "" : "s"}
-        </p>
+        <AdminPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          total={result.total}
+          basePath="/admin/blog"
+        />
         <ButtonLink href="/admin/blog/new">New article</ButtonLink>
       </div>
 
@@ -97,6 +104,15 @@ export function ArticlesList({ articles }: ArticlesListProps) {
           </table>
         </div>
       )}
+
+      {result.totalPages > 1 ? (
+        <AdminPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          total={result.total}
+          basePath="/admin/blog"
+        />
+      ) : null}
     </div>
   );
 }

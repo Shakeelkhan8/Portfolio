@@ -1,5 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
+import {
+  buildPaginatedResult,
+  getRange,
+  type PaginatedResult,
+} from "@/lib/admin/pagination";
 import type { ContactSubmissionRecord } from "@/types/cms";
 import type { ContactStatusFilter } from "@/lib/validators/contact";
 
@@ -32,6 +37,29 @@ type GetContactSubmissionsOptions = {
   search?: string;
 };
 
+function applyContactFilters<
+  T extends {
+    eq: (column: string, value: string) => T;
+    or: (filters: string) => T;
+  },
+>(query: T, options: GetContactSubmissionsOptions) {
+  let next = query;
+
+  if (options.status && options.status !== "all") {
+    next = next.eq("status", options.status);
+  }
+
+  const search = options.search?.trim();
+  if (search) {
+    const pattern = `%${search.replace(/[%_]/g, "")}%`;
+    next = next.or(
+      `name.ilike.${pattern},email.ilike.${pattern},message.ilike.${pattern}`,
+    );
+  }
+
+  return next;
+}
+
 export async function getContactSubmissions(
   options: GetContactSubmissionsOptions = {},
 ): Promise<ContactSubmissionRecord[]> {
@@ -40,16 +68,15 @@ export async function getContactSubmissions(
   }
 
   const supabase = await createClient();
-  let query = supabase
-    .from("contact_submissions")
-    .select(
-      "id, name, email, message, status, ip_hash, user_agent, read_at, created_at",
-    )
-    .order("created_at", { ascending: false });
-
-  if (options.status && options.status !== "all") {
-    query = query.eq("status", options.status);
-  }
+  const query = applyContactFilters(
+    supabase
+      .from("contact_submissions")
+      .select(
+        "id, name, email, message, status, ip_hash, user_agent, read_at, created_at",
+      )
+      .order("created_at", { ascending: false }),
+    options,
+  );
 
   const { data, error } = await query;
 
@@ -57,18 +84,47 @@ export async function getContactSubmissions(
     return [];
   }
 
-  const submissions = data.map(mapContactSubmission);
-  const search = options.search?.trim().toLowerCase();
+  return data.map(mapContactSubmission);
+}
 
-  if (!search) {
-    return submissions;
+type GetContactSubmissionsPaginatedOptions = GetContactSubmissionsOptions & {
+  page: number;
+  pageSize: number;
+};
+
+export async function getContactSubmissionsPaginated(
+  options: GetContactSubmissionsPaginatedOptions,
+): Promise<PaginatedResult<ContactSubmissionRecord>> {
+  if (!isSupabaseConfigured()) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
   }
 
-  return submissions.filter((submission) => {
-    const haystack =
-      `${submission.name} ${submission.email} ${submission.message}`.toLowerCase();
-    return haystack.includes(search);
-  });
+  const supabase = await createClient();
+  const { from, to } = getRange(options.page, options.pageSize);
+  const query = applyContactFilters(
+    supabase
+      .from("contact_submissions")
+      .select(
+        "id, name, email, message, status, ip_hash, user_agent, read_at, created_at",
+        { count: "exact" },
+      )
+      .order("created_at", { ascending: false })
+      .range(from, to),
+    options,
+  );
+
+  const { data, count, error } = await query;
+
+  if (error || !data) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  return buildPaginatedResult(
+    data.map(mapContactSubmission),
+    count ?? 0,
+    options.page,
+    options.pageSize,
+  );
 }
 
 export async function getContactSubmissionById(

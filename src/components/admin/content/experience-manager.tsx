@@ -7,6 +7,7 @@ import {
 } from "@/lib/admin/actions/content";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -73,17 +74,24 @@ export function ExperienceManager({ entries }: ExperienceManagerProps) {
       <section className="space-y-4">
         {entries.map((entry) => (
           <article key={entry.id} className="rounded-xl border border-border p-6">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h3 className="font-semibold">
-                  {entry.role} · {entry.company}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {entry.location} · {entry.startDate} – {entry.endDate ?? "Present"}
-                </p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold">
+                    {entry.role} · {entry.company}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {entry.location} · {entry.startDate} – {entry.endDate ?? "Present"}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <ReorderButtons
+                    entity="experiences"
+                    id={entry.id}
+                    label={`Reorder ${entry.company}`}
+                  />
+                  <DeleteItemButton action={deleteExperienceAction} id={entry.id} />
+                </div>
               </div>
-              <DeleteItemButton action={deleteExperienceAction} id={entry.id} />
-            </div>
             <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
               {entry.highlights.map((highlight) => (
                 <li key={highlight.slice(0, 40)}>{highlight}</li>

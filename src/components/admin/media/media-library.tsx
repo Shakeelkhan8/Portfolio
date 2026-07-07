@@ -12,10 +12,12 @@ import { FormMessage } from "@/components/admin/shared/form-message";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AdminPagination } from "@/components/admin/shared/admin-pagination";
+import type { PaginatedResult } from "@/lib/admin/pagination";
 import type { MediaFileRecord } from "@/types/cms";
 
 type MediaLibraryProps = {
-  files: MediaFileRecord[];
+  result: PaginatedResult<MediaFileRecord>;
 };
 
 function formatFileSize(bytes: number) {
@@ -24,8 +26,9 @@ function formatFileSize(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function MediaLibrary({ files }: MediaLibraryProps) {
+export function MediaLibrary({ result }: MediaLibraryProps) {
   const [uploadState, uploadMedia] = useActionState(uploadMediaAction, {});
+  const { items: files } = result;
 
   return (
     <div className="space-y-10">
@@ -53,18 +56,36 @@ export function MediaLibrary({ files }: MediaLibraryProps) {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Library ({files.length})</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">Library</h2>
+          <AdminPagination
+            page={result.page}
+            totalPages={result.totalPages}
+            total={result.total}
+            basePath="/admin/media"
+          />
+        </div>
 
         {files.length === 0 ? (
           <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
             No files uploaded yet.
           </p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {files.map((file) => (
-              <MediaCard key={file.id} file={file} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {files.map((file) => (
+                <MediaCard key={file.id} file={file} />
+              ))}
+            </div>
+            {result.totalPages > 1 ? (
+              <AdminPagination
+                page={result.page}
+                totalPages={result.totalPages}
+                total={result.total}
+                basePath="/admin/media"
+              />
+            ) : null}
+          </>
         )}
       </section>
     </div>

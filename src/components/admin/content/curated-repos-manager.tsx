@@ -9,6 +9,7 @@ import {
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { EditItemButton } from "@/components/admin/shared/edit-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -159,6 +160,11 @@ export function CuratedReposManager({ repos }: CuratedReposManagerProps) {
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
+                    <ReorderButtons
+                      entity="curated-repos"
+                      id={repo.id}
+                      label={`Reorder ${repo.repoFullName}`}
+                    />
                     <EditItemButton onClick={() => setEditingId(repo.id)} />
                     <DeleteItemButton
                       action={deleteCuratedRepoAction}

@@ -7,6 +7,7 @@ import {
 } from "@/lib/admin/actions/content";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,10 +101,18 @@ export function NavigationManager({ items }: NavigationManagerProps) {
                       {item.external ? " · external" : ""} · order {item.displayOrder}
                     </p>
                   </div>
-                  <DeleteItemButton
-                    action={deleteNavigationAction}
-                    id={item.id}
-                  />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <ReorderButtons
+                      entity="navigation"
+                      id={item.id}
+                      scopeKey={group}
+                      label={`Reorder ${item.title}`}
+                    />
+                    <DeleteItemButton
+                      action={deleteNavigationAction}
+                      id={item.id}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>

@@ -2,12 +2,24 @@ import type { Metadata } from "next";
 import { ProjectsList } from "@/components/admin/content/projects-list";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
-import { getProjectRecords } from "@/lib/db/queries/admin/projects";
+import { ADMIN_PAGE_SIZE, parsePageParam } from "@/lib/admin/pagination";
+import { getProjectListRecords } from "@/lib/db/queries/admin/projects";
 
 export const metadata: Metadata = { title: "Projects" };
 
-export default async function AdminProjectsPage() {
-  const projects = await getProjectRecords();
+type AdminProjectsPageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function AdminProjectsPage({
+  searchParams,
+}: AdminProjectsPageProps) {
+  const params = await searchParams;
+  const page = parsePageParam(params.page);
+  const result = await getProjectListRecords({
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  });
 
   return (
     <div className="space-y-6">
@@ -19,7 +31,7 @@ export default async function AdminProjectsPage() {
           Manage portfolio case studies, publish state, and project content.
         </Text>
       </div>
-      <ProjectsList projects={projects} />
+      <ProjectsList result={result} />
     </div>
   );
 }

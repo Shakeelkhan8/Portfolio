@@ -7,6 +7,7 @@ import {
 } from "@/lib/admin/actions/content";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,15 +62,22 @@ export function EducationManager({ entries }: EducationManagerProps) {
       <section className="space-y-4">
         {entries.map((entry) => (
           <article key={entry.id} className="rounded-xl border border-border p-6">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h3 className="font-semibold">{entry.degree}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {entry.institution} · {entry.location}
-                </p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold">{entry.degree}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {entry.institution} · {entry.location}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <ReorderButtons
+                    entity="educations"
+                    id={entry.id}
+                    label={`Reorder ${entry.degree}`}
+                  />
+                  <DeleteItemButton action={deleteEducationAction} id={entry.id} />
+                </div>
               </div>
-              <DeleteItemButton action={deleteEducationAction} id={entry.id} />
-            </div>
           </article>
         ))}
       </section>

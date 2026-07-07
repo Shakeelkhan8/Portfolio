@@ -1,6 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
-import type { ProjectArchitectureRecord, ProjectRecord } from "@/types/cms";
+import {
+  buildPaginatedResult,
+  getRange,
+  type PaginatedResult,
+} from "@/lib/admin/pagination";
+import type { ProjectArchitectureRecord, ProjectListRecord, ProjectRecord } from "@/types/cms";
 
 function byProject<T extends { project_id: string; display_order: number }>(
   rows: T[] | null | undefined,
@@ -275,4 +280,43 @@ export async function getProjectRecordById(
       relations.diagrams.find((diagram) => diagram.project_id === project.id) ??
       null,
   });
+}
+
+type ProjectListOptions = {
+  page: number;
+  pageSize: number;
+};
+
+export async function getProjectListRecords(
+  options: ProjectListOptions,
+): Promise<PaginatedResult<ProjectListRecord>> {
+  if (!isSupabaseConfigured()) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const supabase = await createClient();
+  const { from, to } = getRange(options.page, options.pageSize);
+  const { data, count, error } = await supabase
+    .from("projects")
+    .select("id, slug, title, status, featured, display_order", {
+      count: "exact",
+    })
+    .is("deleted_at", null)
+    .order("display_order", { ascending: true })
+    .range(from, to);
+
+  if (error || !data) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const items: ProjectListRecord[] = data.map((project) => ({
+    id: project.id,
+    slug: project.slug,
+    title: project.title,
+    status: project.status,
+    featured: project.featured,
+    displayOrder: project.display_order,
+  }));
+
+  return buildPaginatedResult(items, count ?? 0, options.page, options.pageSize);
 }

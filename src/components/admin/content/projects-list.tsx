@@ -1,23 +1,31 @@
 "use client";
 
 import { deleteProjectAction } from "@/lib/admin/actions/projects";
+import { AdminPagination } from "@/components/admin/shared/admin-pagination";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Badge } from "@/components/ui/badge";
 import { routes } from "@/config/navigation";
-import type { ProjectRecord } from "@/types/cms";
+import type { PaginatedResult } from "@/lib/admin/pagination";
+import type { ProjectListRecord } from "@/types/cms";
 
 type ProjectsListProps = {
-  projects: ProjectRecord[];
+  result: PaginatedResult<ProjectListRecord>;
 };
 
-export function ProjectsList({ projects }: ProjectsListProps) {
+export function ProjectsList({ result }: ProjectsListProps) {
+  const { items: projects } = result;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground">
-          {projects.length} project{projects.length === 1 ? "" : "s"}
-        </p>
+        <AdminPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          total={result.total}
+          basePath="/admin/projects"
+        />
         <ButtonLink href="/admin/projects/new">New project</ButtonLink>
       </div>
 
@@ -57,7 +65,18 @@ export function ProjectsList({ projects }: ProjectsListProps) {
                       {project.status}
                     </Badge>
                   </td>
-                  <td className="px-4 py-4">{project.displayOrder}</td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <span className="tabular-nums text-muted-foreground">
+                        {project.displayOrder}
+                      </span>
+                      <ReorderButtons
+                        entity="projects"
+                        id={project.id}
+                        label={`Reorder ${project.title}`}
+                      />
+                    </div>
+                  </td>
                   <td className="px-4 py-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <ButtonLink
@@ -90,6 +109,15 @@ export function ProjectsList({ projects }: ProjectsListProps) {
           </table>
         </div>
       )}
+
+      {result.totalPages > 1 ? (
+        <AdminPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          total={result.total}
+          basePath="/admin/projects"
+        />
+      ) : null}
     </div>
   );
 }

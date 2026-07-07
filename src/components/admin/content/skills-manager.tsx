@@ -9,6 +9,7 @@ import {
 } from "@/lib/admin/actions/content";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,10 +106,17 @@ export function SkillsManager({ categories }: SkillsManagerProps) {
                 <h3 className="font-semibold">{category.name}</h3>
                 <p className="text-sm text-muted-foreground">{category.slug}</p>
               </div>
-              <DeleteItemButton
-                action={deleteSkillCategoryAction}
-                id={category.id}
-              />
+              <div className="flex flex-wrap items-center gap-2">
+                <ReorderButtons
+                  entity="skill-categories"
+                  id={category.id}
+                  label={`Reorder ${category.name}`}
+                />
+                <DeleteItemButton
+                  action={deleteSkillCategoryAction}
+                  id={category.id}
+                />
+              </div>
             </div>
             <ul className="space-y-2">
               {category.skills.map((skill) => (
@@ -123,7 +131,15 @@ export function SkillsManager({ categories }: SkillsManagerProps) {
                       {skill.icon ? ` · ${skill.icon}` : ""}
                     </p>
                   </div>
-                  <DeleteItemButton action={deleteSkillAction} id={skill.id} />
+                  <div className="flex items-center gap-2">
+                    <ReorderButtons
+                      entity="skills"
+                      id={skill.id}
+                      scopeKey={category.id}
+                      label={`Reorder ${skill.name}`}
+                    />
+                    <DeleteItemButton action={deleteSkillAction} id={skill.id} />
+                  </div>
                 </li>
               ))}
             </ul>

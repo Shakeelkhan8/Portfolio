@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { Archive, Download } from "lucide-react";
 import {
@@ -9,17 +10,22 @@ import {
   markContactSubmissionReadAction,
   markContactSubmissionUnreadAction,
 } from "@/lib/admin/actions/contact";
+import { AdminPagination } from "@/components/admin/shared/admin-pagination";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { buildAdminQueryString } from "@/lib/admin/pagination";
 import { formatDate } from "@/lib/formatters";
+import type { PaginatedResult } from "@/lib/admin/pagination";
 import type { ContactSubmissionRecord } from "@/types/cms";
 import type { ContactStatusFilter } from "@/lib/validators/contact";
 
 type ContactInboxProps = {
-  submissions: ContactSubmissionRecord[];
+  result: PaginatedResult<ContactSubmissionRecord>;
+  status: ContactStatusFilter;
+  search: string;
 };
 
 const statusFilters: Array<{ value: ContactStatusFilter; label: string }> = [
@@ -35,48 +41,39 @@ function statusVariant(status: ContactSubmissionRecord["status"]) {
   return "secondary" as const;
 }
 
-export function ContactInbox({ submissions }: ContactInboxProps) {
-  const [statusFilter, setStatusFilter] = useState<ContactStatusFilter>("all");
-  const [search, setSearch] = useState("");
+export function ContactInbox({ result, status, search }: ContactInboxProps) {
+  const { items: submissions } = result;
   const [selectedId, setSelectedId] = useState<string | null>(
     submissions[0]?.id ?? null,
   );
   const [isExporting, startExport] = useTransition();
 
-  const filteredSubmissions = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+  const selectedSubmission = useMemo(
+    () =>
+      submissions.find((submission) => submission.id === selectedId) ??
+      submissions[0] ??
+      null,
+    [selectedId, submissions],
+  );
 
-    return submissions.filter((submission) => {
-      const matchesStatus =
-        statusFilter === "all" || submission.status === statusFilter;
-      const matchesSearch =
-        !normalizedSearch ||
-        `${submission.name} ${submission.email} ${submission.message}`
-          .toLowerCase()
-          .includes(normalizedSearch);
-
-      return matchesStatus && matchesSearch;
-    });
-  }, [search, statusFilter, submissions]);
-
-  const selectedSubmission =
-    filteredSubmissions.find((submission) => submission.id === selectedId) ??
-    filteredSubmissions[0] ??
-    null;
+  const paginationQuery = {
+    status: status === "all" ? undefined : status,
+    q: search || undefined,
+  };
 
   function handleExport() {
     startExport(async () => {
       const formData = new FormData();
-      formData.set("status", statusFilter);
+      formData.set("status", status);
       formData.set("search", search);
 
-      const result = await exportContactSubmissionsAction({}, formData);
+      const exportResult = await exportContactSubmissionsAction({}, formData);
 
-      if (!result.csv) {
+      if (!exportResult.csv) {
         return;
       }
 
-      const blob = new Blob([result.csv], { type: "text/csv;charset=utf-8" });
+      const blob = new Blob([exportResult.csv], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -90,38 +87,65 @@ export function ContactInbox({ submissions }: ContactInboxProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
-          {statusFilters.map((filter) => (
-            <Button
-              key={filter.value}
-              type="button"
-              size="sm"
-              variant={statusFilter === filter.value ? "default" : "outline"}
-              onClick={() => setStatusFilter(filter.value)}
-            >
-              {filter.label}
-            </Button>
-          ))}
+          {statusFilters.map((filter) => {
+            const href = `/admin/contact${buildAdminQueryString({
+              status: filter.value === "all" ? undefined : filter.value,
+              q: search || undefined,
+            })}`;
+
+            return (
+              <Button
+                key={filter.value}
+                size="sm"
+                variant={status === filter.value ? "default" : "outline"}
+                render={<Link href={href} />}
+              >
+                {filter.label}
+              </Button>
+            );
+          })}
         </div>
         <Button
           type="button"
           variant="outline"
           size="sm"
           onClick={handleExport}
-          disabled={isExporting || filteredSubmissions.length === 0}
+          disabled={isExporting || result.total === 0}
         >
           <Download className="size-4" data-icon="inline-start" />
           Export CSV
         </Button>
       </div>
 
-      <Input
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-        placeholder="Search by name, email, or message..."
-        aria-label="Search contact submissions"
+      <form
+        method="GET"
+        action="/admin/contact"
+        className="flex flex-wrap items-center gap-3"
+      >
+        {status !== "all" ? (
+          <input type="hidden" name="status" value={status} />
+        ) : null}
+        <Input
+          name="q"
+          defaultValue={search}
+          placeholder="Search by name, email, or message..."
+          aria-label="Search contact submissions"
+          className="max-w-md flex-1"
+        />
+        <Button type="submit" variant="outline" size="sm">
+          Search
+        </Button>
+      </form>
+
+      <AdminPagination
+        page={result.page}
+        totalPages={result.totalPages}
+        total={result.total}
+        basePath="/admin/contact"
+        query={paginationQuery}
       />
 
-      {filteredSubmissions.length === 0 ? (
+      {submissions.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No contact submissions match your filters.
         </p>
@@ -137,7 +161,7 @@ export function ContactInbox({ submissions }: ContactInboxProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filteredSubmissions.map((submission) => (
+                {submissions.map((submission) => (
                   <tr
                     key={submission.id}
                     className={
@@ -257,6 +281,16 @@ export function ContactInbox({ submissions }: ContactInboxProps) {
           ) : null}
         </div>
       )}
+
+      {result.totalPages > 1 ? (
+        <AdminPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          total={result.total}
+          basePath="/admin/contact"
+          query={paginationQuery}
+        />
+      ) : null}
     </div>
   );
 }

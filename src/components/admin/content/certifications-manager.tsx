@@ -10,6 +10,7 @@ import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { EditItemButton } from "@/components/admin/shared/edit-item-button";
 import { MediaSelect } from "@/components/admin/shared/media-select";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -190,6 +191,11 @@ export function CertificationsManager({
                     ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
+                    <ReorderButtons
+                      entity="certifications"
+                      id={cert.id}
+                      label={`Reorder ${cert.name}`}
+                    />
                     <EditItemButton onClick={() => setEditingId(cert.id)} />
                     <DeleteItemButton
                       action={deleteCertificationAction}

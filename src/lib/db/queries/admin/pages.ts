@@ -1,7 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
+import {
+  buildPaginatedResult,
+  getRange,
+  type PaginatedResult,
+} from "@/lib/admin/pagination";
 import { mapPageRecord } from "@/lib/db/mappers/settings";
-import type { PageRecord } from "@/types/cms";
+import type { PageListRecord, PageRecord } from "@/types/cms";
 
 export async function getPageRecords(): Promise<PageRecord[]> {
   if (!isSupabaseConfigured()) {
@@ -69,4 +74,40 @@ export async function getPageRecordById(id: string): Promise<PageRecord | null> 
   }
 
   return mapPageRecord(data, ogImageUrl);
+}
+
+type PageListOptions = {
+  page: number;
+  pageSize: number;
+};
+
+export async function getPageListRecords(
+  options: PageListOptions,
+): Promise<PaginatedResult<PageListRecord>> {
+  if (!isSupabaseConfigured()) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const supabase = await createClient();
+  const { from, to } = getRange(options.page, options.pageSize);
+  const { data, count, error } = await supabase
+    .from("pages")
+    .select("id, slug, title, status, updated_at", { count: "exact" })
+    .is("deleted_at", null)
+    .order("updated_at", { ascending: false })
+    .range(from, to);
+
+  if (error || !data) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const items: PageListRecord[] = data.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    status: row.status,
+    updatedAt: row.updated_at,
+  }));
+
+  return buildPaginatedResult(items, count ?? 0, options.page, options.pageSize);
 }

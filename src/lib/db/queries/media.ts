@@ -1,5 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
+import {
+  buildPaginatedResult,
+  getRange,
+  type PaginatedResult,
+} from "@/lib/admin/pagination";
 import type { MediaFileRecord } from "@/types/cms";
 
 function mapMediaFile(row: {
@@ -78,4 +83,39 @@ export async function getMediaFileById(
 export async function getImageMediaFiles(): Promise<MediaFileRecord[]> {
   const files = await getMediaFiles();
   return files.filter((file) => file.mimeType.startsWith("image/"));
+}
+
+type MediaListOptions = {
+  page: number;
+  pageSize: number;
+};
+
+export async function getMediaFilesPaginated(
+  options: MediaListOptions,
+): Promise<PaginatedResult<MediaFileRecord>> {
+  if (!isSupabaseConfigured()) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  const supabase = await createClient();
+  const { from, to } = getRange(options.page, options.pageSize);
+  const { data, count, error } = await supabase
+    .from("media_files")
+    .select(
+      "id, filename, original_filename, mime_type, size_bytes, storage_bucket, storage_path, public_url, alt_text, width, height, created_at",
+      { count: "exact" },
+    )
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error || !data) {
+    return buildPaginatedResult([], 0, options.page, options.pageSize);
+  }
+
+  return buildPaginatedResult(
+    data.map(mapMediaFile),
+    count ?? 0,
+    options.page,
+    options.pageSize,
+  );
 }

@@ -7,6 +7,7 @@ import {
 } from "@/lib/admin/actions/content";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,10 +52,17 @@ export function AchievementsManager({ achievements }: AchievementsManagerProps) 
                 <p className="mt-1 text-xs text-primary">Featured</p>
               ) : null}
             </div>
-            <DeleteItemButton
-              action={deleteAchievementAction}
-              id={achievement.id}
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              <ReorderButtons
+                entity="achievements"
+                id={achievement.id}
+                label="Reorder achievement"
+              />
+              <DeleteItemButton
+                action={deleteAchievementAction}
+                id={achievement.id}
+              />
+            </div>
           </div>
         ))}
       </section>

@@ -9,6 +9,7 @@ import {
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
 import { EditItemButton } from "@/components/admin/shared/edit-item-button";
 import { FormMessage } from "@/components/admin/shared/form-message";
+import { ReorderButtons } from "@/components/admin/shared/reorder-buttons";
 import { SubmitButton } from "@/components/admin/shared/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -154,6 +155,11 @@ export function ServicesManager({ services }: ServicesManagerProps) {
                     ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
+                    <ReorderButtons
+                      entity="services"
+                      id={service.id}
+                      label={`Reorder ${service.title}`}
+                    />
                     <EditItemButton onClick={() => setEditingId(service.id)} />
                     <DeleteItemButton action={deleteServiceAction} id={service.id} />
                   </div>

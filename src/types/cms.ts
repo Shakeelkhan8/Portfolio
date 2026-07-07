@@ -95,6 +95,14 @@ export type PageRecord = {
   updatedAt: string;
 };
 
+export type PageListRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  status: "draft" | "published";
+  updatedAt: string;
+};
+
 export type CertificationRecord = {
   id: string;
   name: string;
@@ -312,6 +320,15 @@ export type ProjectRecord = {
   diagram: ProjectArchitectureRecord | null;
 };
 
+export type ProjectListRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  status: "draft" | "published";
+  featured: boolean;
+  displayOrder: number;
+};
+
 export type ArticleRecord = {
   id: string;
   slug: string;
@@ -327,6 +344,15 @@ export type ArticleRecord = {
   robots: string | null;
   publishedAt: string | null;
   tags: string[];
+};
+
+export type ArticleListRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  status: "draft" | "published";
+  readingTimeMinutes: number;
+  publishedAt: string | null;
 };
 
 export type ContactSubmissionRecord = {
