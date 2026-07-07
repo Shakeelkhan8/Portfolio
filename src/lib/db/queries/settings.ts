@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -29,7 +30,7 @@ async function resolveMediaUrl(mediaId: string | null) {
     return null;
   }
 
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data } = await supabase
     .from("media_files")
     .select("public_url")
@@ -40,7 +41,7 @@ async function resolveMediaUrl(mediaId: string | null) {
 }
 
 async function fetchSeoDefaultsFromDb(): Promise<SeoDefaultsRecord | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("seo_defaults")
     .select(
@@ -75,7 +76,7 @@ export const getSeoDefaults = unstable_cache(
 );
 
 async function fetchThemeSettingsFromDb(): Promise<ThemeSettingsRecord | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("theme_settings")
     .select("*")
@@ -107,7 +108,7 @@ export const getThemeSettings = unstable_cache(
 );
 
 async function fetchAnalyticsSettingsFromDb(): Promise<AnalyticsSettingsRecord | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("analytics_settings")
     .select("*")
@@ -139,7 +140,7 @@ export const getAnalyticsSettings = unstable_cache(
 );
 
 async function fetchGitHubSettingsFromDb(): Promise<GitHubSettingsRecord | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("github_settings")
     .select("id, username, show_live_stats")
@@ -173,7 +174,7 @@ export const getGitHubSettings = unstable_cache(
 async function fetchCustomScriptsFromDb(
   enabledOnly: boolean,
 ): Promise<CustomScriptRecord[]> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   let query = supabase
     .from("custom_scripts")
     .select("id, name, script_content, placement, enabled")

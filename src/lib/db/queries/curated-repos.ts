@@ -1,12 +1,12 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import { mapCuratedRepo } from "@/lib/db/mappers/curated-repos";
 import type { CuratedRepoRecord } from "@/types/cms";
 
 async function fetchCuratedReposFromDb(): Promise<CuratedRepoRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("curated_repos")
     .select("*")

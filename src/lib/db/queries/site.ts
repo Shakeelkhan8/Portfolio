@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -13,7 +13,7 @@ import {
 } from "@/lib/db/mappers/site";
 
 async function fetchSiteConfigFromDb() {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const [
     siteResult,
@@ -73,7 +73,7 @@ export const getSiteConfig = unstable_cache(
 );
 
 async function fetchHomeContentFromDb() {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const [headersResult, ctaResult] = await Promise.all([
     supabase

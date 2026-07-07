@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -10,7 +10,7 @@ import { mapNavigation, mapNavigationItem } from "@/lib/db/mappers/site";
 import type { NavigationItemRecord } from "@/types/cms";
 
 async function fetchNavigationFromDb() {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("navigation_items")
     .select("id, nav_group, title, href, external, display_order, visible")
@@ -46,7 +46,7 @@ export const getNavigationItems = unstable_cache(
       return getFallbackNavigationItems();
     }
 
-    const supabase = await createClient();
+    const supabase = createReadClient();
     const { data, error } = await supabase
       .from("navigation_items")
       .select("id, nav_group, title, href, external, display_order, visible")

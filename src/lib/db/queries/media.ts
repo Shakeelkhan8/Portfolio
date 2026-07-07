@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import {
   buildPaginatedResult,
@@ -42,7 +42,7 @@ export async function getMediaFiles(): Promise<MediaFileRecord[]> {
     return [];
   }
 
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("media_files")
     .select(
@@ -64,7 +64,7 @@ export async function getMediaFileById(
     return null;
   }
 
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("media_files")
     .select(
@@ -97,7 +97,7 @@ export async function getMediaFilesPaginated(
     return buildPaginatedResult([], 0, options.page, options.pageSize);
   }
 
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { from, to } = getRange(options.page, options.pageSize);
   const { data, count, error } = await supabase
     .from("media_files")

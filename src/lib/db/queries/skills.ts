@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -19,7 +19,7 @@ function mapToSkillGroups(categories: SkillCategoryRecord[]): SkillGroup[] {
 }
 
 async function fetchSkillCategoriesFromDb(): Promise<SkillCategoryRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data: categories, error } = await supabase
     .from("skill_categories")
@@ -85,7 +85,7 @@ export const getAboutContent = unstable_cache(
     }
 
     try {
-      const supabase = await createClient();
+      const supabase = createReadClient();
       const { data, error } = await supabase
         .from("about_paragraphs")
         .select("content")

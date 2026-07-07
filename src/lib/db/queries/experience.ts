@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -16,7 +16,7 @@ import type {
 import type { Education, ExperienceEntry } from "@/types";
 
 async function fetchExperienceFromDb(): Promise<ExperienceRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data: experiences, error } = await supabase
     .from("experiences")
@@ -97,7 +97,7 @@ export async function getFeaturedExperience(): Promise<ExperienceEntry | undefin
 }
 
 async function fetchEducationFromDb(): Promise<EducationRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data: educations, error } = await supabase
     .from("educations")
@@ -172,7 +172,7 @@ export async function getPrimaryEducation(): Promise<Education> {
 }
 
 async function fetchAchievementsFromDb(): Promise<AchievementRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("achievements")
     .select("id, text, featured, display_order")

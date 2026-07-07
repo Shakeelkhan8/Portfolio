@@ -10,6 +10,7 @@ export function revalidateContent(...tags: CacheTag[]) {
 }
 
 export function revalidatePublicPages() {
+  revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/about");
   revalidatePath("/experience");
@@ -66,6 +67,7 @@ export function revalidateAfterSettingsChange() {
   revalidatePath("/privacy");
   revalidatePath("/manifest.webmanifest");
   revalidatePath("/opengraph-image");
+  revalidatePath("/icon");
   revalidatePath("/robots.txt");
 }
 

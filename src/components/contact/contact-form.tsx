@@ -6,16 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Text } from "@/components/typography/text";
-import { siteConfig } from "@/config/site";
-import { useSiteDataSafe } from "@/components/providers/site-data-provider";
+import { useSiteData } from "@/components/providers/site-data-provider";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
 export function ContactForm() {
-  const siteData = useSiteDataSafe();
-  const site = siteData?.site ?? {
-    email: siteConfig.email,
-  };
+  const { site } = useSiteData();
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 

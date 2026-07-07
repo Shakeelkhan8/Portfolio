@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -13,7 +13,7 @@ import {
 import type { ArchitectureDiagramData, Project, ProjectDetail } from "@/types";
 
 async function fetchProjectsFromDb(): Promise<Project[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data: projects, error } = await supabase
     .from("projects")
@@ -191,7 +191,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | undefine
 async function fetchProjectDetailFromDb(
   slug: string,
 ): Promise<ProjectDetail | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data: project, error } = await supabase
     .from("projects")
@@ -393,7 +393,7 @@ export async function getProjectSitemapEntries(): Promise<SitemapEntry[]> {
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createReadClient();
     const { data, error } = await supabase
       .from("projects")
       .select("slug, published_at, updated_at")
@@ -421,7 +421,7 @@ export async function getArchitectureDiagram(
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createReadClient();
     const projectResult = await supabase
       .from("projects")
       .select("id")

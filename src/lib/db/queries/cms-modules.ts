@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import {
@@ -26,7 +26,7 @@ async function resolveMediaUrls(ids: Array<string | null>) {
     return new Map<string, string>();
   }
 
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data } = await supabase
     .from("media_files")
     .select("id, public_url")
@@ -36,7 +36,7 @@ async function resolveMediaUrls(ids: Array<string | null>) {
 }
 
 async function fetchCertificationsFromDb(): Promise<CertificationRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("certifications")
     .select("*")
@@ -71,7 +71,7 @@ export const getCertifications = unstable_cache(
 );
 
 async function fetchTestimonialsFromDb(): Promise<TestimonialRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("testimonials")
     .select("*")
@@ -113,7 +113,7 @@ export async function getFeaturedTestimonials(
 }
 
 async function fetchServicesFromDb(): Promise<ServiceRecord[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -145,7 +145,7 @@ export const getServices = unstable_cache(
 );
 
 async function fetchActiveResumeFromDb(): Promise<ResumeVersionRecord | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("resume_versions")
     .select("id, title, file_media_id, is_active, display_order, uploaded_at")
@@ -192,7 +192,7 @@ export async function getResumeVersions(): Promise<ResumeVersionRecord[]> {
     return [];
   }
 
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("resume_versions")
     .select("id, title, file_media_id, is_active, display_order, uploaded_at")

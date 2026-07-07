@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import { articles as fallbackArticles } from "@/content/writing";
@@ -7,7 +7,7 @@ import { mapArticle } from "@/lib/db/mappers/content";
 import type { Article, ArticleDetail } from "@/types";
 
 async function fetchArticlesFromDb(): Promise<Article[] | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data, error } = await supabase
     .from("articles")
@@ -78,7 +78,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | undefine
 async function fetchArticleDetailFromDb(
   slug: string,
 ): Promise<ArticleDetail | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
 
   const { data: article, error } = await supabase
     .from("articles")

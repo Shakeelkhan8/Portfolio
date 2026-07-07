@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createReadClient } from "@/lib/supabase/read-client";
 import { isSupabaseConfigured } from "@/lib/env";
 import { CACHE_TAGS } from "@/lib/db/cache-tags";
 import { getFallbackPrivacyPage } from "@/lib/db/fallback/settings";
@@ -7,7 +7,7 @@ import { mapPageRecord } from "@/lib/db/mappers/settings";
 import type { PageRecord } from "@/types/cms";
 
 async function fetchPageBySlugFromDb(slug: string): Promise<PageRecord | null> {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("pages")
     .select(
@@ -76,7 +76,7 @@ async function fetchPublishedPageSlugsFromDb(): Promise<
     updatedAt: string;
   }>
 > {
-  const supabase = await createClient();
+  const supabase = createReadClient();
   const { data, error } = await supabase
     .from("pages")
     .select("slug, title, meta_description, updated_at")

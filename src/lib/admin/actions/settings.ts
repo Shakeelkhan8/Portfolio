@@ -30,6 +30,33 @@ async function logAdminAction(
   });
 }
 
+async function syncIdentityLinks(
+  supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"],
+  input: { email: string; githubUsername: string | null },
+) {
+  await supabase
+    .from("social_links")
+    .update({ url: `mailto:${input.email}` })
+    .eq("platform", "email");
+
+  if (!input.githubUsername) {
+    return;
+  }
+
+  await Promise.all([
+    supabase
+      .from("social_links")
+      .update({
+        url: `https://github.com/${input.githubUsername}`,
+      })
+      .eq("platform", "github"),
+    supabase
+      .from("github_settings")
+      .update({ username: input.githubUsername })
+      .not("id", "is", null),
+  ]);
+}
+
 export async function upsertSiteSettingsAction(
   _prev: AdminActionState,
   formData: FormData,
@@ -90,6 +117,11 @@ export async function upsertSiteSettingsAction(
     .eq("id", id);
 
   if (error) return { error: error.message };
+
+  await syncIdentityLinks(supabase, {
+    email: parsed.data.email,
+    githubUsername: parsed.data.githubUsername ?? null,
+  });
 
   await logAdminAction(supabase, user.id, "update", "site_settings", id);
   revalidateAfterSettingsChange();
