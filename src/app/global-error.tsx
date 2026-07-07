@@ -18,8 +18,10 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-        <h1 className="text-2xl font-semibold">Something went wrong</h1>
+      <body className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background p-6 text-center text-foreground antialiased">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Something went wrong
+        </h1>
         <p className="max-w-md text-muted-foreground">
           An unexpected error occurred. You can try again or return to the
           homepage.

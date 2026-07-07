@@ -50,7 +50,7 @@ export function TimelineItem({
             .map((highlight) => (
               <li
                 key={highlight.slice(0, 40)}
-                className="text-sm leading-relaxed text-muted-foreground"
+                className="relative pl-5 text-sm leading-relaxed text-muted-foreground before:absolute before:top-2.5 before:left-0 before:size-1.5 before:rounded-full before:bg-border before:content-['']"
               >
                 {highlight}
               </li>
@@ -66,7 +66,7 @@ export function TimelineItem({
               {entry.highlights.slice(3).map((highlight) => (
                 <li
                   key={highlight.slice(0, 40)}
-                  className="text-sm leading-relaxed text-muted-foreground"
+                  className="relative pl-5 text-sm leading-relaxed text-muted-foreground before:absolute before:top-2.5 before:left-0 before:size-1.5 before:rounded-full before:bg-border before:content-['']"
                 >
                   {highlight}
                 </li>

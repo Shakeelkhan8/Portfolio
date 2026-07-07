@@ -21,7 +21,11 @@ export function Footer({ site, navigation, className }: FooterProps) {
       <Container className="py-10">
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
-            <p className="font-heading text-sm font-semibold text-foreground">
+            <p className="flex items-center gap-2 font-heading text-sm font-semibold text-foreground">
+              <span
+                className="inline-block size-2 rounded-full bg-primary"
+                aria-hidden="true"
+              />
               {site.name}
             </p>
             <p className="text-sm text-muted-foreground">
@@ -43,7 +47,7 @@ export function Footer({ site, navigation, className }: FooterProps) {
                 href={item.href}
                 external={item.external}
                 showExternalIcon={false}
-                className="hover:text-foreground"
+                className="rounded-sm transition-colors hover:text-foreground"
               >
                 {item.title}
               </AppLink>

@@ -8,10 +8,13 @@ import { routes } from "@/config/navigation";
 export default function NotFound() {
   return (
     <Section spacing="sm" className="flex flex-1 items-center py-24">
-      <Container className="text-center">
-        <Text size="sm" muted className="mb-4 uppercase tracking-widest">
+      <Container className="flex flex-col items-center text-center">
+        <span
+          className="mb-2 select-none text-gradient font-heading text-7xl font-bold tracking-tighter sm:text-8xl"
+          aria-hidden="true"
+        >
           404
-        </Text>
+        </span>
         <Heading as="h1" size="xl" className="mb-4">
           Page not found
         </Heading>

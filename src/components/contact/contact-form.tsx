@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,8 +56,11 @@ export function ContactForm() {
       <div
         role="status"
         aria-live="polite"
-        className="rounded-xl border border-success/30 bg-success-muted/30 p-8 text-center"
+        className="flex flex-col items-center rounded-2xl border border-success/30 bg-success-muted/30 p-8 text-center animate-in fade-in-0 zoom-in-95 duration-300"
       >
+        <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-success/15 text-success">
+          <CheckCircle2 className="size-6" aria-hidden="true" />
+        </div>
         <Text className="font-medium text-foreground">
           Message sent successfully.
         </Text>
@@ -74,8 +78,10 @@ export function ContactForm() {
     );
   }
 
+  const isLoading = state === "loading";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
         <Input
@@ -84,6 +90,7 @@ export function ContactForm() {
           required
           placeholder="Your name"
           autoComplete="name"
+          disabled={isLoading}
         />
       </div>
       <div className="space-y-2">
@@ -95,10 +102,14 @@ export function ContactForm() {
           required
           placeholder="you@example.com"
           autoComplete="email"
+          disabled={isLoading}
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="message">Message</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="message">Message</Label>
+          <span className="text-xs text-muted-foreground">Max 5000 characters</span>
+        </div>
         <Textarea
           id="message"
           name="message"
@@ -106,6 +117,7 @@ export function ContactForm() {
           placeholder="Tell me about the opportunity or project..."
           rows={6}
           maxLength={5000}
+          disabled={isLoading}
         />
       </div>
 
@@ -140,8 +152,18 @@ export function ContactForm() {
         </div>
       ) : null}
 
-      <Button type="submit" size="lg" disabled={state === "loading"}>
-        {state === "loading" ? "Sending..." : "Send Message"}
+      <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto">
+        {isLoading ? (
+          <>
+            <Loader2 className="size-4 animate-spin" data-icon="inline-start" />
+            Sending...
+          </>
+        ) : (
+          <>
+            <Send className="size-4" data-icon="inline-start" />
+            Send Message
+          </>
+        )}
       </Button>
     </form>
   );

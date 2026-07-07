@@ -18,6 +18,16 @@ export async function ThemeVariables() {
     : null;
   const customCss = sanitizeCustomCss(theme.customCss);
 
+  // Brand color applies to both themes; the admin-configurable
+  // background/foreground are light-theme surfaces, so scope them to
+  // `:root:not(.dark)` to avoid clobbering the dark palette.
+  const lightSurfaces = [
+    backgroundColor ? `--background: ${backgroundColor};` : "",
+    foregroundColor ? `--foreground: ${foregroundColor};` : "",
+  ]
+    .filter(Boolean)
+    .join("\n      ");
+
   const css = `
     :root {
       --primary: ${primaryColor};
@@ -26,9 +36,8 @@ export async function ThemeVariables() {
       --sidebar-ring: ${primaryColor};
       --chart-1: ${primaryColor};
       ${accentColor ? `--accent-muted: color-mix(in srgb, ${accentColor} 12%, transparent);` : ""}
-      ${backgroundColor ? `--background: ${backgroundColor};` : ""}
-      ${foregroundColor ? `--foreground: ${foregroundColor};` : ""}
     }
+    ${lightSurfaces ? `:root:not(.dark) {\n      ${lightSurfaces}\n    }` : ""}
     ${customCss}
   `.trim();
 

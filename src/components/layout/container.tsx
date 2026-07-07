@@ -7,7 +7,7 @@ type ContainerProps = ComponentPropsWithoutRef<"div"> & {
 
 const sizeClasses = {
   content: "container-content",
-  prose: "container-prose px-6",
+  prose: "container-prose",
   wide: "container-wide",
 } as const;
 

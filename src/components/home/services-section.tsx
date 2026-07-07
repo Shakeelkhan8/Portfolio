@@ -20,8 +20,10 @@ export function ServicesSection({ services }: ServicesSectionProps) {
 
         return (
           <FadeIn key={service.id} delay={index * 0.05}>
-            <div className="h-full rounded-xl border border-border bg-surface p-6">
-              <Icon className="mb-4 size-5 text-primary" aria-hidden />
+            <div className="hover-lift group h-full rounded-xl border border-border bg-surface p-6 hover:border-foreground/15">
+              <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
+                <Icon className="size-5" aria-hidden />
+              </div>
               <Text className="mb-2 font-medium">{service.title}</Text>
               <Text size="sm" muted leading="relaxed">
                 {service.description}

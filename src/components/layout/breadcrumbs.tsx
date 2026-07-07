@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import { cn } from "@/lib/utils";
 import { routes } from "@/config/navigation";
@@ -20,24 +21,27 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
           <AppLink
             href={routes.home}
             showExternalIcon={false}
-            className="hover:text-foreground"
+            className="rounded-sm transition-colors hover:text-foreground"
           >
             Home
           </AppLink>
         </li>
         {items.map((item, index) => (
           <li key={item.label} className="flex items-center gap-2">
-            <span aria-hidden="true">/</span>
+            <ChevronRight
+              className="size-3.5 text-muted-foreground/50"
+              aria-hidden="true"
+            />
             {item.href && index < items.length - 1 ? (
               <AppLink
                 href={item.href}
                 showExternalIcon={false}
-                className="hover:text-foreground"
+                className="rounded-sm transition-colors hover:text-foreground"
               >
                 {item.label}
               </AppLink>
             ) : (
-              <span className="text-foreground" aria-current="page">
+              <span className="font-medium text-foreground" aria-current="page">
                 {item.label}
               </span>
             )}

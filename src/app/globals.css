@@ -46,13 +46,19 @@
   --duration-normal: 250ms;
   --duration-slow: 400ms;
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06),
-    0 2px 4px -2px rgb(0 0 0 / 0.06);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06),
-    0 4px 6px -4px rgb(0 0 0 / 0.06);
+  --header-height: 4rem;
+
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.05);
+  --shadow-md: 0 4px 12px -2px rgb(15 23 42 / 0.08),
+    0 2px 6px -2px rgb(15 23 42 / 0.05);
+  --shadow-lg: 0 12px 32px -8px rgb(15 23 42 / 0.12),
+    0 6px 12px -6px rgb(15 23 42 / 0.06);
+  --shadow-xl: 0 24px 48px -12px rgb(15 23 42 / 0.18),
+    0 8px 16px -8px rgb(15 23 42 / 0.08);
 
   --chart-1: #2563eb;
   --chart-2: #525252;
@@ -97,11 +103,14 @@
   --destructive: #f87171;
   --input: #262626;
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3),
-    0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3),
-    0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.28);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.45),
+    0 2px 6px -2px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 12px 32px -8px rgb(0 0 0 / 0.55),
+    0 6px 12px -6px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 24px 48px -12px rgb(0 0 0 / 0.6),
+    0 8px 16px -8px rgb(0 0 0 / 0.45);
 
   --chart-1: #60a5fa;
   --chart-2: #a3a3a3;
@@ -169,9 +178,14 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
+  --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+
+  --ease-out: var(--ease-out);
+  --ease-spring: var(--ease-spring);
 }
 
 @layer base {
@@ -181,17 +195,38 @@
 
   html {
     @apply font-sans scroll-smooth;
+    /* Offset in-page anchor targets so they clear the sticky header */
+    scroll-padding-top: calc(var(--header-height) + 1rem);
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
   }
 }
 
 ::selection {
-  background: var(--accent-muted);
+  background: color-mix(in oklch, var(--primary) 22%, transparent);
   color: var(--foreground);
+}
+
+/* Refined, low-profile scrollbars */
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent)
+      transparent;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -208,30 +243,106 @@
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 @utility container-content {
   width: 100%;
   max-width: var(--content-width);
   margin-inline: auto;
-  padding-inline: 1.5rem;
+  padding-inline: 1.25rem;
 }
 
 @utility container-prose {
   width: 100%;
   max-width: var(--prose-width);
   margin-inline: auto;
+  padding-inline: 1.25rem;
 }
 
 @utility container-wide {
   width: 100%;
   max-width: var(--wide-width);
   margin-inline: auto;
-  padding-inline: 1.5rem;
+  padding-inline: 1.25rem;
 }
 
+@media (min-width: 640px) {
+  .container-content,
+  .container-prose,
+  .container-wide {
+    padding-inline: 2rem;
+  }
+}
+
+/* Fluid vertical rhythm for page sections */
 @utility section-spacing {
-  padding-block: 6rem;
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+@utility section-spacing-sm {
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+
+@utility section-spacing-lg {
+  padding-block: clamp(5rem, 12vw, 9rem);
+}
+
+/* Subtle dotted grid for hero / feature backdrops */
+@utility bg-grid {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 10%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+  background-position: center;
+}
+
+/* Gradient text for accent headings */
+@utility text-gradient {
+  background-image: linear-gradient(
+    135deg,
+    var(--foreground) 0%,
+    color-mix(in oklch, var(--foreground) 62%, var(--muted-foreground)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Consistent interactive lift used on cards & tiles */
+@utility hover-lift {
+  transition: transform var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* Masked gradient edge for horizontally scrolling rails */
+@utility fade-edges-x {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 5%,
+    #000 95%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 5%,
+    #000 95%,
+    transparent
+  );
 }
 
 @media print {

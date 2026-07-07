@@ -50,29 +50,43 @@ export default async function Home() {
 
   return (
     <>
-      <Section spacing="sm" className="pt-16 pb-20 md:pt-24 md:pb-28">
+      <Section
+        spacing="none"
+        className="relative isolate overflow-hidden pt-20 pb-20 md:pt-28 md:pb-28"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_35%,#000,transparent)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-[420px] w-[720px] max-w-[95vw] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
+        />
         <Container>
           <FadeIn className="mx-auto flex max-w-3xl flex-col items-center text-center">
             <AvailabilityBadge site={site} className="mb-8" />
-            <Heading as="h1" size="hero" className="mb-4">
+            <Heading as="h1" size="hero" className="mb-5 text-gradient">
               {site.name}
             </Heading>
-            <Text size="xl" muted className="mb-6 max-w-xl">
+            <Text size="xl" className="mb-5 max-w-xl font-medium">
               {site.title}
             </Text>
             <Text size="lg" leading="relaxed" muted className="mb-10 max-w-2xl">
               {site.description}
             </Text>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <ButtonLink href={routes.projects} size="lg">
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <ButtonLink href={routes.projects} size="lg" className="group">
                 View Projects
-                <ArrowRight className="size-4" data-icon="inline-end" />
+                <ArrowRight
+                  className="size-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                  data-icon="inline-end"
+                />
               </ButtonLink>
               <ButtonLink href={routes.contact} variant="outline" size="lg">
                 Get in Touch
               </ButtonLink>
             </div>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
               <Badge variant="secondary">
                 {site.yearsOfExperience}+ years
               </Badge>
@@ -113,10 +127,10 @@ export default async function Home() {
               <AppLink
                 href={routes.projects}
                 showExternalIcon={false}
-                className="text-sm font-medium text-primary"
+                className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary"
               >
                 View all
-                <ArrowRight className="ml-1 inline size-4" />
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </AppLink>
             }
           />
@@ -137,8 +151,14 @@ export default async function Home() {
           <div className="grid gap-4 md:grid-cols-2">
             {site.philosophy.map((item, index) => (
               <FadeIn key={item.title} delay={index * 0.05}>
-                <div className="rounded-xl border border-border bg-surface p-6">
-                  <Text className="mb-2 font-medium">{item.title}</Text>
+                <div className="hover-lift h-full rounded-xl border border-border bg-surface p-6 hover:border-foreground/15">
+                  <div className="mb-3 flex items-center gap-2">
+                    <span
+                      className="inline-block size-1.5 rounded-full bg-primary"
+                      aria-hidden="true"
+                    />
+                    <Text className="font-medium">{item.title}</Text>
+                  </div>
                   <Text size="sm" muted leading="relaxed">
                     {item.description}
                   </Text>
@@ -157,10 +177,10 @@ export default async function Home() {
               <AppLink
                 href={routes.writing}
                 showExternalIcon={false}
-                className="text-sm font-medium text-primary"
+                className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary"
               >
                 View all
-                <ArrowRight className="ml-1 inline size-4" />
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </AppLink>
             }
           />

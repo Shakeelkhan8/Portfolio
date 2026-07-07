@@ -18,7 +18,7 @@ type ProjectCardProps = {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Card className="group h-full overflow-hidden transition-shadow hover:shadow-md">
+    <Card className="hover-lift group h-full overflow-hidden hover:ring-foreground/15">
       {project.thumbnailUrl ? (
         <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-border bg-muted">
           <Image
