@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { siteConfig } from "@/config/site";
 import { getSiteConfig } from "@/lib/content";
 
 // Use the Node.js runtime: the Edge runtime has a 1 MB bundle limit on Vercel,
