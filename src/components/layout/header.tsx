@@ -4,15 +4,17 @@ import { NavBar } from "@/components/navigation/nav-bar";
 import { MobileNav } from "@/components/navigation/mobile-nav";
 import { SearchTrigger } from "@/components/search/search-trigger";
 import { Container } from "@/components/layout/container";
-import { siteConfig } from "@/config/site";
 import { routes } from "@/config/navigation";
+import type { NavigationData, SiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
 type HeaderProps = {
+  site: SiteConfig;
+  navigation: NavigationData;
   className?: string;
 };
 
-export function Header({ className }: HeaderProps) {
+export function Header({ site, navigation, className }: HeaderProps) {
   return (
     <header
       role="banner"
@@ -27,14 +29,14 @@ export function Header({ className }: HeaderProps) {
           href={routes.home}
           className="font-heading text-sm font-semibold tracking-tight text-foreground hover:text-foreground"
         >
-          {siteConfig.name}
+          {site.name}
         </AppLink>
 
         <div className="flex items-center gap-2">
           <SearchTrigger />
-          <NavBar />
+          <NavBar navigation={navigation} />
           <ThemeToggle />
-          <MobileNav />
+          <MobileNav site={site} navigation={navigation} />
         </div>
       </Container>
     </header>

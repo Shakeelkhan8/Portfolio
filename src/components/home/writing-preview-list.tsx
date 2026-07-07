@@ -4,10 +4,10 @@ import { ButtonLink } from "@/components/shared/button-link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { getFeaturedArticles } from "@/lib/content";
 import { routes } from "@/config/navigation";
-import { formatDate } from "@/lib/content";
+import { formatDate } from "@/lib/formatters";
 
-export function WritingPreviewList() {
-  const articles = getFeaturedArticles();
+export async function WritingPreviewList() {
+  const articles = await getFeaturedArticles();
 
   if (articles.length === 0) {
     return (

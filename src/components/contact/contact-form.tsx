@@ -7,10 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Text } from "@/components/typography/text";
 import { siteConfig } from "@/config/site";
+import { useSiteDataSafe } from "@/components/providers/site-data-provider";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
 export function ContactForm() {
+  const siteData = useSiteDataSafe();
+  const site = siteData?.site ?? {
+    email: siteConfig.email,
+  };
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -24,6 +29,7 @@ export function ContactForm() {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       message: formData.get("message") as string,
+      company: formData.get("company") as string,
     };
 
     try {
@@ -50,7 +56,11 @@ export function ContactForm() {
 
   if (state === "success") {
     return (
-      <div className="rounded-xl border border-success/30 bg-success-muted/30 p-8 text-center">
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-xl border border-success/30 bg-success-muted/30 p-8 text-center"
+      >
         <Text className="font-medium text-foreground">
           Message sent successfully.
         </Text>
@@ -99,21 +109,36 @@ export function ContactForm() {
           required
           placeholder="Tell me about the opportunity or project..."
           rows={6}
+          maxLength={5000}
+        />
+      </div>
+
+      <div className="hidden" aria-hidden="true">
+        <Label htmlFor="company">Company</Label>
+        <Input
+          id="company"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
         />
       </div>
 
       {state === "error" ? (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-lg border border-destructive/30 bg-destructive/5 p-4"
+        >
           <Text size="sm" className="text-destructive">
             {errorMessage}
           </Text>
           <Text size="sm" muted className="mt-2">
             Or email directly at{" "}
             <a
-              href={`mailto:${siteConfig.email}`}
+              href={`mailto:${site.email}`}
               className="font-medium text-primary hover:underline"
             >
-              {siteConfig.email}
+              {site.email}
             </a>
           </Text>
         </div>

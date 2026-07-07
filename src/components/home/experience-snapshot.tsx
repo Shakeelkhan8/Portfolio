@@ -5,8 +5,8 @@ import { Heading } from "@/components/typography/heading";
 import { formatDateRange, getFeaturedExperience } from "@/lib/content";
 import { routes } from "@/config/navigation";
 
-export function ExperienceSnapshot() {
-  const current = getFeaturedExperience();
+export async function ExperienceSnapshot() {
+  const current = await getFeaturedExperience();
 
   if (!current) return null;
 

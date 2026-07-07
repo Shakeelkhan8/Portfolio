@@ -13,7 +13,10 @@ test.describe("Portfolio smoke tests", () => {
 
   test("navigation to about page works", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: "About" }).click();
+    await page
+      .getByRole("navigation", { name: "Main navigation" })
+      .getByRole("link", { name: "About" })
+      .click();
     await expect(page).toHaveURL(/\/about$/);
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
       "About",
@@ -33,7 +36,16 @@ test.describe("Portfolio smoke tests", () => {
 
   test("404 page shows helpful links", async ({ page }) => {
     await page.goto("/does-not-exist");
-    await expect(page.getByText("Page not found")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Go Home" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Page not found" }),
+    ).toBeVisible();
+    await expect(page.locator('a[href="/"]', { hasText: "Go Home" })).toBeVisible();
+  });
+
+  test("admin login page is reachable", async ({ page }) => {
+    await page.goto("/admin/login");
+    await expect(
+      page.getByRole("heading", { name: "Admin sign in" }),
+    ).toBeVisible();
   });
 });

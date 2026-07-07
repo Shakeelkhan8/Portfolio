@@ -21,7 +21,6 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { buildSearchIndex } from "@/lib/search";
 import { routes } from "@/config/navigation";
 import { useCommandMenu } from "@/components/command/command-menu-provider";
 import type { SearchResult } from "@/types";
@@ -41,16 +40,24 @@ const navigationItems = [
   { label: "Contact", href: routes.contact, icon: Mail, shortcut: "G C" },
 ];
 
-export function CommandPalette() {
+type CommandPaletteProps = {
+  searchIndex: SearchResult[];
+};
+
+export function CommandPalette({ searchIndex }: CommandPaletteProps) {
   const router = useRouter();
   const { commandOpen, setCommandOpen } = useCommandMenu();
-  const searchIndex = buildSearchIndex();
 
   const grouped = {
     pages: searchIndex.filter((item) => item.type === "page"),
     projects: searchIndex.filter((item) => item.type === "project"),
     articles: searchIndex.filter((item) => item.type === "article"),
   };
+
+  const navHrefs = new Set<string>(navigationItems.map((item) => item.href));
+  const customPages = grouped.pages.filter(
+    (item) => item.id.startsWith("page-") && !navHrefs.has(item.href),
+  );
 
   function navigate(href: string) {
     setCommandOpen(false);
@@ -81,6 +88,29 @@ export function CommandPalette() {
             </CommandItem>
           ))}
         </CommandGroup>
+
+        {customPages.length > 0 ? (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Pages">
+              {customPages.map((item) => (
+                <CommandItem
+                  key={item.id}
+                  value={`${item.title} ${item.description}`}
+                  onSelect={() => navigate(item.href)}
+                >
+                  <FileText />
+                  <span className="flex flex-col">
+                    <span>{item.title}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.description}
+                    </span>
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        ) : null}
 
         {grouped.projects.length > 0 ? (
           <>
