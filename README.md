@@ -2,6 +2,8 @@
 
 Personal portfolio site for [Shakeel Khan](https://github.com/Shakeelkhan8) — Senior Backend Engineer. Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Supabase CMS.
 
+**New to this project?** Start with the [Complete Setup & Deployment Guide](./docs/GUIDE.md) — step-by-step instructions for installation, configuration, customization, and deployment.
+
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router, Turbopack)
@@ -84,11 +86,12 @@ src/
 │   └── contact/        # Contact form services
 └── types/              # Shared TypeScript types
 supabase/migrations/    # SQL schema + RLS policies
-docs/                   # Admin guide + security model
+docs/                   # Setup guide, admin guide, security model
 ```
 
-## CMS documentation
+## Documentation
 
+- [Complete Setup & Deployment Guide](./docs/GUIDE.md) — install, configure, customize, deploy, troubleshoot
 - [Admin Panel Guide](./docs/ADMIN.md) — content workflows, publishing, maintenance mode
 - [Security Model](./docs/SECURITY.md) — RLS, XSS controls, rate limiting, headers
 
