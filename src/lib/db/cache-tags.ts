@@ -9,6 +9,10 @@ export const CACHE_TAGS = {
   media: "cms:media",
   articles: "cms:articles",
   pages: "cms:pages",
+  certifications: "cms:certifications",
+  testimonials: "cms:testimonials",
+  services: "cms:services",
+  resume: "cms:resume",
   search: "cms:search",
 } as const;
 

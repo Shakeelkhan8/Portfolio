@@ -14,16 +14,39 @@ import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { WritingPreviewList } from "@/components/home/writing-preview-list";
 import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
 import { ContactCTA } from "@/components/home/contact-cta";
-import { getSectionHeader, getSiteConfig } from "@/lib/content";
+import { ServicesSection } from "@/components/home/services-section";
+import { TestimonialsSection } from "@/components/home/testimonials-section";
+import {
+  getFeaturedTestimonials,
+  getSectionHeader,
+  getServices,
+  getSiteConfig,
+} from "@/lib/content";
 import { routes } from "@/config/navigation";
 
 export default async function Home() {
   const site = await getSiteConfig();
-  const expertiseHeader = await getSectionHeader("home", "expertise");
-  const projectsHeader = await getSectionHeader("home", "projects");
-  const philosophyHeader = await getSectionHeader("home", "philosophy");
-  const writingHeader = await getSectionHeader("home", "writing");
-  const experienceHeader = await getSectionHeader("home", "experience");
+  const [
+    expertiseHeader,
+    projectsHeader,
+    philosophyHeader,
+    writingHeader,
+    experienceHeader,
+    servicesHeader,
+    testimonialsHeader,
+    services,
+    testimonials,
+  ] = await Promise.all([
+    getSectionHeader("home", "expertise"),
+    getSectionHeader("home", "projects"),
+    getSectionHeader("home", "philosophy"),
+    getSectionHeader("home", "writing"),
+    getSectionHeader("home", "experience"),
+    getSectionHeader("home", "services"),
+    getSectionHeader("home", "testimonials"),
+    getServices(),
+    getFeaturedTestimonials(),
+  ]);
 
   return (
     <>
@@ -151,6 +174,33 @@ export default async function Home() {
           <ExperienceSnapshot />
         </Container>
       </Section>
+
+      <Section spacing="sm" className="border-t border-border bg-muted/30">
+        <Container>
+          <SectionHeader
+            title={servicesHeader?.title ?? "Services"}
+            description={
+              servicesHeader?.description ??
+              "Ways I can help your team ship reliable software."
+            }
+            align="center"
+          />
+          <ServicesSection services={services} />
+        </Container>
+      </Section>
+
+      {testimonials.length > 0 ? (
+        <Section spacing="sm" className="border-t border-border">
+          <Container>
+            <SectionHeader
+              title={testimonialsHeader?.title ?? "Testimonials"}
+              description={testimonialsHeader?.description ?? undefined}
+              align="center"
+            />
+            <TestimonialsSection testimonials={testimonials} />
+          </Container>
+        </Section>
+      ) : null}
 
       <Section spacing="sm" className="border-t border-border bg-muted/30">
         <Container>

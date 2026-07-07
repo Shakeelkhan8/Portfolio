@@ -55,6 +55,20 @@ export const homeSectionHeaders = [
     description: null,
     display_order: 5,
   },
+  {
+    page_key: "home",
+    section_key: "services",
+    title: "Services",
+    description: "Ways I can help your team ship reliable software.",
+    display_order: 6,
+  },
+  {
+    page_key: "home",
+    section_key: "testimonials",
+    title: "Testimonials",
+    description: "What colleagues and clients say about working together.",
+    display_order: 7,
+  },
 ] as const;
 
 export const ctaSections = [
@@ -265,6 +279,56 @@ export function getSeedPayload() {
       meta_title: "Privacy Policy",
       meta_description: "Privacy policy for this portfolio website.",
     },
+    services: [
+      {
+        title: "Backend Architecture",
+        description:
+          "Design and build scalable APIs, multi-tenant systems, and production-grade services.",
+        icon: "Server",
+        display_order: 0,
+        visible: true,
+      },
+      {
+        title: "System Modernization",
+        description:
+          "Migrate legacy systems, improve reliability, and reduce operational risk.",
+        icon: "RefreshCw",
+        display_order: 1,
+        visible: true,
+      },
+      {
+        title: "Technical Consulting",
+        description:
+          "Architecture reviews, performance tuning, and hands-on engineering leadership.",
+        icon: "Lightbulb",
+        display_order: 2,
+        visible: true,
+      },
+    ],
+    testimonials: [
+      {
+        author_name: "Engineering Lead",
+        author_role: "Staff Engineer",
+        author_company: "Enterprise SaaS",
+        content:
+          "Shakeel consistently delivers well-architected backend systems with clear documentation and strong ownership.",
+        rating: 5,
+        featured: true,
+        display_order: 0,
+        visible: true,
+      },
+    ],
+    certifications: [
+      {
+        name: "AWS Certified Solutions Architect",
+        issuer: "Amazon Web Services",
+        issue_date: "2024-06-01",
+        credential_id: null,
+        verification_url: null,
+        display_order: 0,
+        visible: true,
+      },
+    ],
     sectionHeaders: homeSectionHeaders,
     ctaSections,
   };

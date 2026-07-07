@@ -30,6 +30,24 @@ Use `pnpm db:seed:force` only when you intentionally want to reset CMS content.
 - Add tags, excerpt, SEO metadata, and optional OG image from the media library.
 - Published articles appear under `/writing/[slug]`.
 
+### Custom pages (`/admin/pages`)
+
+- Create landing pages and legal content with HTML and SEO fields.
+- Reserved slugs (e.g. `admin`, `projects`) are blocked to protect system routes.
+- Published pages appear at `/{slug}` (privacy uses `/privacy`).
+
+### Certifications, testimonials, services (`/admin/certifications`, `/testimonials`, `/services`)
+
+- **Certifications** — shown on the resume page with optional verification links.
+- **Testimonials** — featured items appear on the home page.
+- **Services** — shown on home and contact pages.
+
+### Resume PDF (`/admin/resume`)
+
+- Upload PDFs via the media library, then attach versions here.
+- Mark one version as **active** for the public download button on `/resume`.
+- Without an active PDF, visitors can still print the on-page resume.
+
 ### Core content (`/admin/skills`, `/experience`, `/education`, `/achievements`, `/navigation`)
 
 - Manage structured portfolio sections used across About, Experience, Resume, and navigation.
@@ -38,7 +56,7 @@ Use `pnpm db:seed:force` only when you intentionally want to reset CMS content.
 ### Media (`/admin/media`)
 
 - Upload images and documents to Supabase Storage.
-- Files referenced by projects, articles, or resume versions cannot be deleted until references are removed.
+- Files referenced by projects, articles, pages, certifications, testimonials, theme, SEO defaults, or resume versions cannot be deleted until references are removed.
 
 ### Contact inbox (`/admin/contact`)
 

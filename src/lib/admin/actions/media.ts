@@ -37,8 +37,17 @@ async function getMediaReferenceCount(
   supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"],
   id: string,
 ) {
-  const [projectRefs, articleRefs, galleryItems, resumeVersions] =
-    await Promise.all([
+  const [
+    projectRefs,
+    articleRefs,
+    galleryItems,
+    resumeVersions,
+    certificationRefs,
+    testimonialRefs,
+    pageRefs,
+    seoRefs,
+    themeRefs,
+  ] = await Promise.all([
     supabase
       .from("projects")
       .select("id", { count: "exact", head: true })
@@ -55,13 +64,38 @@ async function getMediaReferenceCount(
       .from("resume_versions")
       .select("id", { count: "exact", head: true })
       .eq("file_media_id", id),
+    supabase
+      .from("certifications")
+      .select("id", { count: "exact", head: true })
+      .eq("image_media_id", id),
+    supabase
+      .from("testimonials")
+      .select("id", { count: "exact", head: true })
+      .eq("avatar_media_id", id),
+    supabase
+      .from("pages")
+      .select("id", { count: "exact", head: true })
+      .eq("og_image_id", id),
+    supabase
+      .from("seo_defaults")
+      .select("id", { count: "exact", head: true })
+      .eq("default_og_image_id", id),
+    supabase
+      .from("theme_settings")
+      .select("id", { count: "exact", head: true })
+      .or(`logo_media_id.eq.${id},favicon_media_id.eq.${id}`),
   ]);
 
   return (
     (projectRefs.count ?? 0) +
     (articleRefs.count ?? 0) +
     (galleryItems.count ?? 0) +
-    (resumeVersions.count ?? 0)
+    (resumeVersions.count ?? 0) +
+    (certificationRefs.count ?? 0) +
+    (testimonialRefs.count ?? 0) +
+    (pageRefs.count ?? 0) +
+    (seoRefs.count ?? 0) +
+    (themeRefs.count ?? 0)
   );
 }
 
@@ -190,7 +224,7 @@ export async function deleteMediaAction(formData: FormData) {
   if (referenceCount > 0) {
     return {
       error:
-        "This file is still referenced by a project, article, or resume. Remove references before deleting.",
+        "This file is still referenced by content. Remove references before deleting.",
     };
   }
 

@@ -44,3 +44,11 @@ export {
   getSettingsBundle,
 } from "@/lib/db/queries/settings";
 export { getPageBySlug, getPublishedPages } from "@/lib/db/queries/pages";
+export {
+  getCertifications,
+  getTestimonials,
+  getFeaturedTestimonials,
+  getServices,
+  getActiveResumeVersion,
+  getResumeVersions,
+} from "@/lib/db/queries/cms-modules";

@@ -47,6 +47,7 @@ export const routes = {
   openSource: "/open-source",
   resume: "/resume",
   contact: "/contact",
+  page: (slug: string) => `/${slug}` as const,
   privacy: "/privacy",
   rss: "/rss.xml",
   sitemap: "/sitemap.xml",

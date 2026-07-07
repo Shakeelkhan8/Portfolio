@@ -196,6 +196,18 @@ export async function runSeed(
     }
   }
 
+  const moduleInserts = await Promise.all([
+    supabase.from("services").insert(payload.services),
+    supabase.from("testimonials").insert(payload.testimonials),
+    supabase.from("certifications").insert(payload.certifications),
+  ]);
+
+  for (const result of moduleInserts) {
+    if (result.error) {
+      throw new Error(`Failed to seed CMS modules: ${result.error.message}`);
+    }
+  }
+
   for (const [index, group] of payload.skillGroups.entries()) {
     const { data: category, error: categoryError } = await supabase
       .from("skill_categories")

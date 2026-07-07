@@ -95,6 +95,53 @@ export type PageRecord = {
   updatedAt: string;
 };
 
+export type CertificationRecord = {
+  id: string;
+  name: string;
+  issuer: string;
+  issueDate: string | null;
+  credentialId: string | null;
+  verificationUrl: string | null;
+  imageMediaId: string | null;
+  imageUrl: string | null;
+  displayOrder: number;
+  visible: boolean;
+};
+
+export type TestimonialRecord = {
+  id: string;
+  authorName: string;
+  authorRole: string | null;
+  authorCompany: string | null;
+  content: string;
+  rating: number | null;
+  avatarMediaId: string | null;
+  avatarUrl: string | null;
+  featured: boolean;
+  displayOrder: number;
+  visible: boolean;
+};
+
+export type ServiceRecord = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string | null;
+  displayOrder: number;
+  visible: boolean;
+};
+
+export type ResumeVersionRecord = {
+  id: string;
+  title: string;
+  fileMediaId: string;
+  fileUrl: string;
+  fileName: string;
+  isActive: boolean;
+  displayOrder: number;
+  uploadedAt: string;
+};
+
 export type NavigationData = {
   mainNav: NavItem[];
   utilityNav: NavItem[];

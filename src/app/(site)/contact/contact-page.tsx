@@ -3,11 +3,13 @@ import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { ContactForm } from "@/components/contact/contact-form";
+import { ServicesSection } from "@/components/home/services-section";
+import { SectionHeader } from "@/components/layout/section-header";
 import { Text } from "@/components/typography/text";
-import { getSiteConfig } from "@/lib/content";
+import { getServices, getSiteConfig } from "@/lib/content";
 
 export default async function ContactPage() {
-  const site = await getSiteConfig();
+  const [site, services] = await Promise.all([getSiteConfig(), getServices()]);
 
   return (
     <>
@@ -55,6 +57,19 @@ export default async function ContactPage() {
           </div>
         </Container>
       </Section>
+
+      {services.length > 0 ? (
+        <Section spacing="sm" className="border-t border-border bg-muted/30">
+          <Container>
+            <SectionHeader
+              title="Services"
+              description="Areas where I can contribute on contract or consulting engagements."
+              align="center"
+            />
+            <ServicesSection services={services} />
+          </Container>
+        </Section>
+      ) : null}
     </>
   );
 }

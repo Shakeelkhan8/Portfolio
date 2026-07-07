@@ -17,6 +17,7 @@ export function revalidatePublicPages() {
   revalidatePath("/projects");
   revalidatePath("/writing");
   revalidatePath("/contact");
+  revalidatePath("/open-source");
   revalidatePath("/sitemap.xml");
   revalidatePath("/rss.xml");
 }
@@ -66,4 +67,30 @@ export function revalidateAfterSettingsChange() {
   revalidatePath("/manifest.webmanifest");
   revalidatePath("/opengraph-image");
   revalidatePath("/robots.txt");
+}
+
+export function revalidateAfterPageChange(options?: {
+  slug?: string;
+  previousSlug?: string;
+}) {
+  revalidateAfterContentChange(CACHE_TAGS.pages);
+
+  if (options?.previousSlug && options.previousSlug !== options.slug) {
+    revalidatePath(`/${options.previousSlug}`);
+    if (options.previousSlug === "privacy") {
+      revalidatePath("/privacy");
+    }
+  }
+
+  if (options?.slug) {
+    revalidatePath(`/${options.slug}`);
+    if (options.slug === "privacy") {
+      revalidatePath("/privacy");
+    }
+  }
+}
+
+export function revalidateAfterResumeChange() {
+  revalidateAfterContentChange(CACHE_TAGS.resume);
+  revalidatePath("/resume");
 }
