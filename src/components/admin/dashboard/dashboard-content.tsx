@@ -1,10 +1,14 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  Award,
+  BookOpen,
   FileText,
   FolderKanban,
   Mail,
+  MessageSquareQuote,
   Sparkles,
+  Wrench,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ButtonLink } from "@/components/shared/button-link";
@@ -34,29 +38,44 @@ export async function DashboardContent() {
 
   const statCards = [
     {
-      label: "Total projects",
-      value: stats.totalProjects,
-      icon: FolderKanban,
-    },
-    {
-      label: "Published",
+      label: "Published projects",
       value: stats.publishedProjects,
-      icon: FileText,
-    },
-    {
-      label: "Draft projects",
-      value: stats.draftProjects,
       icon: FolderKanban,
     },
     {
-      label: "Skills",
-      value: stats.totalSkills,
-      icon: Sparkles,
+      label: "Articles",
+      value: stats.totalArticles,
+      icon: BookOpen,
+    },
+    {
+      label: "Published pages",
+      value: stats.publishedPages,
+      icon: FileText,
     },
     {
       label: "Unread messages",
       value: stats.unreadMessages,
       icon: Mail,
+    },
+    {
+      label: "Testimonials",
+      value: stats.testimonials,
+      icon: MessageSquareQuote,
+    },
+    {
+      label: "Services",
+      value: stats.services,
+      icon: Wrench,
+    },
+    {
+      label: "Certifications",
+      value: stats.certifications,
+      icon: Award,
+    },
+    {
+      label: "Skills",
+      value: stats.totalSkills,
+      icon: Sparkles,
     },
   ];
 
@@ -74,7 +93,7 @@ export async function DashboardContent() {
         </div>
       ) : null}
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((card) => {
           const Icon = card.icon;
 
@@ -158,15 +177,19 @@ export async function DashboardContent() {
         </Card>
       </div>
 
-      <div className="rounded-xl border border-dashed border-border p-6">
-        <p className="font-medium">Phase 1 complete</p>
+      <div className="rounded-xl border border-border bg-muted/20 p-6">
+        <p className="font-medium">CMS is fully operational</p>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Foundation is ready: Supabase schema, auth, admin shell, and seed
-          tooling. Content management screens will be built in Phase 2.
+          Manage projects, blog, pages, testimonials, services, certifications,
+          resume PDFs, and open-source curation from the sidebar. Changes
+          revalidate the public site automatically.
         </p>
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-3">
           <ButtonLink href="/" variant="outline">
             View public site
+          </ButtonLink>
+          <ButtonLink href="/admin/pages" variant="outline">
+            Manage pages
           </ButtonLink>
         </div>
       </div>

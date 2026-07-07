@@ -46,7 +46,14 @@ Use `pnpm db:seed:force` only when you intentionally want to reset CMS content.
 
 - Upload PDFs via the media library, then attach versions here.
 - Mark one version as **active** for the public download button on `/resume`.
+- Edit existing versions inline; the active version cannot be deleted until another is set active.
 - Without an active PDF, visitors can still print the on-page resume.
+
+### Open source curation (`/admin/curated-repos`)
+
+- Pin, hide, or override descriptions for repositories on `/open-source`.
+- Live GitHub data is still fetched; curation rules layer on top.
+- Pinned repos outside the default fetch window are loaded individually.
 
 ### Core content (`/admin/skills`, `/experience`, `/education`, `/achievements`, `/navigation`)
 

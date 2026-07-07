@@ -11,9 +11,13 @@ import {
 import { RepoCard } from "@/components/github/repo-card";
 import { ButtonLink } from "@/components/shared/button-link";
 import { routes } from "@/config/navigation";
-import { getGitHubSettings, getSiteConfig } from "@/lib/content";
+import { getCuratedRepos, getGitHubSettings, getSiteConfig } from "@/lib/content";
+import {
+  applyCuratedRepos,
+  getMissingPinnedRepos,
+} from "@/lib/github/apply-curation";
 import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
-import { getGitHubData } from "@/services/github";
+import { getGitHubData, getGitHubRepo } from "@/services/github";
 import type { GitHubProfile, GitHubRepo } from "@/types";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,9 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function OpenSourcePage() {
-  const [site, githubSettings] = await Promise.all([
+  const [site, githubSettings, curatedRepos] = await Promise.all([
     getSiteConfig(),
     getGitHubSettings(),
+    getCuratedRepos(),
   ]);
 
   let profile: GitHubProfile | null = null;
@@ -38,7 +43,20 @@ export default async function OpenSourcePage() {
     try {
       const data = await getGitHubData(githubSettings.username);
       profile = data.profile;
-      repos = data.repos;
+
+      let allRepos = data.repos;
+      const missingPinned = getMissingPinnedRepos(data.repos, curatedRepos);
+      if (missingPinned.length) {
+        const extraRepos = await Promise.all(
+          missingPinned.map((fullName) => getGitHubRepo(fullName)),
+        );
+        const validExtra = extraRepos.filter(
+          (repo): repo is GitHubRepo => repo !== null,
+        );
+        allRepos = [...data.repos, ...validExtra];
+      }
+
+      repos = applyCuratedRepos(allRepos, curatedRepos);
     } catch {
       profile = null;
       repos = [];

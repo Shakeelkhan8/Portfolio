@@ -135,7 +135,7 @@ export const getServices = unstable_cache(
 
     try {
       const rows = await fetchServicesFromDb();
-      return rows?.length ? rows : getFallbackServices();
+      return rows ?? getFallbackServices();
     } catch {
       return getFallbackServices();
     }

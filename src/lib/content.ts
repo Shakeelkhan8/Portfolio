@@ -43,6 +43,9 @@ export {
   getAllCustomScripts,
   getSettingsBundle,
 } from "@/lib/db/queries/settings";
+export {
+  getCuratedRepos,
+} from "@/lib/db/queries/curated-repos";
 export { getPageBySlug, getPublishedPages } from "@/lib/db/queries/pages";
 export {
   getCertifications,

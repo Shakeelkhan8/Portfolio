@@ -54,6 +54,11 @@ export function CommandPalette({ searchIndex }: CommandPaletteProps) {
     articles: searchIndex.filter((item) => item.type === "article"),
   };
 
+  const navHrefs = new Set<string>(navigationItems.map((item) => item.href));
+  const customPages = grouped.pages.filter(
+    (item) => item.id.startsWith("page-") && !navHrefs.has(item.href),
+  );
+
   function navigate(href: string) {
     setCommandOpen(false);
     router.push(href);
@@ -83,6 +88,29 @@ export function CommandPalette({ searchIndex }: CommandPaletteProps) {
             </CommandItem>
           ))}
         </CommandGroup>
+
+        {customPages.length > 0 ? (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Pages">
+              {customPages.map((item) => (
+                <CommandItem
+                  key={item.id}
+                  value={`${item.title} ${item.description}`}
+                  onSelect={() => navigate(item.href)}
+                >
+                  <FileText />
+                  <span className="flex flex-col">
+                    <span>{item.title}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.description}
+                    </span>
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        ) : null}
 
         {grouped.projects.length > 0 ? (
           <>

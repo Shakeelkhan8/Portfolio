@@ -69,12 +69,17 @@ export async function getPageBySlug(slug: string): Promise<PageRecord | undefine
 }
 
 async function fetchPublishedPageSlugsFromDb(): Promise<
-  Array<{ slug: string; updatedAt: string }>
+  Array<{
+    slug: string;
+    title: string;
+    metaDescription: string | null;
+    updatedAt: string;
+  }>
 > {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("pages")
-    .select("slug, updated_at")
+    .select("slug, title, meta_description, updated_at")
     .eq("status", "published")
     .is("deleted_at", null);
 
@@ -84,23 +89,53 @@ async function fetchPublishedPageSlugsFromDb(): Promise<
 
   return data.map((row) => ({
     slug: row.slug,
+    title: row.title,
+    metaDescription: row.meta_description,
     updatedAt: row.updated_at,
   }));
 }
 
+export type PublishedPageSummary = {
+  slug: string;
+  title: string;
+  metaDescription: string | null;
+  updatedAt: string;
+};
+
 export const getPublishedPages = unstable_cache(
-  async (): Promise<Array<{ slug: string; updatedAt: string }>> => {
+  async (): Promise<PublishedPageSummary[]> => {
     if (!isSupabaseConfigured()) {
-      return [{ slug: "privacy", updatedAt: new Date().toISOString() }];
+      return [
+        {
+          slug: "privacy",
+          title: "Privacy Policy",
+          metaDescription: "Privacy policy for this portfolio website.",
+          updatedAt: new Date().toISOString(),
+        },
+      ];
     }
 
     try {
       const pages = await fetchPublishedPageSlugsFromDb();
       return pages.length > 0
         ? pages
-        : [{ slug: "privacy", updatedAt: new Date().toISOString() }];
+        : [
+            {
+              slug: "privacy",
+              title: "Privacy Policy",
+              metaDescription: "Privacy policy for this portfolio website.",
+              updatedAt: new Date().toISOString(),
+            },
+          ];
     } catch {
-      return [{ slug: "privacy", updatedAt: new Date().toISOString() }];
+      return [
+        {
+          slug: "privacy",
+          title: "Privacy Policy",
+          metaDescription: "Privacy policy for this portfolio website.",
+          updatedAt: new Date().toISOString(),
+        },
+      ];
     }
   },
   ["cms-published-pages"],

@@ -4,9 +4,15 @@ export type DashboardStats = {
   totalProjects: number;
   publishedProjects: number;
   draftProjects: number;
+  totalArticles: number;
+  publishedPages: number;
   totalSkills: number;
   unreadMessages: number;
-  totalArticles: number;
+  testimonials: number;
+  services: number;
+  certifications: number;
+  resumeVersions: number;
+  curatedRepos: number;
   seedCompleted: boolean;
 };
 
@@ -25,6 +31,12 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     skillsResult,
     messagesResult,
     articlesResult,
+    pagesResult,
+    testimonialsResult,
+    servicesResult,
+    certificationsResult,
+    resumeResult,
+    curatedResult,
     seedResult,
   ] = await Promise.all([
     supabase.from("projects").select("status", { count: "exact" }),
@@ -34,6 +46,16 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       .select("id", { count: "exact", head: true })
       .eq("status", "unread"),
     supabase.from("articles").select("id", { count: "exact", head: true }),
+    supabase
+      .from("pages")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "published")
+      .is("deleted_at", null),
+    supabase.from("testimonials").select("id", { count: "exact", head: true }),
+    supabase.from("services").select("id", { count: "exact", head: true }),
+    supabase.from("certifications").select("id", { count: "exact", head: true }),
+    supabase.from("resume_versions").select("id", { count: "exact", head: true }),
+    supabase.from("curated_repos").select("id", { count: "exact", head: true }),
     supabase
       .from("app_meta")
       .select("value")
@@ -50,9 +72,15 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     totalProjects: projects.length,
     publishedProjects,
     draftProjects: projects.length - publishedProjects,
+    totalArticles: articlesResult.count ?? 0,
+    publishedPages: pagesResult.count ?? 0,
     totalSkills: skillsResult.count ?? 0,
     unreadMessages: messagesResult.count ?? 0,
-    totalArticles: articlesResult.count ?? 0,
+    testimonials: testimonialsResult.count ?? 0,
+    services: servicesResult.count ?? 0,
+    certifications: certificationsResult.count ?? 0,
+    resumeVersions: resumeResult.count ?? 0,
+    curatedRepos: curatedResult.count ?? 0,
     seedCompleted: seedResult.data?.value === "true",
   };
 }
@@ -72,18 +100,28 @@ export async function getRecentActivity(limit = 8): Promise<RecentActivity[]> {
 export async function getQuickActions() {
   return [
     {
-      title: "Add project",
-      description: "Create a new portfolio case study.",
-      href: "/admin/projects",
+      title: "New project",
+      description: "Create a portfolio case study.",
+      href: "/admin/projects/new",
+    },
+    {
+      title: "New article",
+      description: "Write and publish a blog post.",
+      href: "/admin/blog/new",
+    },
+    {
+      title: "Custom page",
+      description: "Publish a landing or legal page.",
+      href: "/admin/pages/new",
     },
     {
       title: "Upload media",
-      description: "Add images, PDFs, or videos to the library.",
+      description: "Add images, PDFs, or documents.",
       href: "/admin/media",
     },
     {
       title: "Review messages",
-      description: "Read and respond to contact submissions.",
+      description: "Read contact form submissions.",
       href: "/admin/contact",
     },
     {

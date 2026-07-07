@@ -23,6 +23,11 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+
+  if (DEDICATED_PAGE_SLUGS.has(slug)) {
+    return { title: "Page Not Found" };
+  }
+
   const [ctx, page] = await Promise.all([
     getMetadataContext(),
     getPageBySlug(slug),

@@ -1,16 +1,19 @@
 import { routes } from "@/config/navigation";
-import { getArticles, getProjects } from "@/lib/content";
+import { getArticles, getProjects, getPublishedPages } from "@/lib/content";
 import { getNavigation } from "@/lib/db/queries/navigation";
 import { filterSearchIndex } from "@/lib/search-utils";
 import type { SearchResult } from "@/types";
 
 export { filterSearchIndex } from "@/lib/search-utils";
 
+const DEDICATED_CMS_PAGE_SLUGS = new Set(["privacy"]);
+
 export async function buildSearchIndex(): Promise<SearchResult[]> {
-  const [navigation, projects, articles] = await Promise.all([
+  const [navigation, projects, articles, publishedPages] = await Promise.all([
     getNavigation(),
     getProjects(),
     getArticles(),
+    getPublishedPages(),
   ]);
 
   const staticPages: SearchResult[] = [
@@ -37,6 +40,16 @@ export async function buildSearchIndex(): Promise<SearchResult[]> {
     })),
   ];
 
+  const cmsPageResults: SearchResult[] = publishedPages
+    .filter((page) => !DEDICATED_CMS_PAGE_SLUGS.has(page.slug))
+    .map((page) => ({
+      id: `page-${page.slug}`,
+      title: page.title,
+      description: page.metaDescription ?? `Page: /${page.slug}`,
+      href: routes.page(page.slug),
+      type: "page" as const,
+    }));
+
   const projectResults: SearchResult[] = projects.map((project) => ({
     id: `project-${project.slug}`,
     title: project.title,
@@ -53,7 +66,7 @@ export async function buildSearchIndex(): Promise<SearchResult[]> {
     type: "article",
   }));
 
-  return [...staticPages, ...projectResults, ...articleResults];
+  return [...staticPages, ...cmsPageResults, ...projectResults, ...articleResults];
 }
 
 export async function searchContent(query: string): Promise<SearchResult[]> {

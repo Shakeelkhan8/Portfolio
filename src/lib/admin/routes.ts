@@ -5,6 +5,7 @@ import {
   Briefcase,
   FileText,
   FolderKanban,
+  GitBranch,
   GraduationCap,
   Image,
   LayoutDashboard,
@@ -57,6 +58,11 @@ export const adminNavGroups: AdminNavGroup[] = [
       },
       { title: "Services", href: "/admin/services", icon: Wrench },
       { title: "Achievements", href: "/admin/achievements", icon: Award },
+      {
+        title: "Open Source",
+        href: "/admin/curated-repos",
+        icon: GitBranch,
+      },
     ],
   },
   {

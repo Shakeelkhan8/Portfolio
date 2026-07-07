@@ -13,6 +13,7 @@ export const CACHE_TAGS = {
   testimonials: "cms:testimonials",
   services: "cms:services",
   resume: "cms:resume",
+  curatedRepos: "cms:curated-repos",
   search: "cms:search",
 } as const;
 

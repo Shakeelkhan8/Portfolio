@@ -142,6 +142,16 @@ export type ResumeVersionRecord = {
   uploadedAt: string;
 };
 
+export type CuratedRepoRecord = {
+  id: string;
+  repoFullName: string;
+  githubRepoId: number | null;
+  pinned: boolean;
+  hidden: boolean;
+  overrideDescription: string | null;
+  displayOrder: number;
+};
+
 export type NavigationData = {
   mainNav: NavItem[];
   utilityNav: NavItem[];

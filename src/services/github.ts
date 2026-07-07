@@ -91,6 +91,20 @@ export async function getGitHubProfile(username: string): Promise<GitHubProfile>
   return mapProfile(data);
 }
 
+export async function getGitHubRepo(
+  fullName: string,
+): Promise<GitHubRepo | null> {
+  try {
+    const data = await githubFetch<GitHubRepoResponse>(`/repos/${fullName}`);
+    if (data.fork) {
+      return null;
+    }
+    return mapRepo(data);
+  } catch {
+    return null;
+  }
+}
+
 export async function getGitHubRepos(
   username: string,
   limit = 12,

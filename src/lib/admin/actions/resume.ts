@@ -98,6 +98,20 @@ export async function deleteResumeVersionAction(formData: FormData) {
   }
 
   const { supabase, user } = await requireAdmin();
+
+  const { data: version } = await supabase
+    .from("resume_versions")
+    .select("is_active")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (version?.is_active) {
+    return {
+      error:
+        "Cannot delete the active resume version. Set another version active first.",
+    };
+  }
+
   const { error } = await supabase.from("resume_versions").delete().eq("id", id);
 
   if (error) return { error: error.message };
