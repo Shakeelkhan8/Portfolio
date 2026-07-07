@@ -2,6 +2,7 @@
 
 import { revalidateAfterSettingsChange } from "@/lib/db/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
+import { sanitizeCustomCss } from "@/lib/security/sanitize";
 import type { AdminActionState } from "@/lib/validators/content";
 import {
   analyticsSettingsSchema,
@@ -170,7 +171,7 @@ export async function upsertThemeSettingsAction(
       font_heading: parsed.data.fontHeading,
       font_body: parsed.data.fontBody,
       font_mono: parsed.data.fontMono,
-      custom_css: parsed.data.customCss || null,
+      custom_css: sanitizeCustomCss(parsed.data.customCss) || null,
     })
     .eq("id", id);
 

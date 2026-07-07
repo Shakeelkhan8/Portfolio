@@ -5,6 +5,7 @@ import { Prose } from "@/components/typography/prose";
 import { routes } from "@/config/navigation";
 import { getPageBySlug } from "@/lib/content";
 import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
+import { sanitizeRichHtml } from "@/lib/security/sanitize";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [ctx, page] = await Promise.all([
@@ -42,7 +43,11 @@ export default async function PrivacyPage() {
         description={`Last updated: ${lastUpdated}`}
       />
       <Section spacing="sm" className="border-t border-border pt-0">
-        <Prose dangerouslySetInnerHTML={{ __html: page.contentHtml }} />
+        <Prose
+          dangerouslySetInnerHTML={{
+            __html: sanitizeRichHtml(page.contentHtml),
+          }}
+        />
       </Section>
     </>
   );

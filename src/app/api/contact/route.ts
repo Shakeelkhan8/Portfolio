@@ -3,10 +3,24 @@ import { persistContactSubmission } from "@/lib/contact/persist-submission";
 import { resolveContactRecipientEmail } from "@/lib/contact/recipient";
 import { getRequestIp, hashContactIp } from "@/lib/contact/request-meta";
 import { sendContactNotificationEmail } from "@/lib/contact/send-email";
-import { getContactEnv } from "@/lib/env";
+import { getContactEnv, getPublicEnv } from "@/lib/env";
+import { isTrustedSiteRequest } from "@/lib/security/request-origin";
 import { contactFormSchema } from "@/lib/validators/contact";
 
 export async function POST(request: Request) {
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("application/json")) {
+    return NextResponse.json(
+      { error: "Content-Type must be application/json." },
+      { status: 415 },
+    );
+  }
+
+  if (!isTrustedSiteRequest(request, getPublicEnv().NEXT_PUBLIC_SITE_URL)) {
+    return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+  }
+
   let body: unknown;
 
   try {

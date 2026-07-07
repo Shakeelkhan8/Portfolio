@@ -1,6 +1,10 @@
 import { createServiceClient } from "@/lib/supabase/admin";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { getServerEnv, isSupabaseConfigured } from "@/lib/env";
+import {
+  CONTACT_RATE_LIMIT_WINDOW_MS,
+  isContactRateLimitExceeded,
+} from "@/lib/contact/rate-limit";
 import type { ContactFormInput } from "@/lib/validators/contact";
 
 type PersistContactSubmissionInput = ContactFormInput & {
@@ -8,8 +12,7 @@ type PersistContactSubmissionInput = ContactFormInput & {
   userAgent: string | null;
 };
 
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = CONTACT_RATE_LIMIT_WINDOW_MS;
 
 async function isRateLimited(ipHash: string | null) {
   if (!ipHash || !getServerEnv().SUPABASE_SERVICE_ROLE_KEY) {
@@ -29,7 +32,7 @@ async function isRateLimited(ipHash: string | null) {
     return false;
   }
 
-  return (count ?? 0) >= RATE_LIMIT_MAX;
+  return isContactRateLimitExceeded(count ?? 0);
 }
 
 export async function persistContactSubmission({

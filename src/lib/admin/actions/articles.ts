@@ -2,6 +2,7 @@
 
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { revalidateAfterArticleChange } from "@/lib/db/revalidate";
+import { sanitizeRichHtml } from "@/lib/security/sanitize";
 import { estimateReadingTimeMinutes } from "@/lib/utils/reading-time";
 import {
   articleSchema,
@@ -79,15 +80,16 @@ export async function upsertArticleAction(
       ? formData.get("previousSlug")?.toString()
       : undefined;
   const tags = parseArticleTags(formData.get("tags")?.toString());
+  const sanitizedContentHtml = sanitizeRichHtml(parsed.data.contentHtml);
   const readingTimeMinutes =
     parsed.data.readingTimeMinutes ??
-    estimateReadingTimeMinutes(parsed.data.contentHtml);
+    estimateReadingTimeMinutes(sanitizedContentHtml);
 
   const basePayload = {
     slug: parsed.data.slug,
     title: parsed.data.title,
     excerpt: parsed.data.excerpt,
-    content_html: parsed.data.contentHtml,
+    content_html: sanitizedContentHtml,
     status: parsed.data.status,
     reading_time_minutes: readingTimeMinutes,
     meta_title: parsed.data.metaTitle || null,

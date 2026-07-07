@@ -17,6 +17,7 @@ import {
   getArticleSlugs,
 } from "@/lib/content";
 import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
+import { sanitizeRichHtml } from "@/lib/security/sanitize";
 import {
   getArticleSchema,
   getBreadcrumbSchema,
@@ -109,7 +110,9 @@ export default async function ArticlePage({ params }: PageProps) {
           <FadeIn delay={0.1}>
             {article.content ? (
               <Prose
-                dangerouslySetInnerHTML={{ __html: article.content }}
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeRichHtml(article.content),
+                }}
               />
             ) : (
               <Prose>
