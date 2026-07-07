@@ -34,6 +34,7 @@ export function mapProject(
     lessons: string[];
     futureImprovements: string[];
   },
+  thumbnailUrl?: string | null,
 ): Project {
   return {
     slug: row.slug,
@@ -56,6 +57,7 @@ export function mapProject(
     futureImprovements: relations.futureImprovements.length
       ? relations.futureImprovements
       : undefined,
+    thumbnailUrl: thumbnailUrl ?? null,
   };
 }
 

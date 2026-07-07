@@ -56,7 +56,11 @@ export function ContactForm() {
 
   if (state === "success") {
     return (
-      <div className="rounded-xl border border-success/30 bg-success-muted/30 p-8 text-center">
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-xl border border-success/30 bg-success-muted/30 p-8 text-center"
+      >
         <Text className="font-medium text-foreground">
           Message sent successfully.
         </Text>
@@ -120,7 +124,11 @@ export function ContactForm() {
       </div>
 
       {state === "error" ? (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-lg border border-destructive/30 bg-destructive/5 p-4"
+        >
           <Text size="sm" className="text-destructive">
             {errorMessage}
           </Text>

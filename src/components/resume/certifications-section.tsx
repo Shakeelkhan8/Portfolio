@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { Text } from "@/components/typography/text";
 import { formatMonthYear } from "@/lib/formatters";
@@ -20,21 +21,32 @@ export function CertificationsSection({
       <ul className="space-y-3">
         {certifications.map((cert) => (
           <li key={cert.id} className="flex items-start justify-between gap-4">
-            <div>
-              <Text size="sm" className="font-medium">
-                {cert.name}
-              </Text>
-              <Text size="sm" muted>
-                {cert.issuer}
-                {cert.issueDate
-                  ? ` · ${formatMonthYear(cert.issueDate)}`
-                  : ""}
-              </Text>
-              {cert.credentialId ? (
-                <Text size="xs" muted>
-                  ID: {cert.credentialId}
-                </Text>
+            <div className="flex items-start gap-3">
+              {cert.imageUrl ? (
+                <Image
+                  src={cert.imageUrl}
+                  alt={`${cert.name} badge`}
+                  width={40}
+                  height={40}
+                  className="size-10 shrink-0 rounded-md object-contain"
+                />
               ) : null}
+              <div>
+                <Text size="sm" className="font-medium">
+                  {cert.name}
+                </Text>
+                <Text size="sm" muted>
+                  {cert.issuer}
+                  {cert.issueDate
+                    ? ` · ${formatMonthYear(cert.issueDate)}`
+                    : ""}
+                </Text>
+                {cert.credentialId ? (
+                  <Text size="xs" muted>
+                    ID: {cert.credentialId}
+                  </Text>
+                ) : null}
+              </div>
             </div>
             {cert.verificationUrl ? (
               <a

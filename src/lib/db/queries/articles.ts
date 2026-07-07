@@ -151,6 +151,16 @@ export async function getArticleSlugs(): Promise<string[]> {
   return articles.map((article) => article.slug);
 }
 
+export async function getArticleSitemapEntries(): Promise<
+  Array<{ slug: string; lastModified: Date }>
+> {
+  const articles = await getArticles();
+  return articles.map((article) => ({
+    slug: article.slug,
+    lastModified: new Date(article.date),
+  }));
+}
+
 export async function getArticleDetailBySlug(
   slug: string,
 ): Promise<ArticleDetail | undefined> {

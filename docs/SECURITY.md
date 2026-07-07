@@ -46,8 +46,32 @@ Applied globally via `next.config.ts`:
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Permissions-Policy` (camera/microphone/geolocation disabled)
 - `Strict-Transport-Security` (preload-ready max-age)
+- `Content-Security-Policy` (production only)
 
-A strict Content-Security-Policy is not enabled by default because CMS-configured analytics (Plausible, GA4) and custom scripts require runtime flexibility. If you remove custom scripts, consider adding a tailored CSP.
+### Content-Security-Policy
+
+The CSP is defined in `src/lib/security/headers.ts` and applied only in
+production (dev/HMR needs `'unsafe-eval'`). It intentionally allows
+`'unsafe-inline'` for scripts/styles and `https:` sources because CMS-configured
+analytics (Plausible, GA4), Supabase, Sentry, and admin custom scripts require
+runtime flexibility, and there is no per-request nonce infrastructure.
+
+The meaningful hardening it provides:
+
+- `object-src 'none'` — blocks plugin/embed injection
+- `base-uri 'self'` — blocks `<base>` tag hijacking
+- `frame-ancestors 'self'` — clickjacking protection (aligned with `X-Frame-Options`)
+- `form-action 'self'` — prevents form-target hijacking
+- `upgrade-insecure-requests` — forces HTTPS subresources
+
+CMS-authored HTML is additionally sanitized server-side before render, so the
+`'unsafe-inline'` script allowance is not an XSS vector for stored content.
+
+## Crawl controls
+
+`robots.ts` disallows `/admin` and `/api` for all user agents (even when
+indexing is enabled), so admin login/dashboard routes are never indexed. When
+`seo.defaultRobots` is set to noindex, the entire site is disallowed.
 
 ## Secrets and environment
 

@@ -18,7 +18,7 @@ async function fetchProjectsFromDb(): Promise<Project[] | null> {
   const { data: projects, error } = await supabase
     .from("projects")
     .select(
-      "slug, title, summary, problem, role, context, overview, architecture_text, featured, demo_url, github_url, display_order",
+      "slug, title, summary, problem, role, context, overview, architecture_text, featured, demo_url, github_url, display_order, thumbnail_media_id",
     )
     .eq("status", "published")
     .is("deleted_at", null)
@@ -26,6 +26,23 @@ async function fetchProjectsFromDb(): Promise<Project[] | null> {
 
   if (error || !projects?.length) {
     return null;
+  }
+
+  const thumbnailIds = [
+    ...new Set(
+      projects
+        .map((project) => project.thumbnail_media_id)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+
+  let thumbnailMap = new Map<string, string>();
+  if (thumbnailIds.length) {
+    const { data: media } = await supabase
+      .from("media_files")
+      .select("id, public_url")
+      .in("id", thumbnailIds);
+    thumbnailMap = new Map((media ?? []).map((file) => [file.id, file.public_url]));
   }
 
   const projectIdsResult = await supabase
@@ -113,28 +130,34 @@ async function fetchProjectsFromDb(): Promise<Project[] | null> {
       links.push({ label: "GitHub", href: project.github_url });
     }
 
-    return mapProject(project, {
-      tags: byProject(tagsResult.data, projectId).map((row) => row.tag),
-      stack: byProject(stackResult.data, projectId).map((row) => row.technology),
-      links,
-      metrics: byProject(metricsResult.data, projectId).map((row) => ({
-        label: row.label,
-        value: row.value,
-      })),
-      challenges: byProject(challengesResult.data, projectId).map(
-        (row) => row.text,
-      ),
-      decisions: byProject(decisionsResult.data, projectId).map((row) => ({
-        decision: row.decision,
-        rationale: row.rationale,
-        tradeoff: row.tradeoff,
-      })),
-      results: byProject(resultsResult.data, projectId).map((row) => row.text),
-      lessons: byProject(lessonsResult.data, projectId).map((row) => row.text),
-      futureImprovements: byProject(futureResult.data, projectId).map(
-        (row) => row.text,
-      ),
-    });
+    return mapProject(
+      project,
+      {
+        tags: byProject(tagsResult.data, projectId).map((row) => row.tag),
+        stack: byProject(stackResult.data, projectId).map((row) => row.technology),
+        links,
+        metrics: byProject(metricsResult.data, projectId).map((row) => ({
+          label: row.label,
+          value: row.value,
+        })),
+        challenges: byProject(challengesResult.data, projectId).map(
+          (row) => row.text,
+        ),
+        decisions: byProject(decisionsResult.data, projectId).map((row) => ({
+          decision: row.decision,
+          rationale: row.rationale,
+          tradeoff: row.tradeoff,
+        })),
+        results: byProject(resultsResult.data, projectId).map((row) => row.text),
+        lessons: byProject(lessonsResult.data, projectId).map((row) => row.text),
+        futureImprovements: byProject(futureResult.data, projectId).map(
+          (row) => row.text,
+        ),
+      },
+      project.thumbnail_media_id
+        ? thumbnailMap.get(project.thumbnail_media_id) ?? null
+        : null,
+    );
   });
 }
 
@@ -173,7 +196,7 @@ async function fetchProjectDetailFromDb(
   const { data: project, error } = await supabase
     .from("projects")
     .select(
-      "id, slug, title, summary, problem, role, context, overview, architecture_text, featured, demo_url, github_url, display_order, meta_title, meta_description, canonical_url, robots, og_image_id",
+      "id, slug, title, summary, problem, role, context, overview, architecture_text, featured, demo_url, github_url, display_order, meta_title, meta_description, canonical_url, robots, og_image_id, thumbnail_media_id",
     )
     .eq("slug", slug)
     .eq("status", "published")
@@ -195,6 +218,7 @@ async function fetchProjectDetailFromDb(
     lessonsResult,
     futureResult,
     ogImageResult,
+    thumbnailResult,
   ] = await Promise.all([
     supabase
       .from("project_tags")
@@ -248,6 +272,13 @@ async function fetchProjectDetailFromDb(
           .eq("id", project.og_image_id)
           .maybeSingle()
       : Promise.resolve({ data: null }),
+    project.thumbnail_media_id
+      ? supabase
+          .from("media_files")
+          .select("public_url")
+          .eq("id", project.thumbnail_media_id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
 
   const links = (linksResult.data ?? []).map((link) => ({
@@ -295,6 +326,7 @@ async function fetchProjectDetailFromDb(
       lessons: (lessonsResult.data ?? []).map((row) => row.text),
       futureImprovements: (futureResult.data ?? []).map((row) => row.text),
     },
+    thumbnailResult.data?.public_url ?? null,
   );
 
   return {
@@ -348,6 +380,37 @@ export async function getProjectDetailBySlug(
 export async function getProjectSlugs(): Promise<string[]> {
   const projects = await getProjects();
   return projects.map((project) => project.slug);
+}
+
+export type SitemapEntry = { slug: string; lastModified: Date };
+
+export async function getProjectSitemapEntries(): Promise<SitemapEntry[]> {
+  if (!isSupabaseConfigured()) {
+    return getFallbackProjects().map((project) => ({
+      slug: project.slug,
+      lastModified: new Date(),
+    }));
+  }
+
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("projects")
+      .select("slug, published_at, updated_at")
+      .eq("status", "published")
+      .is("deleted_at", null);
+
+    if (error || !data?.length) {
+      return [];
+    }
+
+    return data.map((row) => ({
+      slug: row.slug,
+      lastModified: new Date(row.updated_at ?? row.published_at ?? Date.now()),
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function getArchitectureDiagram(

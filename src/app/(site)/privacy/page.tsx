@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { Prose } from "@/components/typography/prose";
@@ -28,7 +29,7 @@ export default async function PrivacyPage() {
   const page = await getPageBySlug("privacy");
 
   if (!page?.contentHtml) {
-    return null;
+    notFound();
   }
 
   const lastUpdated = new Date(page.updatedAt).toLocaleDateString("en-US", {

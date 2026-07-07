@@ -1,13 +1,21 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
-import { SECURITY_HEADERS } from "@/lib/security/headers";
+import {
+  CONTENT_SECURITY_POLICY,
+  SECURITY_HEADERS,
+} from "@/lib/security/headers";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
-const securityHeaders = [...SECURITY_HEADERS];
+const securityHeaders = [
+  ...SECURITY_HEADERS,
+  ...(process.env.NODE_ENV === "production"
+    ? [{ key: "Content-Security-Policy", value: CONTENT_SECURITY_POLICY }]
+    : []),
+];
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,

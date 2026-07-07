@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Quote } from "lucide-react";
 import { FadeIn } from "@/components/motion/fade-in";
 import { Text } from "@/components/typography/text";
@@ -6,6 +7,16 @@ import type { TestimonialRecord } from "@/types/cms";
 type TestimonialsSectionProps = {
   testimonials: TestimonialRecord[];
 };
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part.charAt(0))
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
   if (!testimonials.length) {
@@ -23,15 +34,33 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                 {item.content}
               </Text>
             </blockquote>
-            <figcaption className="mt-6 border-t border-border pt-4">
-              <Text size="sm" className="font-medium">
-                {item.authorName}
-              </Text>
-              <Text size="xs" muted>
-                {[item.authorRole, item.authorCompany]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </Text>
+            <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-4">
+              {item.avatarUrl ? (
+                <Image
+                  src={item.avatarUrl}
+                  alt={`${item.authorName} avatar`}
+                  width={40}
+                  height={40}
+                  className="size-10 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground"
+                >
+                  {getInitials(item.authorName)}
+                </span>
+              )}
+              <span className="min-w-0">
+                <Text size="sm" className="font-medium">
+                  {item.authorName}
+                </Text>
+                <Text size="xs" muted>
+                  {[item.authorRole, item.authorCompany]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </Text>
+              </span>
             </figcaption>
           </figure>
         </FadeIn>

@@ -39,6 +39,7 @@ export type Project = {
   results: string[];
   lessons: string[];
   futureImprovements?: string[];
+  thumbnailUrl?: string | null;
 };
 
 export type ExperienceEntry = {

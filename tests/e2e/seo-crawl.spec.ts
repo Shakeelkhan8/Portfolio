@@ -1,13 +1,16 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("SEO and crawl assets", () => {
-  test("robots.txt advertises sitemap", async ({ request }) => {
+  test("robots.txt advertises sitemap and disallows admin", async ({
+    request,
+  }) => {
     const response = await request.get("/robots.txt");
     expect(response.ok()).toBeTruthy();
 
     const body = await response.text();
     expect(body).toContain("Sitemap:");
     expect(body).toContain("/sitemap.xml");
+    expect(body).toContain("Disallow: /admin");
   });
 
   test("sitemap.xml is reachable", async ({ request }) => {

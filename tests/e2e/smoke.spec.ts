@@ -36,7 +36,9 @@ test.describe("Portfolio smoke tests", () => {
 
   test("404 page shows helpful links", async ({ page }) => {
     await page.goto("/does-not-exist");
-    await expect(page.getByText("Page not found")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Page not found" }),
+    ).toBeVisible();
     await expect(page.locator('a[href="/"]', { hasText: "Go Home" })).toBeVisible();
   });
 

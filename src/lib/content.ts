@@ -4,6 +4,7 @@ export {
   getProjectBySlug,
   getProjectDetailBySlug,
   getProjectSlugs,
+  getProjectSitemapEntries,
   getArchitectureDiagram,
 } from "@/lib/db/queries/projects";
 
@@ -13,6 +14,7 @@ export {
   getArticleBySlug,
   getArticleDetailBySlug,
   getArticleSlugs,
+  getArticleSitemapEntries,
 } from "@/lib/db/queries/articles";
 
 export {
