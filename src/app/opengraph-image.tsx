@@ -1,8 +1,10 @@
 import { ImageResponse } from "next/og";
 import { getSiteConfig } from "@/lib/content";
 
-export const runtime = "edge";
-export const alt = "Portfolio Open Graph image";
+// Use the Node.js runtime: the Edge runtime has a 1 MB bundle limit on Vercel,
+// and next/og's ImageResponse (WASM renderer + font handling) exceeds it.
+export const runtime = "nodejs";
+export const alt = `${siteConfig.name} — ${siteConfig.title}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
