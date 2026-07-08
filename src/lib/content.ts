@@ -6,6 +6,7 @@ export {
   getProjectSlugs,
   getProjectSitemapEntries,
   getArchitectureDiagram,
+  getArchitectureDiagramsBySlugs,
 } from "@/lib/db/queries/projects";
 
 export {

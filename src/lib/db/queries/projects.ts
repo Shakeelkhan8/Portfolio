@@ -416,34 +416,69 @@ export async function getProjectSitemapEntries(): Promise<SitemapEntry[]> {
 export async function getArchitectureDiagram(
   slug: string,
 ): Promise<ArchitectureDiagramData | undefined> {
+  const diagrams = await getArchitectureDiagramsBySlugs([slug]);
+  return diagrams[slug];
+}
+
+export async function getArchitectureDiagramsBySlugs(
+  slugs: string[],
+): Promise<Record<string, ArchitectureDiagramData>> {
+  const unique = [...new Set(slugs.filter(Boolean))];
+  if (!unique.length) {
+    return {};
+  }
+
+  const fromFallback = () =>
+    Object.fromEntries(
+      unique.flatMap((slug) => {
+        const diagram = getFallbackArchitectureDiagram(slug);
+        return diagram ? [[slug, diagram] as const] : [];
+      }),
+    );
+
   if (!isSupabaseConfigured()) {
-    return getFallbackArchitectureDiagram(slug);
+    return fromFallback();
   }
 
   try {
     const supabase = createReadClient();
-    const projectResult = await supabase
+    const { data: projects, error: projectsError } = await supabase
       .from("projects")
-      .select("id")
-      .eq("slug", slug)
-      .maybeSingle();
+      .select("id, slug")
+      .in("slug", unique);
 
-    if (!projectResult.data) {
-      return getFallbackArchitectureDiagram(slug);
+    if (projectsError || !projects?.length) {
+      return fromFallback();
     }
 
+    const idToSlug = new Map(projects.map((project) => [project.id, project.slug]));
     const { data, error } = await supabase
       .from("project_architecture_diagrams")
-      .select("title, nodes_json, edges_json")
-      .eq("project_id", projectResult.data.id)
-      .maybeSingle();
+      .select("project_id, title, nodes_json, edges_json")
+      .in("project_id", projects.map((project) => project.id));
 
-    if (error || !data) {
-      return getFallbackArchitectureDiagram(slug);
+    if (error || !data?.length) {
+      return fromFallback();
     }
 
-    return mapArchitectureDiagram(data);
+    const diagrams: Record<string, ArchitectureDiagramData> = {};
+    for (const row of data) {
+      const slug = idToSlug.get(row.project_id);
+      if (!slug) continue;
+      diagrams[slug] = mapArchitectureDiagram(row);
+    }
+
+    for (const slug of unique) {
+      if (!diagrams[slug]) {
+        const fallback = getFallbackArchitectureDiagram(slug);
+        if (fallback) {
+          diagrams[slug] = fallback;
+        }
+      }
+    }
+
+    return diagrams;
   } catch {
-    return getFallbackArchitectureDiagram(slug);
+    return fromFallback();
   }
 }

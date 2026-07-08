@@ -1,14 +1,17 @@
 import Image from "next/image";
 import { ArchitectureDiagramPreview } from "@/components/architecture/architecture-diagram-preview";
 import { Badge } from "@/components/ui/badge";
-import { getArchitectureDiagram } from "@/lib/content";
-import type { Project } from "@/types";
+import type { ArchitectureDiagramData, Project } from "@/types";
 
 type ProjectCardVisualProps = {
   project: Project;
+  diagram?: ArchitectureDiagramData | null;
 };
 
-export async function ProjectCardVisual({ project }: ProjectCardVisualProps) {
+export function ProjectCardVisual({
+  project,
+  diagram,
+}: ProjectCardVisualProps) {
   if (project.thumbnailUrl) {
     return (
       <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-border bg-muted">
@@ -23,7 +26,6 @@ export async function ProjectCardVisual({ project }: ProjectCardVisualProps) {
     );
   }
 
-  const diagram = await getArchitectureDiagram(project.slug);
   if (diagram) {
     return <ArchitectureDiagramPreview diagram={diagram} />;
   }

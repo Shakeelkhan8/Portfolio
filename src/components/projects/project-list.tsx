@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/input";
 import { ProjectCard } from "@/components/projects/project-card";
 import { FadeIn } from "@/components/motion/fade-in";
 import { cn } from "@/lib/utils";
-import type { Project } from "@/types";
+import type { ArchitectureDiagramData, Project } from "@/types";
 
 type ProjectListProps = {
   projects: Project[];
+  diagrams?: Record<string, ArchitectureDiagramData>;
 };
 
-export function ProjectList({ projects }: ProjectListProps) {
+export function ProjectList({ projects, diagrams = {} }: ProjectListProps) {
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
@@ -95,7 +96,10 @@ export function ProjectList({ projects }: ProjectListProps) {
           {filteredProjects.map((project, index) => (
             <li key={project.slug}>
               <FadeIn delay={index * 0.05}>
-                <ProjectCard project={project} />
+                <ProjectCard
+                  project={project}
+                  diagram={diagrams[project.slug] ?? null}
+                />
               </FadeIn>
             </li>
           ))}

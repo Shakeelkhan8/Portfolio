@@ -10,16 +10,17 @@ import {
 } from "@/components/ui/card";
 import { ProjectCardVisual } from "@/components/projects/project-card-visual";
 import { routes } from "@/config/navigation";
-import type { Project } from "@/types";
+import type { ArchitectureDiagramData, Project } from "@/types";
 
 type ProjectCardProps = {
   project: Project;
+  diagram?: ArchitectureDiagramData | null;
 };
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, diagram }: ProjectCardProps) {
   return (
     <Card className="hover-lift group h-full overflow-hidden hover:ring-foreground/15">
-      <ProjectCardVisual project={project} />
+      <ProjectCardVisual project={project} diagram={diagram} />
       <CardHeader>
         <div className="mb-2 flex flex-wrap gap-2">
           {project.tags.map((tag) => (
