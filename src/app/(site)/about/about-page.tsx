@@ -1,3 +1,4 @@
+import { DecisionHighlight } from "@/components/about/decision-highlight";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
@@ -6,7 +7,6 @@ import { FadeIn } from "@/components/motion/fade-in";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   getAboutContent,
   getSiteConfig,
@@ -24,7 +24,7 @@ export default async function AboutPage() {
     <>
       <PageHeader
         title="About"
-        description="Senior backend engineer focused on scalable systems, production SaaS, and engineering excellence."
+        description="Senior backend engineer focused on scalable SaaS systems, APIs, and production ownership."
       >
         <AvailabilityBadge site={site} className="mt-4" />
       </PageHeader>
@@ -41,27 +41,7 @@ export default async function AboutPage() {
         </Container>
       </Section>
 
-      <Section spacing="sm" className="bg-muted/30">
-        <Container>
-          <Heading as="h2" size="lg" className="mb-8">
-            Engineering Philosophy
-          </Heading>
-          <div className="grid gap-4 md:grid-cols-2">
-            {site.philosophy.map((item, index) => (
-              <FadeIn key={item.title} delay={index * 0.05}>
-                <Card className="h-full">
-                  <CardHeader>
-                    <CardTitle className="text-base">{item.title}</CardTitle>
-                    <CardDescription className="leading-relaxed">
-                      {item.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </FadeIn>
-            ))}
-          </div>
-        </Container>
-      </Section>
+      <DecisionHighlight />
 
       <Section spacing="sm">
         <Container>
