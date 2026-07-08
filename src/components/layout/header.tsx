@@ -5,7 +5,6 @@ import { AppLink } from "@/components/shared/app-link";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { NavBar } from "@/components/navigation/nav-bar";
 import { MobileNav } from "@/components/navigation/mobile-nav";
-import { SearchTrigger } from "@/components/search/search-trigger";
 import { Container } from "@/components/layout/container";
 import { routes } from "@/config/navigation";
 import type { NavigationData, SiteConfig } from "@/types/cms";
@@ -50,9 +49,11 @@ export function Header({ site, navigation, className }: HeaderProps) {
         </AppLink>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-          <SearchTrigger />
           <NavBar navigation={navigation} />
-          <div className="mx-0.5 hidden h-5 w-px bg-border md:block" aria-hidden="true" />
+          <div
+            className="mx-0.5 hidden h-5 w-px bg-border md:block"
+            aria-hidden="true"
+          />
           <ThemeToggle />
           <MobileNav site={site} navigation={navigation} />
         </div>

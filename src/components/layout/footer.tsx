@@ -19,7 +19,7 @@ export function Footer({ site, navigation, className }: FooterProps) {
   return (
     <footer role="contentinfo" className={cn("mt-auto border-t border-border", className)}>
       <Container className="py-10">
-        <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="space-y-2">
             <p className="flex items-center gap-2 font-heading text-sm font-semibold text-foreground">
               <span
@@ -33,7 +33,29 @@ export function Footer({ site, navigation, className }: FooterProps) {
             </p>
           </div>
 
-          <SocialLinks navigation={navigation} />
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-10">
+            {navigation.utilityNav.length > 0 ? (
+              <nav aria-label="More site links" className="flex flex-col gap-2">
+                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  More
+                </p>
+                <div className="flex flex-col gap-2 text-sm">
+                  {navigation.utilityNav.map((item) => (
+                    <AppLink
+                      key={item.href}
+                      href={item.href}
+                      external={item.external}
+                      showExternalIcon={false}
+                      className="rounded-sm text-foreground transition-colors hover:text-primary"
+                    >
+                      {item.title}
+                    </AppLink>
+                  ))}
+                </div>
+              </nav>
+            ) : null}
+            <SocialLinks navigation={navigation} />
+          </div>
         </div>
 
         <Separator className="my-8" />

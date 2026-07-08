@@ -16,14 +16,6 @@ export function NavBar({ navigation, className }: NavBarProps) {
       {navigation.mainNav.map((item) => (
         <NavLink key={item.href} item={item} />
       ))}
-      <span className="hidden h-4 w-px bg-border lg:block" aria-hidden="true" />
-      {navigation.utilityNav.map((item) => (
-        <NavLink
-          key={item.href}
-          item={item}
-          className="hidden text-muted-foreground lg:inline-flex"
-        />
-      ))}
     </nav>
   );
 }

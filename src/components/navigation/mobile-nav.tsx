@@ -40,19 +40,33 @@ export function MobileNav({ site, navigation }: MobileNavProps) {
         <SheetHeader>
           <SheetTitle>{site.name}</SheetTitle>
         </SheetHeader>
-        <nav
-          aria-label="Mobile navigation"
-          className="mt-4 flex flex-1 flex-col gap-1 overflow-y-auto px-4"
-        >
-          {[...navigation.mainNav, ...navigation.utilityNav].map((item) => (
-            <NavLink
-              key={item.href}
-              item={item}
-              className="block rounded-md px-3 py-2.5 text-lg after:hidden hover:bg-muted"
-              onClick={() => setOpen(false)}
-            />
-          ))}
-        </nav>
+        <div className="mt-4 flex flex-1 flex-col gap-8 overflow-y-auto px-4">
+          <nav aria-label="Mobile navigation" className="flex flex-col gap-1">
+            {navigation.mainNav.map((item) => (
+              <NavLink
+                key={item.href}
+                item={item}
+                className="block rounded-md px-3 py-2.5 text-lg after:hidden hover:bg-muted"
+                onClick={() => setOpen(false)}
+              />
+            ))}
+          </nav>
+          {navigation.utilityNav.length > 0 ? (
+            <nav aria-label="More site links" className="flex flex-col gap-1">
+              <p className="px-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                More
+              </p>
+              {navigation.utilityNav.map((item) => (
+                <NavLink
+                  key={item.href}
+                  item={item}
+                  className="block rounded-md px-3 py-2.5 text-base text-muted-foreground after:hidden hover:bg-muted hover:text-foreground"
+                  onClick={() => setOpen(false)}
+                />
+              ))}
+            </nav>
+          ) : null}
+        </div>
         <div className="mt-auto border-t border-border px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           <SocialLinks navigation={navigation} />
         </div>

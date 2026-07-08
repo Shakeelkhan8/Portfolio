@@ -28,9 +28,9 @@ test.describe("Portfolio smoke tests", () => {
     await expect(page.getByText("Dispatch Management SaaS")).toBeVisible();
   });
 
-  test("command palette opens from search button", async ({ page }) => {
+  test("command palette opens with keyboard shortcut", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Open search" }).click();
+    await page.keyboard.press("ControlOrMeta+KeyK");
     await expect(page.getByPlaceholder("Search portfolio...")).toBeVisible();
   });
 
