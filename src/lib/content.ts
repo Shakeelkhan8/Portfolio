@@ -11,6 +11,7 @@ export {
 
 export {
   getArticles,
+  getFeaturedArticles,
   getArticleBySlug,
   getArticleDetailBySlug,
   getArticleSlugs,
@@ -38,6 +39,7 @@ export {
   getSiteConfig,
   getHomeContent,
   getSectionHeader,
+  getCtaSection,
 } from "@/lib/db/queries/site";
 export { getNavigation } from "@/lib/db/queries/navigation";
 export {
@@ -55,5 +57,8 @@ export {
 export { getPageBySlug, getPublishedPages } from "@/lib/db/queries/pages";
 export {
   getCertifications,
+  getTestimonials,
+  getFeaturedTestimonials,
+  getServices,
   getActiveResumeVersion,
 } from "@/lib/db/queries/cms-modules";
