@@ -5,10 +5,17 @@ import type { Project } from "@/types";
 
 type ProjectPreviewGridProps = {
   projects?: Project[];
+  limit?: number;
 };
 
-export async function ProjectPreviewGrid({ projects }: ProjectPreviewGridProps) {
-  const items = projects ?? (await getFeaturedProjects());
+export async function ProjectPreviewGrid({
+  projects,
+  limit,
+}: ProjectPreviewGridProps) {
+  const items = (projects ?? (await getFeaturedProjects())).slice(
+    0,
+    limit ?? undefined,
+  );
 
   return (
     <div className="grid gap-6 md:grid-cols-2">

@@ -1,12 +1,16 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Phase 9 CMS surfaces", () => {
-  test("home page shows services section", async ({ page }) => {
+  test("home page shows featured projects and experience", async ({ page }) => {
     await page.goto("/");
-    const servicesSection = page.locator("section").filter({
-      has: page.getByRole("heading", { name: "Services" }),
-    });
-    await expect(servicesSection.getByText("Backend Architecture")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Selected Projects" }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
+    await page
+      .getByRole("link", { name: /Dispatch Management SaaS/i })
+      .scrollIntoViewIfNeeded();
+    await expect(page.getByText("Dispatch Management SaaS")).toBeVisible();
   });
 
   test("resume page renders", async ({ page }) => {
