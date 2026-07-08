@@ -31,11 +31,6 @@ export function getWebSiteSchema(site: SiteConfig) {
       "@type": "Person",
       name: site.name,
     },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${site.url}${routes.projects}?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 

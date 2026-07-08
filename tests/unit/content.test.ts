@@ -81,10 +81,10 @@ describe("structured data", () => {
     expect(schema.name).toBeTruthy();
   });
 
-  it("generates website schema with search action", () => {
+  it("generates website schema without invalid SearchAction", () => {
     const schema = getWebSiteSchema(site);
     expect(schema["@type"]).toBe("WebSite");
-    expect(schema.potentialAction).toBeTruthy();
+    expect(schema).not.toHaveProperty("potentialAction");
   });
 
   it("generates breadcrumb list", () => {

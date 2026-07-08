@@ -9,6 +9,8 @@ export type MetadataContext = {
   seo: SeoDefaultsRecord;
 };
 
+const DEFAULT_SOCIAL_IMAGE = "/opengraph-image";
+
 export async function getMetadataContext(): Promise<MetadataContext> {
   const [site, seo] = await Promise.all([getSiteConfig(), getSeoDefaults()]);
   return { site, seo };
@@ -23,13 +25,25 @@ function resolveTwitterCard(
   return "summary_large_image";
 }
 
+/** Prefer page OG image → CMS default → generated `/opengraph-image`. */
+export function resolveSocialImages(
+  ogImage?: string | null,
+  defaultOgImageUrl?: string | null,
+): NonNullable<NonNullable<Metadata["openGraph"]>["images"]> {
+  if (ogImage) {
+    return [{ url: ogImage }];
+  }
+  if (defaultOgImageUrl) {
+    return [{ url: defaultOgImageUrl }];
+  }
+  return [{ url: DEFAULT_SOCIAL_IMAGE }];
+}
+
 export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
   const { site, seo } = ctx;
   const defaultTitle = seo.defaultTitle || `${site.name} — ${site.title}`;
   const defaultDescription = seo.defaultDescription || site.description;
-  const defaultOgImage = seo.defaultOgImageUrl
-    ? [{ url: seo.defaultOgImageUrl }]
-    : [{ url: "/opengraph-image" }];
+  const socialImages = resolveSocialImages(null, seo.defaultOgImageUrl);
 
   return {
     title: {
@@ -60,13 +74,13 @@ export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
       siteName: site.name,
       title: defaultTitle,
       description: defaultDescription,
-      images: defaultOgImage,
+      images: socialImages,
     },
     twitter: {
       card: resolveTwitterCard(seo.twitterCardType),
       title: defaultTitle,
       description: defaultDescription,
-      images: seo.defaultOgImageUrl ? [seo.defaultOgImageUrl] : undefined,
+      images: socialImages,
     },
     robots:
       parseRobotsDirective(seo.defaultRobots) ??
@@ -112,11 +126,7 @@ export function buildPageMetadata(
   const url = canonicalUrl ?? `${site.url}${path}`;
   const metaDescription =
     description ?? seo.defaultDescription ?? site.description;
-  const openGraphImages = ogImage
-    ? [{ url: ogImage }]
-    : seo.defaultOgImageUrl
-      ? [{ url: seo.defaultOgImageUrl }]
-      : undefined;
+  const socialImages = resolveSocialImages(ogImage, seo.defaultOgImageUrl);
   const parsedRobots = parseRobotsDirective(robots);
 
   return {
@@ -129,13 +139,13 @@ export function buildPageMetadata(
       description: metaDescription,
       url,
       siteName: site.name,
-      images: openGraphImages,
+      images: socialImages,
     },
     twitter: {
       card: resolveTwitterCard(seo.twitterCardType),
       title: `${title} — ${site.name}`,
       description: metaDescription,
-      images: ogImage ? [ogImage] : undefined,
+      images: socialImages,
     },
   };
 }

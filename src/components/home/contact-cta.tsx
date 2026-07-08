@@ -37,6 +37,7 @@ export function ContactCTA({ site }: ContactCTAProps) {
           href={getMailtoHref(site.email)}
           variant="outline"
           size="lg"
+          aria-label={getPublicEmailLabel(site.email)}
         >
           {getPublicEmailLabel(site.email)}
         </ButtonLink>

@@ -1,20 +1,22 @@
 import { AppLink } from "@/components/shared/app-link";
 import { Button } from "@/components/ui/button";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 type ButtonLinkProps = Omit<
   ComponentProps<typeof Button>,
-  "render" | "nativeButton"
+  "render" | "nativeButton" | "children"
 > & {
   href: ComponentProps<typeof AppLink>["href"];
   external?: boolean;
   showExternalIcon?: boolean;
+  children: ReactNode;
 };
 
 export function ButtonLink({
   href,
   external,
   showExternalIcon = false,
+  children,
   ...props
 }: ButtonLinkProps) {
   return (
@@ -28,6 +30,8 @@ export function ButtonLink({
         />
       }
       {...props}
-    />
+    >
+      {children}
+    </Button>
   );
 }
