@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ProjectCardVisual } from "@/components/projects/project-card-visual";
 import { routes } from "@/config/navigation";
 import type { Project } from "@/types";
 
@@ -19,17 +19,7 @@ type ProjectCardProps = {
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Card className="hover-lift group h-full overflow-hidden hover:ring-foreground/15">
-      {project.thumbnailUrl ? (
-        <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-border bg-muted">
-          <Image
-            src={project.thumbnailUrl}
-            alt={`${project.title} thumbnail`}
-            fill
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-      ) : null}
+      <ProjectCardVisual project={project} />
       <CardHeader>
         <div className="mb-2 flex flex-wrap gap-2">
           {project.tags.map((tag) => (

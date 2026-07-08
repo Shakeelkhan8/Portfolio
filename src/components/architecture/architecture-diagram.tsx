@@ -2,19 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import type { ArchitectureDiagramData, DiagramNodeType } from "@/types";
+import type { ArchitectureDiagramData } from "@/types";
 import { cn } from "@/lib/utils";
 import { Text } from "@/components/typography/text";
 
-const nodeStyles: Record<DiagramNodeType, string> = {
-  frontend: "border-blue-500/30 bg-blue-500/5",
-  api: "border-primary/30 bg-primary/5",
-  service: "border-violet-500/30 bg-violet-500/5",
-  database: "border-emerald-500/30 bg-emerald-500/5",
-  cache: "border-amber-500/30 bg-amber-500/5",
-  queue: "border-orange-500/30 bg-orange-500/5",
-  external: "border-border bg-muted/40",
-};
+import { diagramNodeStyles } from "@/lib/architecture/node-styles";
 
 type ArchitectureDiagramProps = {
   diagram: ArchitectureDiagramData;
@@ -78,7 +70,7 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
                         transition={{ duration: 0.2 }}
                         className={cn(
                           "min-w-[9rem] rounded-lg border px-3 py-2.5 text-left text-sm font-medium transition-shadow",
-                          nodeStyles[node.type],
+                          diagramNodeStyles[node.type],
                           isFocused && "shadow-md ring-2 ring-ring/40",
                         )}
                       >
