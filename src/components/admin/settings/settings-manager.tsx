@@ -57,6 +57,9 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="tagline">Tagline</Label>
               <Input id="tagline" name="tagline" defaultValue={settings.site.tagline} required />
+              <p className="text-xs text-muted-foreground">
+                Public role title in the hero and resume header. Keep this aligned with your featured Experience role.
+              </p>
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="description">Description</Label>
@@ -116,6 +119,9 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="resumeSummary">Resume summary</Label>
               <Textarea id="resumeSummary" name="resumeSummary" rows={4} defaultValue={settings.site.resumeSummary} />
+              <p className="text-xs text-muted-foreground">
+                Start with the same public title as Tagline / featured Experience (e.g. Senior Backend Engineer).
+              </p>
             </div>
             <div className="space-y-2 md:col-span-2 border-t border-border pt-4">
               <p className="text-sm font-medium">Maintenance mode</p>

@@ -3,7 +3,7 @@ import type { ExperienceEntry, Education, Accomplishment } from "@/types";
 export const experience: ExperienceEntry[] = [
   {
     id: "elityx",
-    role: "Backend Engineer",
+    role: "Senior Backend Engineer",
     company: "Elityx",
     location: "Islamabad, Pakistan",
     startDate: "2025-11",
@@ -93,4 +93,4 @@ export const accomplishments: Accomplishment[] = [
 ];
 
 export const resumeSummary =
-  "Backend Engineer with 5+ years of experience building production-grade SaaS platforms, enterprise automation systems, and API-driven architectures. Proven ability to reduce operational workload through automation and design systems that scale with business growth.";
+  "Senior Backend Engineer with 5+ years of experience building production-grade SaaS platforms, enterprise automation systems, and API-driven architectures. Proven ability to reduce operational workload through automation and design systems that scale with business growth.";
