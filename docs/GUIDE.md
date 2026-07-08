@@ -199,6 +199,7 @@ value means.
    1. `20260307120000_initial_schema.sql`
    2. `20260307120001_rls_policies.sql`
    3. `20260307120002_storage.sql`
+   4. `20260708120000_harden_contact_submissions.sql`
 
    Paste the contents of each file into a new query and click **Run**. (If you
    use the Supabase CLI instead, `supabase db push` will apply them.)
@@ -277,7 +278,7 @@ for production (see [Section 7](#7-deployment-guide)).
 | `RESEND_API_KEY` | Optional | Enables contact-form email delivery via Resend. |
 | `RESEND_FROM` | Optional | The "from" address, e.g. `"Portfolio <onboarding@resend.dev>"`. |
 | `CONTACT_EMAIL` | Optional | Where contact submissions are emailed. |
-| `CONTACT_IP_SALT` | **Production** | Random string used to hash submitter IPs (privacy). Set a unique value per environment. |
+| `CONTACT_IP_SALT` | **Production** | Random string (≥16 chars) used to hash submitter IPs. Required on Vercel production when Supabase is configured. |
 | `GITHUB_TOKEN` | Optional | A GitHub personal access token to raise API rate limits on `/open-source`. |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Optional | Plausible analytics domain (or configure analytics in admin Settings). |
 | `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_DSN` | Optional | Client / server error monitoring DSN. |
@@ -301,8 +302,10 @@ for production (see [Section 7](#7-deployment-guide)).
 
 ### 4.4 Settings to change before deploying
 
-- [ ] Set `NEXT_PUBLIC_SITE_URL` to your real domain.
-- [ ] Set a strong, unique `CONTACT_IP_SALT`.
+- [ ] Set `NEXT_PUBLIC_SITE_URL` to your real domain (not localhost).
+- [ ] Set `SUPABASE_SERVICE_ROLE_KEY` (required for contact inserts + rate limiting).
+- [ ] Set a strong unique `CONTACT_IP_SALT` (≥16 characters).
+- [ ] Apply `20260708120000_harden_contact_submissions.sql` on production Supabase.
 - [ ] Rotate/confirm `ADMIN_PASSWORD` is strong (you can change it after first login).
 - [ ] Add production Supabase keys (a separate Supabase project for production is recommended).
 - [ ] Configure Resend if you want contact emails.

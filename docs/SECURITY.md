@@ -13,9 +13,9 @@ This document describes the production security controls for the portfolio CMS.
 
 - Row Level Security is enabled on every `public` table (verified in CI).
 - **Public read** — Published/visible content only (e.g. `status = 'published'`, `visible = true`).
-- **Public insert** — Limited to `contact_submissions` for the contact form.
+- **Contact submissions** — No public INSERT. Inserts use the service role from `/api/contact` only (migration `20260708120000_harden_contact_submissions.sql`).
 - **Admin write** — Authenticated admin policies via `is_admin()` for all CMS tables.
-- **Service role** — Used only on the server for seeding, rate limiting, and fallback inserts; never exposed to the client.
+- **Service role** — Used only on the server for seeding, contact inserts, and rate limiting; never exposed to the client.
 
 ## Input validation and XSS
 
@@ -32,10 +32,12 @@ Custom scripts (Settings) are intentionally powerful and admin-only. Only paste 
 
 ## Contact form abuse controls
 
-- **Rate limit** — 5 submissions per hashed IP per hour (requires service role).
+- **No direct DB insert** — Anon clients cannot INSERT into `contact_submissions` (bypassing the API is blocked by RLS).
+- **Rate limit** — 5 submissions per hashed IP per hour. Fail closed: missing service role, DB count errors, or missing IP in production are treated as rate limited.
 - **Honeypot** — Hidden `company` field; bots receive silent success.
 - **Origin check** — Production rejects cross-site POSTs to `/api/contact`.
 - **IP storage** — IPs are hashed with `CONTACT_IP_SALT`; raw IPs are not stored.
+- **Production env gate** — On Vercel production (`VERCEL_ENV=production`), startup asserts `NEXT_PUBLIC_SITE_URL` (non-localhost), `SUPABASE_SERVICE_ROLE_KEY`, and `CONTACT_IP_SALT` (≥16 chars) when Supabase is configured.
 
 ## HTTP security headers
 
@@ -77,10 +79,15 @@ indexing is enabled), so admin login/dashboard routes are never indexed. When
 
 Never commit `.env.local`. Required production secrets:
 
+- `NEXT_PUBLIC_SITE_URL` (canonical production domain, not localhost)
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `CONTACT_IP_SALT` (unique per environment)
+- `CONTACT_IP_SALT` (unique per environment, ≥16 characters)
 - `ADMIN_PASSWORD` (strong, rotated after seed)
 - `RESEND_API_KEY` (if email delivery is enabled)
+
+Optional override for local verification of the production gate:
+
+- `PORTFOLIO_ENFORCE_PRODUCTION_ENV=true`
 
 ## Monitoring
 

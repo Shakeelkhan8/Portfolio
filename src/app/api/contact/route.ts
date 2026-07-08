@@ -55,11 +55,26 @@ export async function POST(request: Request) {
     userAgent,
   });
 
-  if (persistResult.reason === "rate_limited") {
-    return NextResponse.json(
-      { error: "Too many messages sent recently. Please try again later." },
-      { status: 429 },
-    );
+  if (!persistResult.stored) {
+    if (persistResult.reason === "rate_limited") {
+      return NextResponse.json(
+        { error: "Too many messages sent recently. Please try again later." },
+        { status: 429 },
+      );
+    }
+
+    if (
+      persistResult.reason === "service_role_missing" ||
+      persistResult.reason === "supabase_unconfigured"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Contact storage is temporarily unavailable. Please try again later or email directly.",
+        },
+        { status: 503 },
+      );
+    }
   }
 
   const recipientEmail = await resolveContactRecipientEmail();
@@ -82,6 +97,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, deliveredByEmail: true });
   }
 
+  // Best-effort email when DB insert failed for other reasons.
   if (emailResult.sent) {
     return NextResponse.json({ success: true, deliveredByEmail: true });
   }

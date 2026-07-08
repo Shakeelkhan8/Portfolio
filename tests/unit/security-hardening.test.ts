@@ -40,8 +40,19 @@ describe("RLS policy coverage", () => {
 
   it("defines admin write policies for contact submissions", () => {
     const rlsSql = readMigration("20260307120001_rls_policies.sql");
-
-    expect(rlsSql).toContain("contact_submissions_public_insert");
     expect(rlsSql).toContain("contact_submissions_admin_all");
+  });
+
+  it("removes public contact INSERT and indexes ip_hash for rate limiting", () => {
+    const hardenSql = readMigration(
+      "20260708120000_harden_contact_submissions.sql",
+    );
+
+    expect(hardenSql).toContain(
+      "DROP POLICY IF EXISTS contact_submissions_public_insert",
+    );
+    expect(hardenSql).toContain(
+      "contact_submissions_ip_hash_created_at_idx",
+    );
   });
 });

@@ -43,11 +43,11 @@ Copy `.env.example` to `.env.local` and configure:
 | `NEXT_PUBLIC_SITE_URL` | Production | Canonical site URL for metadata, sitemap, and RSS |
 | `NEXT_PUBLIC_SUPABASE_URL` | CMS | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | CMS | Supabase anon/publishable key |
-| `SUPABASE_SERVICE_ROLE_KEY` | CMS/seed | Server-only key for seed, rate limits, fallbacks |
+| `SUPABASE_SERVICE_ROLE_KEY` | CMS / production | Server-only key for seed, contact inserts, and rate limiting |
 | `ADMIN_PASSWORD` | Seed | Initial admin password for `pnpm db:seed` (min 12 chars) |
 | `RESEND_API_KEY` | Optional | Contact form email delivery |
 | `CONTACT_EMAIL` | Optional | Recipient for contact form submissions |
-| `CONTACT_IP_SALT` | Production | Salt for hashing contact submission IPs |
+| `CONTACT_IP_SALT` | Production | Salt for hashing contact IPs (≥16 chars on Vercel production) |
 | `GITHUB_TOKEN` | Optional | Higher GitHub API rate limits on `/open-source` |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Optional | Plausible analytics (or configure in admin Settings) |
 | `NEXT_PUBLIC_SENTRY_DSN` | Optional | Client-side error monitoring |

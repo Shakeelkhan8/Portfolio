@@ -20,6 +20,8 @@ const serverEnvSchema = z.object({
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 
+const DEV_ONLY_CONTACT_IP_SALT = "dev-only-contact-ip-salt-not-for-production";
+
 let cachedPublicEnv: PublicEnv | null = null;
 let cachedServerEnv: ServerEnv | null = null;
 
@@ -27,6 +29,30 @@ let cachedServerEnv: ServerEnv | null = null;
 export function resetEnvCacheForTests() {
   cachedPublicEnv = null;
   cachedServerEnv = null;
+}
+
+/**
+ * Enforce stricter contact/CMS env on real Vercel production, or when explicitly opted in.
+ * Avoids breaking `next build` in CI (NODE_ENV=production without Vercel production env).
+ */
+export function shouldEnforceProductionSecurityEnv(): boolean {
+  return (
+    process.env.VERCEL_ENV === "production" ||
+    process.env.PORTFOLIO_ENFORCE_PRODUCTION_ENV === "true"
+  );
+}
+
+function isLocalhostSiteUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1"
+    );
+  } catch {
+    return true;
+  }
 }
 
 export function getPublicEnv(): PublicEnv {
@@ -124,6 +150,21 @@ export function isSupabaseConfigured(): boolean {
   );
 }
 
+export function getContactIpSalt(): string {
+  const salt = getServerEnv().CONTACT_IP_SALT;
+  if (salt) {
+    return salt;
+  }
+
+  if (shouldEnforceProductionSecurityEnv()) {
+    throw new Error(
+      "CONTACT_IP_SALT is required in production. Set a unique random string (16+ chars).",
+    );
+  }
+
+  return DEV_ONLY_CONTACT_IP_SALT;
+}
+
 export function getContactEnv() {
   const serverEnv = getServerEnv();
   return {
@@ -131,6 +172,48 @@ export function getContactEnv() {
     resendFrom:
       serverEnv.RESEND_FROM ?? "Portfolio Contact <onboarding@resend.dev>",
     contactEmail: serverEnv.CONTACT_EMAIL,
-    ipSalt: serverEnv.CONTACT_IP_SALT ?? "portfolio-contact-default-salt",
+    ipSalt: getContactIpSalt(),
   };
+}
+
+/**
+ * Validates production security env. Throws if enforced production is misconfigured.
+ * Call from Node runtime instrumentation only.
+ */
+export function assertProductionSecurityEnv(): void {
+  if (!shouldEnforceProductionSecurityEnv()) {
+    return;
+  }
+
+  const errors: string[] = [];
+  const publicEnv = getPublicEnv();
+  const serverEnv = getServerEnv();
+
+  if (!process.env.NEXT_PUBLIC_SITE_URL) {
+    errors.push("NEXT_PUBLIC_SITE_URL must be set explicitly in production.");
+  } else if (isLocalhostSiteUrl(publicEnv.NEXT_PUBLIC_SITE_URL)) {
+    errors.push(
+      "NEXT_PUBLIC_SITE_URL must not point at localhost in production.",
+    );
+  }
+
+  if (isSupabaseConfigured()) {
+    if (!serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+      errors.push(
+        "SUPABASE_SERVICE_ROLE_KEY is required when Supabase is configured (contact rate limiting and inserts).",
+      );
+    }
+
+    if (!serverEnv.CONTACT_IP_SALT || serverEnv.CONTACT_IP_SALT.length < 16) {
+      errors.push(
+        "CONTACT_IP_SALT must be set to a unique random string of at least 16 characters.",
+      );
+    }
+  }
+
+  if (errors.length) {
+    throw new Error(
+      `Production security env check failed:\n- ${errors.join("\n- ")}`,
+    );
+  }
 }

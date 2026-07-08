@@ -1,6 +1,9 @@
 import { createServiceClient } from "@/lib/supabase/admin";
-import { createPublicSupabaseClient } from "@/lib/supabase/public";
-import { getServerEnv, isSupabaseConfigured } from "@/lib/env";
+import {
+  getServerEnv,
+  isSupabaseConfigured,
+  shouldEnforceProductionSecurityEnv,
+} from "@/lib/env";
 import {
   CONTACT_RATE_LIMIT_WINDOW_MS,
   isContactRateLimitExceeded,
@@ -12,27 +15,57 @@ type PersistContactSubmissionInput = ContactFormInput & {
   userAgent: string | null;
 };
 
+export type PersistContactResult =
+  | { stored: true; id: string }
+  | {
+      stored: false;
+      reason:
+        | "supabase_unconfigured"
+        | "service_role_missing"
+        | "rate_limited"
+        | "insert_failed";
+      error?: string;
+    };
+
 const RATE_LIMIT_WINDOW_MS = CONTACT_RATE_LIMIT_WINDOW_MS;
 
-async function isRateLimited(ipHash: string | null) {
-  if (!ipHash || !getServerEnv().SUPABASE_SERVICE_ROLE_KEY) {
-    return false;
+/**
+ * Fail closed: if we cannot attribute or count submissions safely, treat as limited.
+ * Missing IP is allowed only outside enforced production so local/dev still works.
+ */
+export function shouldFailClosedForMissingIp(
+  enforceProduction = shouldEnforceProductionSecurityEnv(),
+): boolean {
+  return enforceProduction;
+}
+
+async function isRateLimited(ipHash: string | null): Promise<boolean> {
+  if (!getServerEnv().SUPABASE_SERVICE_ROLE_KEY) {
+    return true;
   }
 
-  const supabase = createServiceClient();
-  const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
-
-  const { count, error } = await supabase
-    .from("contact_submissions")
-    .select("id", { count: "exact", head: true })
-    .eq("ip_hash", ipHash)
-    .gte("created_at", since);
-
-  if (error) {
-    return false;
+  if (!ipHash) {
+    return shouldFailClosedForMissingIp();
   }
 
-  return isContactRateLimitExceeded(count ?? 0);
+  try {
+    const supabase = createServiceClient();
+    const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+
+    const { count, error } = await supabase
+      .from("contact_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("ip_hash", ipHash)
+      .gte("created_at", since);
+
+    if (error) {
+      return true;
+    }
+
+    return isContactRateLimitExceeded(count ?? 0);
+  } catch {
+    return true;
+  }
 }
 
 export async function persistContactSubmission({
@@ -41,13 +74,17 @@ export async function persistContactSubmission({
   message,
   ipHash,
   userAgent,
-}: PersistContactSubmissionInput) {
+}: PersistContactSubmissionInput): Promise<PersistContactResult> {
   if (!isSupabaseConfigured()) {
-    return { stored: false as const, reason: "supabase_unconfigured" as const };
+    return { stored: false, reason: "supabase_unconfigured" };
+  }
+
+  if (!getServerEnv().SUPABASE_SERVICE_ROLE_KEY) {
+    return { stored: false, reason: "service_role_missing" };
   }
 
   if (await isRateLimited(ipHash)) {
-    return { stored: false as const, reason: "rate_limited" as const };
+    return { stored: false, reason: "rate_limited" };
   }
 
   const payload = {
@@ -59,39 +96,28 @@ export async function persistContactSubmission({
     user_agent: userAgent,
   };
 
-  const publicClient = createPublicSupabaseClient();
-  const publicInsert = await publicClient
-    .from("contact_submissions")
-    .insert(payload)
-    .select("id")
-    .single();
+  try {
+    const serviceClient = createServiceClient();
+    const { data, error } = await serviceClient
+      .from("contact_submissions")
+      .insert(payload)
+      .select("id")
+      .single();
 
-  if (!publicInsert.error && publicInsert.data) {
-    return { stored: true as const, id: publicInsert.data.id };
-  }
+    if (error || !data) {
+      return {
+        stored: false,
+        reason: "insert_failed",
+        error: error?.message,
+      };
+    }
 
-  if (!getServerEnv().SUPABASE_SERVICE_ROLE_KEY) {
+    return { stored: true, id: data.id };
+  } catch (error) {
     return {
-      stored: false as const,
-      reason: "insert_failed" as const,
-      error: publicInsert.error?.message,
+      stored: false,
+      reason: "insert_failed",
+      error: error instanceof Error ? error.message : "Unknown insert error",
     };
   }
-
-  const serviceClient = createServiceClient();
-  const serviceInsert = await serviceClient
-    .from("contact_submissions")
-    .insert(payload)
-    .select("id")
-    .single();
-
-  if (serviceInsert.error || !serviceInsert.data) {
-    return {
-      stored: false as const,
-      reason: "insert_failed" as const,
-      error: serviceInsert.error?.message,
-    };
-  }
-
-  return { stored: true as const, id: serviceInsert.data.id };
 }
