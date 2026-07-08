@@ -3,20 +3,16 @@ import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { ContactForm } from "@/components/contact/contact-form";
-import { ServicesSection } from "@/components/home/services-section";
-import { SectionHeader } from "@/components/layout/section-header";
 import { Text } from "@/components/typography/text";
-import { getServices, getSiteConfig } from "@/lib/content";
+import { getMailtoHref } from "@/lib/contact/email-display";
+import { getSiteConfig } from "@/lib/content";
 
 export default async function ContactPage() {
-  const [site, services] = await Promise.all([getSiteConfig(), getServices()]);
+  const site = await getSiteConfig();
 
   return (
     <>
-      <PageHeader
-        title="Contact"
-        description={site.availability.message}
-      >
+      <PageHeader title="Contact" description={site.availability.message}>
         <AvailabilityBadge site={site} className="mt-4" />
       </PageHeader>
       <Section spacing="sm" className="border-t border-border pt-0">
@@ -24,14 +20,14 @@ export default async function ContactPage() {
           <div className="lg:col-span-3">
             <ContactForm />
           </div>
-          <div className="space-y-6 lg:col-span-2">
+          <aside className="space-y-6 lg:col-span-2" aria-label="Contact details">
             <div>
               <Text size="sm" className="mb-1 font-medium">
                 Email
               </Text>
               <Text size="sm" muted>
                 <a
-                  href={`mailto:${site.email}`}
+                  href={getMailtoHref(site.email)}
                   className="text-primary hover:underline"
                 >
                   {site.email}
@@ -54,22 +50,9 @@ export default async function ContactPage() {
                 {site.responseTimeText}
               </Text>
             </div>
-          </div>
+          </aside>
         </Container>
       </Section>
-
-      {services.length > 0 ? (
-        <Section spacing="sm" className="border-t border-border bg-muted/30">
-          <Container>
-            <SectionHeader
-              title="Services"
-              description="Areas where I can contribute on contract or consulting engagements."
-              align="center"
-            />
-            <ServicesSection services={services} />
-          </Container>
-        </Section>
-      ) : null}
     </>
   );
 }

@@ -72,3 +72,36 @@ export function GitHubProfileCard({ profile }: GitHubProfileCardProps) {
     </div>
   );
 }
+
+type GitHubProfileFallbackProps = {
+  username: string;
+  githubUrl: string;
+  liveStatsUnavailable?: boolean;
+};
+
+export function GitHubProfileFallback({
+  username,
+  githubUrl,
+  liveStatsUnavailable = false,
+}: GitHubProfileFallbackProps) {
+  return (
+    <div className="rounded-xl border border-border bg-surface p-6">
+      <div className="mb-1 flex items-center gap-2">
+        <GitHubIcon className="size-4" />
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium hover:text-primary"
+        >
+          @{username}
+        </a>
+      </div>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {liveStatsUnavailable
+          ? "Live GitHub stats are temporarily unavailable. Selected repositories are shown below, or view the full profile on GitHub."
+          : "View public repositories and activity on GitHub."}
+      </p>
+    </div>
+  );
+}

@@ -3,22 +3,18 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
-import { FadeIn } from "@/components/motion/fade-in";
 import {
   GitHubProfileCard,
+  GitHubProfileFallback,
   GitHubStats,
 } from "@/components/github/github-stats";
 import { RepoCard } from "@/components/github/repo-card";
 import { ButtonLink } from "@/components/shared/button-link";
+import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
 import { getCuratedRepos, getGitHubSettings, getSiteConfig } from "@/lib/content";
-import {
-  applyCuratedRepos,
-  getMissingPinnedRepos,
-} from "@/lib/github/apply-curation";
+import { resolveOpenSourcePageData } from "@/lib/github/resolve-open-source";
 import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
-import { getGitHubData, getGitHubRepo } from "@/services/github";
-import type { GitHubProfile, GitHubRepo } from "@/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getMetadataContext();
@@ -36,34 +32,16 @@ export default async function OpenSourcePage() {
     getCuratedRepos(),
   ]);
 
-  let profile: GitHubProfile | null = null;
-  let repos: GitHubRepo[] = [];
+  const { profile, repos, liveStatsUnavailable } =
+    await resolveOpenSourcePageData(
+      githubSettings.username,
+      githubSettings.showLiveStats,
+      curatedRepos,
+    );
 
-  if (githubSettings.showLiveStats) {
-    try {
-      const data = await getGitHubData(githubSettings.username);
-      profile = data.profile;
-
-      let allRepos = data.repos;
-      const missingPinned = getMissingPinnedRepos(data.repos, curatedRepos);
-      if (missingPinned.length) {
-        const extraRepos = await Promise.all(
-          missingPinned.map((fullName) => getGitHubRepo(fullName)),
-        );
-        const validExtra = extraRepos.filter(
-          (repo): repo is GitHubRepo => repo !== null,
-        );
-        allRepos = [...data.repos, ...validExtra];
-      }
-
-      repos = applyCuratedRepos(allRepos, curatedRepos);
-    } catch {
-      profile = null;
-      repos = [];
-    }
-  }
-
-  const githubUrl = site.links.github || `https://github.com/${githubSettings.username}`;
+  const githubUrl =
+    site.links.github || `https://github.com/${githubSettings.username}`;
+  const hasContent = Boolean(profile) || repos.length > 0;
 
   return (
     <>
@@ -72,21 +50,51 @@ export default async function OpenSourcePage() {
         description="Selected repositories and public GitHub activity."
       />
       <Section spacing="sm" className="border-t border-border pt-0">
-        <Container>
-          {profile ? (
-            <FadeIn className="space-y-10">
-              <GitHubProfileCard profile={profile} />
-              <GitHubStats profile={profile} />
-              <div className="grid gap-4 sm:grid-cols-2">
-                {repos.map((repo) => (
-                  <RepoCard key={repo.id} repo={repo} />
-                ))}
-              </div>
-            </FadeIn>
+        <Container className="space-y-10">
+          {hasContent ? (
+            <>
+              {profile ? (
+                <>
+                  <GitHubProfileCard profile={profile} />
+                  <GitHubStats profile={profile} />
+                </>
+              ) : (
+                <GitHubProfileFallback
+                  username={githubSettings.username}
+                  githubUrl={githubUrl}
+                  liveStatsUnavailable={liveStatsUnavailable}
+                />
+              )}
+
+              {liveStatsUnavailable && profile ? (
+                <Text size="sm" muted>
+                  Repository details below may be limited while live GitHub data
+                  is unavailable.
+                </Text>
+              ) : null}
+
+              {repos.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {repos.map((repo) => (
+                    <RepoCard key={repo.id} repo={repo} />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState
+                  title="No repositories selected"
+                  description="Curated repositories will appear here once configured in the admin panel."
+                  action={
+                    <ButtonLink href={githubUrl} external>
+                      Browse GitHub profile
+                    </ButtonLink>
+                  }
+                />
+              )}
+            </>
           ) : (
             <EmptyState
-              title="GitHub stats unavailable"
-              description="Live GitHub data could not be loaded right now."
+              title="GitHub activity unavailable"
+              description="Live GitHub data could not be loaded and no curated repositories are configured yet."
               action={
                 <ButtonLink href={githubUrl} external>
                   View GitHub profile

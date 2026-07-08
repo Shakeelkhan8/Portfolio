@@ -352,6 +352,15 @@
     display: none !important;
   }
 
+  /* Full web resume lives in a collapsed <details>; force it open for print. */
+  details summary {
+    display: none !important;
+  }
+
+  details > *:not(summary) {
+    display: block !important;
+  }
+
   body {
     background: white !important;
     color: black !important;

@@ -71,6 +71,9 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" defaultValue={settings.site.email} required />
+              <p className="text-xs text-muted-foreground">
+                Prefer a custom-domain inbox (e.g. hello@yourdomain.com) for public pages. Update Social Links → Email too so footer/header stay in sync. Optional env override: CONTACT_EMAIL for form delivery only.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>

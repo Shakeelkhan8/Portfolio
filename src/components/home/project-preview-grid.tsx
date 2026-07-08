@@ -1,5 +1,4 @@
 import { ProjectCard } from "@/components/projects/project-card";
-import { FadeIn } from "@/components/motion/fade-in";
 import {
   getArchitectureDiagramsBySlugs,
   getFeaturedProjects,
@@ -25,13 +24,12 @@ export async function ProjectPreviewGrid({
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      {items.map((project, index) => (
-        <FadeIn key={project.slug} delay={index * 0.05}>
-          <ProjectCard
-            project={project}
-            diagram={diagrams[project.slug] ?? null}
-          />
-        </FadeIn>
+      {items.map((project) => (
+        <ProjectCard
+          key={project.slug}
+          project={project}
+          diagram={diagrams[project.slug] ?? null}
+        />
       ))}
     </div>
   );

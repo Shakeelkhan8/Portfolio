@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ContentSearch } from "@/components/search/content-search";
 import { useSiteDataSafe } from "@/components/providers/site-data-provider";
 import { formatDate } from "@/lib/formatters";
+import { LIST_SEARCH_MIN_ITEMS } from "@/lib/list-search";
 import { filterSearchIndex } from "@/lib/search-utils";
 import { routes } from "@/config/navigation";
 import type { Article } from "@/types";
@@ -18,9 +19,10 @@ type ArticleListProps = {
 export function ArticleList({ articles }: ArticleListProps) {
   const siteData = useSiteDataSafe();
   const [query, setQuery] = useState("");
+  const showSearch = articles.length >= LIST_SEARCH_MIN_ITEMS;
 
   const filteredArticles = useMemo(() => {
-    if (!query.trim()) return articles;
+    if (!showSearch || !query.trim()) return articles;
 
     const index = siteData?.searchIndex ?? [];
     const matchingSlugs = new Set(
@@ -30,7 +32,7 @@ export function ArticleList({ articles }: ArticleListProps) {
     );
 
     return articles.filter((article) => matchingSlugs.has(article.slug));
-  }, [articles, query, siteData?.searchIndex]);
+  }, [articles, query, showSearch, siteData?.searchIndex]);
 
   if (articles.length === 0) {
     return (
@@ -43,11 +45,13 @@ export function ArticleList({ articles }: ArticleListProps) {
 
   return (
     <div className="space-y-8">
-      <ContentSearch
-        types={["article"]}
-        placeholder="Search articles..."
-        onQueryChange={setQuery}
-      />
+      {showSearch ? (
+        <ContentSearch
+          types={["article"]}
+          placeholder="Search articles..."
+          onQueryChange={setQuery}
+        />
+      ) : null}
 
       {filteredArticles.length === 0 ? (
         <EmptyState

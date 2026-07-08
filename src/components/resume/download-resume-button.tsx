@@ -3,15 +3,20 @@
 import { Download } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { VariantProps } from "class-variance-authority";
 
 type DownloadResumeButtonProps = {
   pdfUrl?: string | null;
   fileName?: string;
-};
+  className?: string;
+} & VariantProps<typeof buttonVariants>;
 
 export function DownloadResumeButton({
   pdfUrl,
   fileName = "resume.pdf",
+  variant = "default",
+  size = "lg",
+  className,
 }: DownloadResumeButtonProps) {
   if (pdfUrl) {
     return (
@@ -20,7 +25,7 @@ export function DownloadResumeButton({
         download={fileName}
         target="_blank"
         rel="noopener noreferrer"
-        className={cn(buttonVariants({ variant: "outline" }))}
+        className={cn(buttonVariants({ variant, size }), className)}
       >
         <Download className="size-4" data-icon="inline-start" />
         Download PDF
@@ -29,9 +34,14 @@ export function DownloadResumeButton({
   }
 
   return (
-    <Button variant="outline" onClick={() => window.print()}>
+    <Button
+      variant={variant}
+      size={size}
+      className={className}
+      onClick={() => window.print()}
+    >
       <Download className="size-4" data-icon="inline-start" />
-      Print resume
+      Print / Save as PDF
     </Button>
   );
 }

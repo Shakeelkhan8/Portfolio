@@ -108,7 +108,7 @@ Manage after setup:
 
 Configured for [Vercel](https://vercel.com). CI runs typecheck, lint, unit tests, build, and Playwright smoke tests on every push/PR.
 
-Set `NEXT_PUBLIC_SITE_URL` to your production domain. For contact email, verify your domain in [Resend](https://resend.com) and configure `RESEND_FROM`.
+Set `NEXT_PUBLIC_SITE_URL` to your production domain. For contact email, prefer a custom-domain address in **Admin → Settings**, verify that domain in [Resend](https://resend.com), and set `RESEND_FROM` (and optionally `CONTACT_EMAIL` for delivery).
 
 ## License
 

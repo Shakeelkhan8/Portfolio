@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "Resume",
     description:
-      "Downloadable resume summary and professional background for Shakeel Khan.",
+      "Download Shakeel Khan’s resume — Senior Backend Engineer focused on production SaaS and APIs.",
     path: routes.resume,
   });
 }

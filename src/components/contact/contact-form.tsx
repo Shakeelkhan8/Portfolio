@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Text } from "@/components/typography/text";
 import { useSiteData } from "@/components/providers/site-data-provider";
+import {
+  getMailtoHref,
+  getPublicEmailLabel,
+} from "@/lib/contact/email-display";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
@@ -141,12 +145,12 @@ export function ContactForm() {
             {errorMessage}
           </Text>
           <Text size="sm" muted className="mt-2">
-            Or email directly at{" "}
+            Or email directly —{" "}
             <a
-              href={`mailto:${site.email}`}
+              href={getMailtoHref(site.email)}
               className="font-medium text-primary hover:underline"
             >
-              {site.email}
+              {getPublicEmailLabel(site.email, { preferAddress: true })}
             </a>
           </Text>
         </div>

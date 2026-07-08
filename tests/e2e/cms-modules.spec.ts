@@ -16,6 +16,11 @@ test.describe("Phase 9 CMS surfaces", () => {
   test("resume page renders", async ({ page }) => {
     await page.goto("/resume");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Resume");
+    await expect(
+      page.getByRole("button", { name: /Download PDF|Print \/ Save as PDF/i })
+        .or(page.getByRole("link", { name: /Download PDF/i })),
+    ).toBeVisible();
+    await expect(page.getByText("View full web resume")).toBeVisible();
   });
 
   test("privacy page remains available at dedicated route", async ({ page }) => {

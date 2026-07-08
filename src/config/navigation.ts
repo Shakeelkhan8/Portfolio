@@ -1,3 +1,5 @@
+import { siteConfig } from "@/config/site";
+import { getMailtoHref } from "@/lib/contact/email-display";
 import type { NavItem } from "@/types";
 
 export const mainNav: NavItem[] = [
@@ -21,17 +23,17 @@ export const footerNav: NavItem[] = [
 export const socialNav: NavItem[] = [
   {
     title: "GitHub",
-    href: "https://github.com/Shakeelkhan8",
+    href: siteConfig.links.github,
     external: true,
   },
   {
     title: "LinkedIn",
-    href: "https://www.linkedin.com/in/shakeel-khan-47888a288/",
+    href: siteConfig.links.linkedin,
     external: true,
   },
   {
     title: "Email",
-    href: "mailto:shakeelkhan4147@gmail.com",
+    href: getMailtoHref(siteConfig.email),
     external: true,
   },
 ];
