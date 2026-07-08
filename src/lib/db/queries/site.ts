@@ -129,10 +129,3 @@ export async function getSectionHeader(pageKey: string, sectionKey: string) {
   );
 }
 
-export async function getCtaSection(key: string) {
-  const home = await getHomeContent();
-  return (
-    home.ctaSections.find((cta) => cta.key === key) ??
-    getFallbackHomeContent().ctaSections.find((cta) => cta.key === key)
-  );
-}

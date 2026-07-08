@@ -14,7 +14,6 @@ import { homeSectionHeaders, ctaSections } from "@/lib/seed/content-data";
 import type {
   AboutContent,
   AchievementRecord,
-  CtaSection,
   EducationRecord,
   ExperienceRecord,
   HomePageContent,
@@ -212,8 +211,4 @@ export function getFallbackSectionHeader(
     (header) =>
       header.pageKey === pageKey && header.sectionKey === sectionKey,
   );
-}
-
-export function getFallbackCta(key: string): CtaSection | undefined {
-  return getFallbackHomeContent().ctaSections.find((cta) => cta.key === key);
 }

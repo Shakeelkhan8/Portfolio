@@ -63,13 +63,6 @@ export const getArticles = unstable_cache(
   { tags: [CACHE_TAGS.articles] },
 );
 
-export async function getFeaturedArticles(limit = 3): Promise<Article[]> {
-  const articles = await getArticles();
-  return articles
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, limit);
-}
-
 export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
   const articles = await getArticles();
   return articles.find((article) => article.slug === slug);
