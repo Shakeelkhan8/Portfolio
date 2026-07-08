@@ -29,7 +29,7 @@ export function MobileNav({ site, navigation }: MobileNavProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="shrink-0 md:hidden"
             aria-label="Open navigation menu"
           >
             <Menu className="size-5" />
@@ -42,18 +42,18 @@ export function MobileNav({ site, navigation }: MobileNavProps) {
         </SheetHeader>
         <nav
           aria-label="Mobile navigation"
-          className="mt-8 flex flex-col gap-4"
+          className="mt-4 flex flex-1 flex-col gap-1 overflow-y-auto px-4"
         >
           {[...navigation.mainNav, ...navigation.utilityNav].map((item) => (
             <NavLink
               key={item.href}
               item={item}
-              className="text-lg"
+              className="block rounded-md px-3 py-2.5 text-lg after:hidden hover:bg-muted"
               onClick={() => setOpen(false)}
             />
           ))}
         </nav>
-        <div className="mt-auto border-t border-border pt-6">
+        <div className="mt-auto border-t border-border px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           <SocialLinks navigation={navigation} />
         </div>
       </SheetContent>

@@ -43,13 +43,13 @@ export function Header({ site, navigation, className }: HeaderProps) {
       <Container className="flex h-16 items-center justify-between gap-4">
         <AppLink
           href={routes.home}
-          className="group -mx-2 flex items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-foreground"
+          className="group -mx-2 flex min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-foreground"
         >
-          <span className="mr-2 inline-block size-2 rounded-full bg-primary transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
-          {site.name}
+          <span className="mr-2 inline-block size-2 shrink-0 rounded-full bg-primary transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
+          <span className="truncate">{site.name}</span>
         </AppLink>
 
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <SearchTrigger />
           <NavBar navigation={navigation} />
           <div className="mx-0.5 hidden h-5 w-px bg-border md:block" aria-hidden="true" />
