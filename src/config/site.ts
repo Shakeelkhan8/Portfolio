@@ -3,7 +3,7 @@ export const siteConfig = {
   legalName: "Muhammad Shakeel",
   title: "Senior Backend Engineer",
   description:
-    "Senior Backend Engineer building scalable systems, multi-tenant SaaS platforms, and production-grade APIs.",
+    "Sole backend owner of a live multi-tenant dispatch platform — 5 companies onboarded, 500+ daily shipments, 80%+ system ownership.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Pakistan",
   city: "Islamabad",

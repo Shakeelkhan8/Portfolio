@@ -61,6 +61,9 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="description">Description</Label>
               <Textarea id="description" name="description" rows={3} defaultValue={settings.site.description} required />
+              <p className="text-xs text-muted-foreground">
+                Shown in the homepage hero below your tagline. Lead with one concrete proof line, not a repeat of your job title.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
