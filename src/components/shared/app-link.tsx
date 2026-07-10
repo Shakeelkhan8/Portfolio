@@ -33,7 +33,7 @@ export function AppLink({
       <a
         href={hrefString}
         className={cn(
-          "inline-flex items-center gap-1.5 transition-colors hover:text-primary",
+          "inline-flex items-center gap-1.5 transition-colors",
           className,
         )}
         target={isMailtoOrTel ? undefined : "_blank"}
@@ -55,7 +55,7 @@ export function AppLink({
   return (
     <NextLink
       href={href}
-      className={cn("transition-colors hover:text-primary", className)}
+      className={cn("transition-colors", className)}
       {...props}
     >
       {children}
