@@ -40,7 +40,7 @@ export default function RootLayout({
       <head>
         <ThemeVariables />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full w-full max-w-full flex-col overflow-x-clip">
         <RootJsonLd />
         <AppProviders>{children}</AppProviders>
         <SiteAnalytics />

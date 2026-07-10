@@ -130,7 +130,7 @@ export function HeroOrb({ className }: HeroOrbProps) {
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const count = mobile ? 920 : 2100;
-      const baseR = Math.min(width, height) * (mobile ? 0.31 : 0.36);
+      const baseR = Math.min(width, height) * (mobile ? 0.27 : 0.36);
       shell = fibonacciSphere(count, baseR);
 
       const moteCount = mobile ? 14 : 28;

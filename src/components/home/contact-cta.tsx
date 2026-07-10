@@ -21,14 +21,14 @@ export function ContactCTA({ site }: ContactCTAProps) {
 
   return (
     <Reveal>
-      <div className="relative isolate overflow-hidden rounded-[1.75rem] border border-border bg-surface px-6 py-16 text-center sm:px-10 sm:py-20">
+      <div className="relative isolate overflow-hidden rounded-[1.75rem] border border-border bg-surface px-5 py-12 text-center sm:px-10 sm:py-20">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-25 [mask-image:radial-gradient(70%_70%_at_50%_0%,#000,transparent)]"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-48 w-[28rem] -translate-x-1/2 rounded-full bg-foreground/[0.04] blur-3xl"
+          className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-48 w-[min(28rem,100%)] -translate-x-1/2 rounded-full bg-foreground/[0.04] blur-3xl"
         />
         <p className="mb-4 font-mono text-[11px] tracking-[0.32em] text-muted-foreground uppercase">
           Contact

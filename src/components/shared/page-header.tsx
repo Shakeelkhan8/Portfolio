@@ -21,10 +21,10 @@ export function PageHeader({
   align = "left",
 }: PageHeaderProps) {
   return (
-    <Container className={cn("relative pt-10 pb-8 sm:pt-16 sm:pb-12 md:pt-24 md:pb-16", className)}>
+    <Container className={cn("relative overflow-x-clip pt-10 pb-8 sm:pt-16 sm:pb-12 md:pt-24 md:pb-16", className)}>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-10 left-0 h-40 w-72 rounded-full bg-foreground/[0.03] blur-3xl"
+        className="pointer-events-none absolute -top-10 left-0 h-40 w-72 max-w-full rounded-full bg-foreground/[0.03] blur-3xl"
       />
       <div
         className={cn(

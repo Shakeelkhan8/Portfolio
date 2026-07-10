@@ -88,6 +88,9 @@
   --site-glass: color-mix(in oklch, var(--background) 78%, transparent);
   --site-glass-border: color-mix(in oklch, var(--foreground) 10%, transparent);
   --header-height: 4.25rem;
+  overflow-x: clip;
+  max-width: 100%;
+  width: 100%;
 }
 
 @theme inline {
@@ -164,6 +167,8 @@
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   body {
@@ -171,6 +176,8 @@
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
     text-wrap: pretty;
     overscroll-behavior-y: none;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   h1,
@@ -355,10 +362,11 @@
   pointer-events: auto;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  grid-auto-columns: minmax(0, 1fr);
   align-items: stretch;
   height: var(--mobile-tab-bar-height);
-  margin-inline: 0.625rem;
+  margin-inline: max(0.5rem, env(safe-area-inset-left, 0px))
+    max(0.5rem, env(safe-area-inset-right, 0px));
   margin-bottom: 0.4rem;
   padding: 0.2rem;
   border-radius: 1.25rem;

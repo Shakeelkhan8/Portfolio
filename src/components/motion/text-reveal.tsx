@@ -76,7 +76,7 @@ export function TextReveal({
       };
 
   return (
-    <Tag className={cn("overflow-hidden", className)}>
+    <Tag className={cn("max-w-full", className)}>
       <span className="sr-only">{text}</span>
       <motion.span
         aria-hidden="true"
@@ -93,9 +93,12 @@ export function TextReveal({
         {parts.map((part, index) => (
           <span
             key={`${part}-${index}`}
-            className="inline-block overflow-hidden align-bottom pb-[0.08em]"
+            className="inline-block max-w-full overflow-hidden align-bottom pb-[0.08em]"
           >
-            <motion.span className="inline-block will-change-transform" variants={wordVariants}>
+            <motion.span
+              className="inline-block max-w-full will-change-transform"
+              variants={wordVariants}
+            >
               {part}
               {mode === "word" && index < parts.length - 1 ? "\u00A0" : null}
             </motion.span>

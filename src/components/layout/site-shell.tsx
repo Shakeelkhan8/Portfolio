@@ -28,7 +28,7 @@ export function SiteShell({
 }: SiteShellProps) {
   return (
     <SoundProvider>
-      <div className="site-shell relative flex min-h-full flex-1 flex-col pb-[calc(var(--mobile-tab-bar-height)+env(safe-area-inset-bottom))] md:pb-0">
+      <div className="site-shell relative flex min-h-full w-full max-w-full flex-1 flex-col overflow-x-clip pb-[calc(var(--mobile-tab-bar-height)+env(safe-area-inset-bottom))] md:pb-0">
         <AmbientBackground />
         <CursorGlow />
         <ScrollProgress />

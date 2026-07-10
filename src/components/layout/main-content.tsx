@@ -7,7 +7,7 @@ export function MainContent({ className, ...props }: MainContentProps) {
   return (
     <main
       id="main-content"
-      className={cn("flex flex-1 flex-col", className)}
+      className={cn("flex min-w-0 max-w-full flex-1 flex-col overflow-x-clip", className)}
       {...props}
     />
   );

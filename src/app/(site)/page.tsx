@@ -50,11 +50,11 @@ export default async function Home() {
     <>
       <Section
         spacing="none"
-        className="relative isolate overflow-hidden pb-16 md:pb-20"
+        className="relative isolate max-w-full overflow-x-clip pb-12 sm:pb-16 md:pb-20"
       >
-        <Container className="relative">
-          <HomeHero site={site} cta={heroCta} />
+        <HomeHero site={site} cta={heroCta} />
 
+        <Container className="relative">
           <Reveal delay={0.15} className="mx-auto mt-2 max-w-3xl sm:mt-4 md:mt-8">
             <Stagger
               className="flex flex-wrap items-center justify-center gap-2 border-t border-border/40 pt-8 sm:gap-2.5 sm:pt-10"
@@ -67,7 +67,7 @@ export default async function Home() {
               </StaggerItem>
               {site.expertise.slice(0, 3).map((item) => (
                 <StaggerItem key={item}>
-                  <span className="inline-flex min-h-9 items-center rounded-full border border-border/70 bg-surface/40 px-3 py-1.5 text-[0.7rem] text-foreground/80 backdrop-blur-sm transition-colors duration-300 active:border-foreground/25 sm:px-3.5 sm:text-xs hover:border-foreground/25 hover:text-foreground">
+                  <span className="inline-flex min-h-9 max-w-full items-center rounded-full border border-border/70 bg-surface/40 px-3 py-1.5 text-[0.7rem] text-foreground/80 backdrop-blur-sm transition-colors duration-300 active:border-foreground/25 sm:px-3.5 sm:text-xs hover:border-foreground/25 hover:text-foreground">
                     {item}
                   </span>
                 </StaggerItem>

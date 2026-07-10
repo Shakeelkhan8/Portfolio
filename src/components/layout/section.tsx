@@ -17,6 +17,13 @@ export function Section({
   ...props
 }: SectionProps) {
   return (
-    <section className={cn(spacingClasses[spacing], className)} {...props} />
+    <section
+      className={cn(
+        "max-w-full overflow-x-clip",
+        spacingClasses[spacing],
+        className,
+      )}
+      {...props}
+    />
   );
 }
