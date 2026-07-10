@@ -6,6 +6,7 @@ import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { ContactForm } from "@/components/contact/contact-form";
 import { ServicesSection } from "@/components/home/services-section";
 import { Text } from "@/components/typography/text";
+import { Reveal } from "@/components/motion/reveal";
 import { getMailtoHref } from "@/lib/contact/email-display";
 import { getServices, getSiteConfig } from "@/lib/content";
 
@@ -17,47 +18,61 @@ export default async function ContactPage() {
       <PageHeader title="Contact" description={site.availability.message}>
         <AvailabilityBadge site={site} className="mt-4" />
       </PageHeader>
-      <Section spacing="sm" className="border-t border-border pt-0">
-        <Container className="grid max-w-4xl gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+      <Section spacing="sm" className="border-t border-border/60 pt-0">
+        <Container className="grid max-w-5xl gap-10 lg:grid-cols-5 lg:gap-12">
+          <Reveal className="site-card rounded-2xl p-6 sm:p-8 lg:col-span-3">
             <ContactForm />
-          </div>
-          <aside className="space-y-6 lg:col-span-2" aria-label="Contact details">
-            <div>
-              <Text size="sm" className="mb-1 font-medium">
-                Email
-              </Text>
-              <Text size="sm" muted>
-                <a
-                  href={getMailtoHref(site.email)}
-                  className="text-primary hover:underline"
+          </Reveal>
+          <Reveal delay={0.08} className="space-y-4 lg:col-span-2">
+            <aside className="space-y-4" aria-label="Contact details">
+              <div className="site-card rounded-2xl p-5">
+                <Text
+                  size="sm"
+                  className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
+                  muted
                 >
-                  {site.email}
-                </a>
-              </Text>
-            </div>
-            <div>
-              <Text size="sm" className="mb-1 font-medium">
-                Location
-              </Text>
-              <Text size="sm" muted>
-                {site.location} ({site.timezone})
-              </Text>
-            </div>
-            <div>
-              <Text size="sm" className="mb-1 font-medium">
-                Response time
-              </Text>
-              <Text size="sm" muted>
-                {site.responseTimeText}
-              </Text>
-            </div>
-          </aside>
+                  Email
+                </Text>
+                <Text size="sm">
+                  <a
+                    href={getMailtoHref(site.email)}
+                    className="font-medium text-primary transition-colors hover:text-primary/80"
+                  >
+                    {site.email}
+                  </a>
+                </Text>
+              </div>
+              <div className="site-card rounded-2xl p-5">
+                <Text
+                  size="sm"
+                  className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
+                  muted
+                >
+                  Location
+                </Text>
+                <Text size="sm" muted>
+                  {site.location} ({site.timezone})
+                </Text>
+              </div>
+              <div className="site-card rounded-2xl p-5">
+                <Text
+                  size="sm"
+                  className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
+                  muted
+                >
+                  Response time
+                </Text>
+                <Text size="sm" muted>
+                  {site.responseTimeText}
+                </Text>
+              </div>
+            </aside>
+          </Reveal>
         </Container>
       </Section>
 
       {services.length > 0 ? (
-        <Section spacing="sm" className="border-t border-border bg-muted/30">
+        <Section spacing="sm" className="border-t border-border/60">
           <Container>
             <SectionHeader
               title="Services"

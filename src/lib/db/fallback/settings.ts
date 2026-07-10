@@ -24,7 +24,7 @@ export function getFallbackThemeSettings(): ThemeSettingsRecord {
     id: "fallback-theme",
     logoMediaId: null,
     faviconMediaId: null,
-    primaryColor: "#2563eb",
+    primaryColor: "#111111",
     accentColor: "#2563eb",
     backgroundColor: "#fafafa",
     foregroundColor: "#171717",

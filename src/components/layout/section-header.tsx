@@ -1,7 +1,10 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
+import { Reveal } from "@/components/motion/reveal";
 
 type SectionHeaderProps = {
   title: string;
@@ -19,7 +22,7 @@ export function SectionHeader({
   align = "left",
 }: SectionHeaderProps) {
   return (
-    <div
+    <Reveal
       className={cn(
         "mb-12 flex flex-col gap-3 md:mb-16",
         align === "center" && "items-center text-center",
@@ -28,16 +31,16 @@ export function SectionHeader({
       )}
     >
       <div className={cn("space-y-3", align === "center" && "max-w-2xl")}>
-        <Heading as="h2" size="2xl">
+        <Heading as="h2" size="2xl" className="text-foreground">
           {title}
         </Heading>
         {description ? (
-          <Text size="lg" muted className="max-w-2xl">
+          <Text size="lg" muted className="max-w-2xl text-balance">
             {description}
           </Text>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
-    </div>
+    </Reveal>
   );
 }

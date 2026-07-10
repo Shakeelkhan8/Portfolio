@@ -53,7 +53,7 @@ export function ProjectList({ projects, diagrams = {} }: ProjectListProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search projects..."
-            className="pl-9"
+            className="pl-9 bg-background/50"
             aria-label="Search projects"
           />
         </div>
@@ -103,11 +103,12 @@ export function ProjectList({ projects, diagrams = {} }: ProjectListProps) {
         </p>
       ) : (
         <ul className={cn("grid list-none gap-6 md:grid-cols-2")}>
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, index) => (
             <li key={project.slug} className="min-w-0">
               <ProjectCard
                 project={project}
                 diagram={diagrams[project.slug] ?? null}
+                delay={Math.min(index, 5) * 0.06}
               />
             </li>
           ))}

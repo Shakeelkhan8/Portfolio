@@ -33,8 +33,8 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
   }, [activeNode, diagram.edges]);
 
   return (
-    <div className="rounded-xl border border-border bg-muted/20 p-4 md:p-6">
-      <Text size="sm" className="mb-6 font-medium">
+    <div className="site-card rounded-2xl p-4 md:p-6">
+      <Text size="sm" className="mb-6 font-heading font-medium tracking-tight">
         {diagram.title}
       </Text>
 

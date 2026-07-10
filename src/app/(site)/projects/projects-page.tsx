@@ -19,7 +19,7 @@ export default async function ProjectsPage() {
         title="Projects"
         description="Engineering case studies from production systems — not demos, but real operational software."
       />
-      <Section spacing="sm" className="border-t border-border pt-0">
+      <Section spacing="sm" className="border-t border-border/60 pt-0">
         <Container>
           <ProjectList projects={projects} diagrams={diagrams} />
         </Container>

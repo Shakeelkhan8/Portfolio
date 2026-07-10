@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { AppLink } from "@/components/shared/app-link";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { SoundToggle } from "@/components/shared/sound-toggle";
 import { NavBar } from "@/components/navigation/nav-bar";
 import { MobileNav } from "@/components/navigation/mobile-nav";
 import { Container } from "@/components/layout/container";
+import { HERO, HERO_EASE } from "@/components/motion/hero-timeline";
 import { routes } from "@/config/navigation";
 import type { NavigationData, SiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
@@ -18,6 +20,7 @@ type HeaderProps = {
 
 export function Header({ site, navigation, className }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -27,37 +30,51 @@ export function Header({ site, navigation, className }: HeaderProps) {
   }, []);
 
   return (
-    <header
+    <motion.header
       role="banner"
       aria-label="Site header"
       data-scrolled={scrolled}
+      initial={
+        prefersReducedMotion ? false : { opacity: 0, y: -24 }
+      }
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        delay: prefersReducedMotion ? 0 : HERO.type.header,
+        duration: 1,
+        ease: HERO_EASE,
+      }}
       className={cn(
-        "sticky top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-300",
+        "sticky top-0 z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
         scrolled
-          ? "border-border/70 bg-background/80 shadow-sm backdrop-blur-xl supports-backdrop-filter:bg-background/65"
-          : "border-transparent bg-background/60 backdrop-blur-md supports-backdrop-filter:bg-background/40",
+          ? "border-b border-border/60 bg-background/70 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] backdrop-blur-xl supports-backdrop-filter:bg-background/55 dark:border-white/10"
+          : "border-b border-transparent bg-transparent",
         className,
       )}
     >
-      <Container className="flex h-16 items-center justify-between gap-4">
+      <Container className="flex h-[var(--header-height)] items-center justify-between gap-4">
         <AppLink
           href={routes.home}
-          className="group -mx-2 flex min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-foreground"
+          className="group -mx-2 flex min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors"
         >
-          <span className="mr-2 inline-block size-2 shrink-0 rounded-full bg-primary transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
-          <span className="truncate">{site.name}</span>
-        </AppLink>
-
-        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-          <NavBar navigation={navigation} />
-          <div
-            className="mx-0.5 hidden h-5 w-px bg-border md:block"
+          <span
+            className="mr-2.5 inline-flex size-2.5 shrink-0 rounded-full bg-foreground transition-transform duration-500 ease-out group-hover:scale-125"
             aria-hidden="true"
           />
-          <ThemeToggle />
+          <span className="truncate tracking-wide transition-opacity duration-300 group-hover:opacity-80">
+            {site.name}
+          </span>
+        </AppLink>
+
+        <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
+          <NavBar navigation={navigation} />
+          <div
+            className="mx-1 hidden h-5 w-px bg-border/80 md:block"
+            aria-hidden="true"
+          />
+          <SoundToggle />
           <MobileNav site={site} navigation={navigation} />
         </div>
       </Container>
-    </header>
+    </motion.header>
   );
 }

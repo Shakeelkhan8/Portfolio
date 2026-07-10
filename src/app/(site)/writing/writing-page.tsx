@@ -13,7 +13,7 @@ export default async function WritingPage() {
         title="Writing"
         description="Technical articles on backend systems, architecture, and engineering decisions."
       />
-      <Section spacing="sm" className="border-t border-border pt-0">
+      <Section spacing="sm" className="border-t border-border/60 pt-0">
         <Container>
           <ArticleList articles={articles} />
         </Container>

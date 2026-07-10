@@ -84,9 +84,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               { label: project.title },
             ]}
           />
-          <FadeIn>
-            <ProjectHero project={project} />
-          </FadeIn>
+          <ProjectHero project={project} />
         </Container>
       </Section>
 
@@ -98,7 +96,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </Section>
       ) : null}
 
-      <Section spacing="sm" className="border-t border-border">
+      <Section spacing="sm" className="border-t border-border/60">
         <Container className="max-w-3xl space-y-12">
           <FadeIn>
             <ProjectSection id="overview" title="Overview">
@@ -141,17 +139,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
           <FadeIn>
             <ProjectSection id="decisions" title="Engineering Decisions">
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {project.decisions.map((decision) => (
                   <div
                     key={decision.decision.slice(0, 40)}
-                    className="rounded-lg border border-border p-5"
+                    className="site-card rounded-2xl p-5 sm:p-6"
                   >
-                    <p className="font-medium text-foreground">
+                    <p className="font-heading font-medium tracking-tight text-foreground">
                       {decision.decision}
                     </p>
-                    <p className="mt-2">{decision.rationale}</p>
-                    <p className="mt-2 text-sm">
+                    <p className="mt-2 text-muted-foreground">{decision.rationale}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
                       <span className="font-medium text-foreground">
                         Trade-off:
                       </span>{" "}

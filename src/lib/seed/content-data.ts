@@ -73,6 +73,15 @@ export const homeSectionHeaders = [
 
 export const ctaSections = [
   {
+    section_key: "home_hero",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    primary_label: "View Projects",
+    primary_href: "/projects",
+    secondary_label: "Get in Touch",
+    secondary_href: "/contact",
+  },
+  {
     section_key: "home_contact",
     title: "Let's work together",
     description: siteConfig.availability.message,

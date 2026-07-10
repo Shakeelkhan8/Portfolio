@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { ResumeView } from "@/components/resume/resume-view";
 import { DownloadResumeButton } from "@/components/resume/download-resume-button";
 import { CertificationsSection } from "@/components/resume/certifications-section";
+import { Reveal } from "@/components/motion/reveal";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
@@ -61,63 +62,79 @@ export default async function ResumePage() {
         </div>
       </PageHeader>
 
-      <Section spacing="sm" className="border-t border-border pt-0">
+      <Section spacing="sm" className="border-t border-border/60 pt-0">
         <Container className="max-w-3xl space-y-8">
-          <div className="rounded-xl border border-border bg-surface p-6 sm:p-8">
-            <Text size="sm" muted className="mb-2 uppercase tracking-widest">
-              Summary
-            </Text>
-            <Text leading="relaxed">{resumeSummary}</Text>
-          </div>
+          <Reveal>
+            <div className="site-card rounded-2xl p-6 sm:p-8">
+              <Text
+                size="sm"
+                muted
+                className="mb-2 font-mono text-[11px] tracking-[0.28em] uppercase"
+              >
+                Summary
+              </Text>
+              <Text leading="relaxed">{resumeSummary}</Text>
+            </div>
+          </Reveal>
 
           {currentRole ? (
-            <div className="rounded-xl border border-border bg-surface p-6 sm:p-8">
-              <Text size="sm" muted className="mb-2 uppercase tracking-widest">
-                Current role
-              </Text>
-              <Heading as="h2" size="md" balance={false} className="mb-1">
-                {currentRole.role}
-              </Heading>
-              <Text className="mb-1 font-medium">{currentRole.company}</Text>
-              <Text size="sm" muted className="mb-4">
-                {formatDateRange(currentRole.startDate, currentRole.endDate)} ·{" "}
-                {currentRole.location}
-              </Text>
-              {currentRole.highlights[0] ? (
-                <Text size="sm" muted leading="relaxed">
-                  {currentRole.highlights[0]}
+            <Reveal delay={0.06}>
+              <div className="site-card rounded-2xl p-6 sm:p-8">
+                <Text
+                  size="sm"
+                  muted
+                  className="mb-2 font-mono text-[11px] tracking-[0.28em] uppercase"
+                >
+                  Current role
                 </Text>
-              ) : null}
-            </div>
+                <Heading as="h2" size="md" balance={false} className="mb-1">
+                  {currentRole.role}
+                </Heading>
+                <Text className="mb-1 font-medium text-foreground/90">
+                  {currentRole.company}
+                </Text>
+                <Text size="sm" muted className="mb-4">
+                  {formatDateRange(currentRole.startDate, currentRole.endDate)} ·{" "}
+                  {currentRole.location}
+                </Text>
+                {currentRole.highlights[0] ? (
+                  <Text size="sm" muted leading="relaxed">
+                    {currentRole.highlights[0]}
+                  </Text>
+                ) : null}
+              </div>
+            </Reveal>
           ) : null}
 
-          <details className="group rounded-xl border border-border bg-muted/20 open:bg-surface">
-            <summary className="no-print cursor-pointer list-none px-6 py-4 text-sm font-medium marker:content-none sm:px-8 [&::-webkit-details-marker]:hidden">
-              <span className="flex items-center justify-between gap-3">
-                <span>View full web resume</span>
-                <span className="text-muted-foreground transition-transform group-open:rotate-180">
-                  ▾
+          <Reveal delay={0.1}>
+            <details className="group site-card rounded-2xl open:bg-surface/80">
+              <summary className="no-print cursor-pointer list-none px-6 py-4 text-sm font-medium marker:content-none sm:px-8 [&::-webkit-details-marker]:hidden">
+                <span className="flex items-center justify-between gap-3">
+                  <span>View full web resume</span>
+                  <span className="text-muted-foreground transition-transform group-open:rotate-180">
+                    ▾
+                  </span>
                 </span>
-              </span>
-            </summary>
-            <div className="border-t border-border px-6 py-8 sm:px-8">
-              <ResumeView
-                site={site}
-                resumeSummary={resumeSummary}
-                skillGroups={skillGroups}
-                experience={experience}
-                education={education}
-                accomplishments={achievements.map((item) => ({
-                  text: item.text,
-                }))}
-              />
-              {certifications.length > 0 ? (
-                <div className="mt-10 border-t border-border pt-10">
-                  <CertificationsSection certifications={certifications} />
-                </div>
-              ) : null}
-            </div>
-          </details>
+              </summary>
+              <div className="border-t border-border/60 px-6 py-8 sm:px-8">
+                <ResumeView
+                  site={site}
+                  resumeSummary={resumeSummary}
+                  skillGroups={skillGroups}
+                  experience={experience}
+                  education={education}
+                  accomplishments={achievements.map((item) => ({
+                    text: item.text,
+                  }))}
+                />
+                {certifications.length > 0 ? (
+                  <div className="mt-10 border-t border-border/60 pt-10">
+                    <CertificationsSection certifications={certifications} />
+                  </div>
+                ) : null}
+              </div>
+            </details>
+          </Reveal>
         </Container>
       </Section>
     </>

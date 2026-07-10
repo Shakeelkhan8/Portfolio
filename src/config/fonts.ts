@@ -1,32 +1,32 @@
-import { Geist, Geist_Mono, Inter, JetBrains_Mono } from "next/font/google";
+import { IBM_Plex_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Body font is preloaded for LCP. Display/mono fonts stay available via CSS
+// variables but skip preload to avoid unused-preload console warnings.
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const ibmPlexSans = IBM_Plex_Sans({
+  variable: "--font-ibm-plex-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
+  preload: true,
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
   display: "swap",
+  preload: false,
 });
 
 export const fontVariables = [
-  geistSans.variable,
-  inter.variable,
-  geistMono.variable,
+  spaceGrotesk.variable,
+  ibmPlexSans.variable,
   jetbrainsMono.variable,
 ].join(" ");

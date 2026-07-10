@@ -43,7 +43,7 @@ export default async function PrivacyPage() {
         title={page.title}
         description={`Last updated: ${lastUpdated}`}
       />
-      <Section spacing="sm" className="border-t border-border pt-0">
+      <Section spacing="sm" className="border-t border-border/60 pt-0">
         <Prose
           dangerouslySetInnerHTML={{
             __html: sanitizeRichHtml(page.contentHtml),
