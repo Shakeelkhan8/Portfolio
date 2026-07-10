@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { ButtonLink } from "@/components/shared/button-link";
 import { HeroOrb } from "@/components/motion/hero-orb";
@@ -35,11 +35,13 @@ function HeroFade({
   delay,
   className,
   y = 22,
+  soft,
 }: {
   children: ReactNode;
   delay: number;
   className?: string;
   y?: number;
+  soft?: boolean;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -50,9 +52,17 @@ function HeroFade({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y, filter: "blur(10px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ delay, duration: 1, ease: HERO_EASE_SOFT }}
+      initial={
+        soft
+          ? { opacity: 0, y: y * 0.7 }
+          : { opacity: 0, y, filter: "blur(10px)" }
+      }
+      animate={
+        soft
+          ? { opacity: 1, y: 0 }
+          : { opacity: 1, y: 0, filter: "blur(0px)" }
+      }
+      transition={{ delay, duration: soft ? 0.7 : 1, ease: HERO_EASE_SOFT }}
     >
       {children}
     </motion.div>
@@ -61,11 +71,20 @@ function HeroFade({
 
 /**
  * Immersive hero: cosmic visual chapter, then CMS identity over the living star.
- * All copy and CTAs come from the CMS — nothing hardcoded.
+ * Mobile uses lighter motion (no blur filters) for a fluid app-like feel.
  */
 export function HomeHero({ site, cta }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   const primaryLabel = cta?.primaryLabel?.trim() || null;
   const primaryHref = cta?.primaryHref?.trim() || routes.projects;
@@ -78,15 +97,15 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
   });
 
   const smooth = useSpring(scrollYProgress, {
-    stiffness: 70,
-    damping: 28,
-    mass: 0.45,
+    stiffness: mobile ? 90 : 70,
+    damping: mobile ? 30 : 28,
+    mass: 0.4,
   });
 
-  const orbY = useTransform(smooth, [0, 1], [0, 140]);
-  const orbScale = useTransform(smooth, [0, 1], [1, 1.55]);
+  const orbY = useTransform(smooth, [0, 1], [0, mobile ? 80 : 140]);
+  const orbScale = useTransform(smooth, [0, 1], [1, mobile ? 1.28 : 1.55]);
   const orbOpacity = useTransform(smooth, [0, 0.8], [1, 0.05]);
-  const contentY = useTransform(smooth, [0, 1], [0, 64]);
+  const contentY = useTransform(smooth, [0, 1], [0, mobile ? 40 : 64]);
   const contentOpacity = useTransform(smooth, [0, 0.5], [1, 0]);
   const cueOpacity = useTransform(smooth, [0, 0.18], [1, 0]);
 
@@ -95,9 +114,8 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
   return (
     <div
       ref={sectionRef}
-      className="relative flex min-h-[calc(100svh-var(--header-height))] flex-col"
+      className="relative flex min-h-[calc(100svh-var(--header-height)-var(--mobile-tab-bar-height))] flex-col md:min-h-[calc(100svh-var(--header-height))]"
     >
-      {/* Visual plane — edge-to-edge star */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute top-0 left-1/2 z-0 h-full w-screen -translate-x-1/2"
@@ -115,60 +133,71 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
         />
       </motion.div>
 
-      {/* Identity chapter — CMS content, choreographed to the star */}
       <motion.div
-        className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-1 pb-28 pt-6 text-center"
+        className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-1 pb-24 pt-4 text-center sm:pb-28 sm:pt-6"
         style={
           prefersReducedMotion
             ? undefined
             : { y: contentY, opacity: contentOpacity }
         }
       >
-        <HeroFade delay={d(HERO.type.badge)} className="mb-7" y={14}>
+        <HeroFade
+          delay={d(HERO.type.badge)}
+          className="mb-5 sm:mb-7"
+          y={14}
+          soft={mobile}
+        >
           <AvailabilityBadge site={site} />
         </HeroFade>
 
         {site.location ? (
-          <HeroFade delay={d(HERO.type.location)} className="mb-5" y={12}>
-            <p className="font-mono text-[11px] tracking-[0.4em] text-muted-foreground uppercase">
+          <HeroFade
+            delay={d(HERO.type.location)}
+            className="mb-4 sm:mb-5"
+            y={12}
+            soft={mobile}
+          >
+            <p className="font-mono text-[10px] tracking-[0.36em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.4em]">
               {site.location}
             </p>
           </HeroFade>
         ) : null}
 
         <motion.div
-          className="relative mb-6"
+          className="relative mb-5 sm:mb-6"
           initial={
-            prefersReducedMotion
-              ? false
-              : { opacity: 0, scale: 0.97 }
+            prefersReducedMotion ? false : { opacity: 0, scale: 0.97 }
           }
           animate={{ opacity: 1, scale: 1 }}
           transition={{
             delay: d(HERO.type.name),
-            duration: 1.2,
+            duration: mobile ? 0.85 : 1.2,
             ease: HERO_EASE,
           }}
         >
           <TextReveal
             as="h1"
             text={site.name}
-            intensity="cinematic"
+            intensity={mobile ? "default" : "cinematic"}
             delay={d(HERO.type.name)}
-            className="font-heading relative z-10 text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-foreground drop-shadow-[0_4px_40px_rgba(0,0,0,0.85)] sm:text-6xl md:text-7xl lg:text-[5rem]"
+            className="font-heading relative z-10 text-[2.35rem] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground drop-shadow-[0_4px_40px_rgba(0,0,0,0.85)] sm:text-6xl md:text-7xl lg:text-[5rem]"
           />
-          {/* Soft light under the name — ties type to the star */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-24 w-[min(90%,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/[0.06] blur-3xl"
+            className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-20 w-[min(92%,26rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/[0.06] blur-3xl sm:h-24 sm:w-[min(90%,28rem)]"
           />
         </motion.div>
 
         {site.title ? (
-          <HeroFade delay={d(HERO.type.title)} className="mb-5 max-w-2xl" y={18}>
+          <HeroFade
+            delay={d(HERO.type.title)}
+            className="mb-4 max-w-2xl sm:mb-5"
+            y={18}
+            soft={mobile}
+          >
             <Text
               size="xl"
-              className="relative z-10 font-medium tracking-tight text-foreground/92"
+              className="relative z-10 text-lg font-medium tracking-tight text-foreground/92 sm:text-xl"
             >
               {site.title}
             </Text>
@@ -178,14 +207,15 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
         {site.description ? (
           <HeroFade
             delay={d(HERO.type.description)}
-            className="mb-10 max-w-2xl"
+            className="mb-8 max-w-2xl sm:mb-10"
             y={16}
+            soft={mobile}
           >
             <Text
               size="lg"
               leading="relaxed"
               muted
-              className="relative z-10 text-balance"
+              className="relative z-10 text-base text-balance sm:text-lg"
             >
               {site.description}
             </Text>
@@ -193,14 +223,14 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
         ) : null}
 
         {primaryLabel || secondaryLabel ? (
-          <HeroFade delay={d(HERO.type.actions)} y={14}>
-            <div className="relative z-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
+          <HeroFade delay={d(HERO.type.actions)} y={14} soft={mobile}>
+            <div className="relative z-10 flex w-full max-w-sm flex-col items-stretch justify-center gap-3 sm:max-w-none sm:w-auto sm:flex-row sm:items-center">
               {primaryLabel ? (
                 <Magnetic strength={0.35}>
                   <ButtonLink
                     href={primaryHref}
                     size="lg"
-                    className="group min-w-[10.5rem] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+                    className="group min-h-12 w-full min-w-[10.5rem] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:w-auto"
                   >
                     {primaryLabel}
                     <ArrowRight
@@ -216,7 +246,7 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
                     href={secondaryHref}
                     variant="outline"
                     size="lg"
-                    className="min-w-[10.5rem] border-border/80 bg-background/20 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+                    className="min-h-12 w-full min-w-[10.5rem] border-border/80 bg-background/20 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:w-auto"
                   >
                     {secondaryLabel}
                   </ButtonLink>
@@ -228,7 +258,7 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
       </motion.div>
 
       <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-8 z-20"
+        className="pointer-events-none absolute inset-x-0 bottom-6 z-20 sm:bottom-8"
         style={prefersReducedMotion ? undefined : { opacity: cueOpacity }}
         initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

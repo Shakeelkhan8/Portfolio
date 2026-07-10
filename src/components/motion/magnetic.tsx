@@ -6,7 +6,7 @@ import {
   useReducedMotion,
   useSpring,
 } from "framer-motion";
-import { useRef, type ReactNode, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
 type MagneticProps = {
@@ -22,12 +22,21 @@ export function Magnetic({
 }: MagneticProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const [finePointer, setFinePointer] = useState(false);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const springX = useSpring(x, { stiffness: 260, damping: 20, mass: 0.4 });
   const springY = useSpring(y, { stiffness: 260, damping: 20, mass: 0.4 });
 
-  if (prefersReducedMotion) {
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: fine)");
+    const sync = () => setFinePointer(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  if (prefersReducedMotion || !finePointer) {
     return <div className={className}>{children}</div>;
   }
 

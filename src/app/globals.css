@@ -53,6 +53,11 @@
 
   --header-height: 4rem;
 
+  /* Mobile app chrome */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --mobile-tab-bar-height: 4rem;
+
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.55), 0 1px 2px -1px rgb(0 0 0 / 0.4);
   --shadow-md: 0 8px 24px -8px rgb(0 0 0 / 0.7),
@@ -153,16 +158,19 @@
 
   html {
     @apply font-sans scroll-smooth;
-    /* Offset in-page anchor targets so they clear the sticky header */
-    scroll-padding-top: calc(var(--header-height) + 1rem);
+    /* Offset in-page anchors for sticky header + mobile tab bar */
+    scroll-padding-top: calc(var(--header-height) + var(--safe-top) + 1rem);
+    scroll-padding-bottom: calc(var(--mobile-tab-bar-height) + var(--safe-bottom) + 0.5rem);
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
     text-wrap: pretty;
+    overscroll-behavior-y: none;
   }
 
   h1,
@@ -208,21 +216,21 @@
   width: 100%;
   max-width: var(--content-width);
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: 1.125rem;
 }
 
 @utility container-prose {
   width: 100%;
   max-width: var(--prose-width);
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: 1.125rem;
 }
 
 @utility container-wide {
   width: 100%;
   max-width: var(--wide-width);
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: 1.125rem;
 }
 
 @media (min-width: 640px) {
@@ -233,17 +241,17 @@
   }
 }
 
-/* Fluid vertical rhythm for page sections */
+/* Fluid vertical rhythm — tighter on small phones */
 @utility section-spacing {
-  padding-block: clamp(4rem, 9vw, 7rem);
+  padding-block: clamp(3.25rem, 8vw, 7rem);
 }
 
 @utility section-spacing-sm {
-  padding-block: clamp(3rem, 6vw, 5rem);
+  padding-block: clamp(2.5rem, 5.5vw, 5rem);
 }
 
 @utility section-spacing-lg {
-  padding-block: clamp(5rem, 12vw, 9rem);
+  padding-block: clamp(4rem, 11vw, 9rem);
 }
 
 /* Subtle dotted grid for hero / feature backdrops */
@@ -301,6 +309,128 @@
 
 .site-card:hover img {
   transform: scale(1.04);
+}
+
+/* Touch press — app-like feedback without hover dependency */
+@media (pointer: coarse) {
+  .site-card:hover {
+    transform: none;
+  }
+
+  .site-card:hover img {
+    transform: none;
+  }
+
+  .site-card:active {
+    transform: scale(0.985);
+    border-color: color-mix(in oklch, var(--foreground) 16%, transparent);
+    background: var(--surface-elevated);
+  }
+
+  .site-shell [data-slot="button"]:hover {
+    transform: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .hover-lift:active {
+    transform: scale(0.985);
+  }
+}
+
+/* ─── Mobile app tab bar ─── */
+.mobile-tab-bar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 55;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  pointer-events: none;
+}
+
+.mobile-tab-bar__inner {
+  pointer-events: auto;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: stretch;
+  height: var(--mobile-tab-bar-height);
+  margin-inline: 0.625rem;
+  margin-bottom: 0.4rem;
+  padding: 0.2rem;
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+  background: color-mix(in oklch, var(--background) 78%, transparent);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  box-shadow:
+    0 12px 40px -16px rgb(0 0 0 / 0.75),
+    0 0 0 1px color-mix(in oklch, var(--foreground) 4%, transparent);
+}
+
+.mobile-tab-bar__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  min-height: 2.75rem;
+  border-radius: 1rem;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mobile-tab-bar__item:active {
+  transform: scale(0.94);
+  background: color-mix(in oklch, var(--foreground) 6%, transparent);
+}
+
+.mobile-tab-bar__item--active {
+  color: var(--foreground);
+}
+
+.mobile-tab-bar__icon-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 1.5rem;
+}
+
+.mobile-tab-bar__indicator {
+  position: absolute;
+  inset: -0.15rem -0.35rem;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+
+.mobile-tab-bar__label {
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-inline: 0.15rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-tab-bar__item:active,
+  .site-card:active {
+    transform: none;
+  }
 }
 
 /* Site-only micro-interactions (does not restyle admin) */
@@ -454,6 +584,7 @@
 @media print {
   header,
   footer,
+  .mobile-tab-bar,
   .no-print {
     display: none !important;
   }

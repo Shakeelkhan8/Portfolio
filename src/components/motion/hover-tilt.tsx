@@ -7,7 +7,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useRef, type ReactNode, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
 type HoverTiltProps = {
@@ -16,7 +16,7 @@ type HoverTiltProps = {
   maxTilt?: number;
 };
 
-/** Subtle 3D tilt on pointer move — desktop only, reduced-motion safe. */
+/** Subtle 3D tilt — fine pointer only; touch devices get press feedback via CSS. */
 export function HoverTilt({
   children,
   className,
@@ -24,6 +24,7 @@ export function HoverTilt({
 }: HoverTiltProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const [finePointer, setFinePointer] = useState(false);
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
   const x = useSpring(rawX, { stiffness: 200, damping: 20, mass: 0.3 });
@@ -31,7 +32,15 @@ export function HoverTilt({
   const rotateX = useTransform(y, [-0.5, 0.5], [maxTilt, -maxTilt]);
   const rotateY = useTransform(x, [-0.5, 0.5], [-maxTilt, maxTilt]);
 
-  if (prefersReducedMotion) {
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: fine)");
+    const sync = () => setFinePointer(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  if (prefersReducedMotion || !finePointer) {
     return <div className={className}>{children}</div>;
   }
 

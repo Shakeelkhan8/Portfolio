@@ -3,14 +3,17 @@ import { Section } from "@/components/layout/section";
 
 export default function SiteLoading() {
   return (
-    <Section spacing="none" className="relative isolate min-h-[60vh]">
+    <Section
+      spacing="none"
+      className="relative isolate min-h-[calc(100svh-var(--header-height)-var(--mobile-tab-bar-height))] md:min-h-[60vh]"
+    >
       <Container>
         <div
-          className="flex min-h-[60vh] flex-col items-center justify-center gap-5"
+          className="flex min-h-[calc(100svh-var(--header-height)-var(--mobile-tab-bar-height)-4rem)] flex-col items-center justify-center gap-5 md:min-h-[60vh]"
           role="status"
           aria-live="polite"
         >
-          <div className="relative flex size-16 items-center justify-center">
+          <div className="relative flex size-14 items-center justify-center sm:size-16">
             <span
               aria-hidden="true"
               className="absolute inset-0 rounded-full border border-border animate-loader-pulse"

@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import { AppLink } from "@/components/shared/app-link";
 import { SoundToggle } from "@/components/shared/sound-toggle";
 import { NavBar } from "@/components/navigation/nav-bar";
-import { MobileNav } from "@/components/navigation/mobile-nav";
 import { Container } from "@/components/layout/container";
 import { HERO, HERO_EASE } from "@/components/motion/hero-timeline";
 import { routes } from "@/config/navigation";
@@ -34,9 +33,7 @@ export function Header({ site, navigation, className }: HeaderProps) {
       role="banner"
       aria-label="Site header"
       data-scrolled={scrolled}
-      initial={
-        prefersReducedMotion ? false : { opacity: 0, y: -24 }
-      }
+      initial={prefersReducedMotion ? false : { opacity: 0, y: -24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         delay: prefersReducedMotion ? 0 : HERO.type.header,
@@ -44,17 +41,17 @@ export function Header({ site, navigation, className }: HeaderProps) {
         ease: HERO_EASE,
       }}
       className={cn(
-        "sticky top-0 z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
+        "sticky top-0 z-50 pt-[env(safe-area-inset-top)] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
         scrolled
-          ? "border-b border-border/60 bg-background/70 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] backdrop-blur-xl supports-backdrop-filter:bg-background/55 dark:border-white/10"
+          ? "border-b border-border/60 bg-background/75 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] backdrop-blur-xl supports-backdrop-filter:bg-background/60 dark:border-white/10"
           : "border-b border-transparent bg-transparent",
         className,
       )}
     >
-      <Container className="flex h-[var(--header-height)] items-center justify-between gap-4">
+      <Container className="flex h-[var(--header-height)] items-center justify-between gap-3">
         <AppLink
           href={routes.home}
-          className="group -mx-2 flex min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors"
+          className="group -mx-2 flex min-h-11 min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors active:opacity-70"
         >
           <span
             className="mr-2.5 inline-flex size-2.5 shrink-0 rounded-full bg-foreground transition-transform duration-500 ease-out group-hover:scale-125"
@@ -72,7 +69,6 @@ export function Header({ site, navigation, className }: HeaderProps) {
             aria-hidden="true"
           />
           <SoundToggle />
-          <MobileNav site={site} navigation={navigation} />
         </div>
       </Container>
     </motion.header>

@@ -24,18 +24,18 @@ export function SectionHeader({
   return (
     <Reveal
       className={cn(
-        "mb-12 flex flex-col gap-3 md:mb-16",
+        "mb-8 flex flex-col gap-2.5 sm:mb-12 sm:gap-3 md:mb-16",
         align === "center" && "items-center text-center",
         action && "md:flex-row md:items-end md:justify-between",
         className,
       )}
     >
-      <div className={cn("space-y-3", align === "center" && "max-w-2xl")}>
+      <div className={cn("space-y-2 sm:space-y-3", align === "center" && "max-w-2xl")}>
         <Heading as="h2" size="2xl" className="text-foreground">
           {title}
         </Heading>
         {description ? (
-          <Text size="lg" muted className="max-w-2xl text-balance">
+          <Text size="lg" muted className="max-w-2xl text-base text-balance sm:text-lg">
             {description}
           </Text>
         ) : null}

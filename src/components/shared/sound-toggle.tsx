@@ -24,7 +24,7 @@ export function SoundToggle() {
             aria-label={muted ? "Unmute interface sounds" : "Mute interface sounds"}
             aria-pressed={!muted}
             onClick={toggleMuted}
-            className="size-9"
+            className="size-11 md:size-9"
           >
             {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
           </Button>

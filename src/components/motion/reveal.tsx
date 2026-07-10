@@ -5,7 +5,7 @@ import {
   useReducedMotion,
   type HTMLMotionProps,
 } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -29,26 +29,44 @@ export function Reveal({
   ...props
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
+  const [coarse, setCoarse] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    const sync = () => setCoarse(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
   }
 
+  const travel = coarse ? Math.min(distance, 20) : distance;
   const offset = {
-    up: { x: 0, y: distance },
-    down: { x: 0, y: -distance },
-    left: { x: distance, y: 0 },
-    right: { x: -distance, y: 0 },
+    up: { x: 0, y: travel },
+    down: { x: 0, y: -travel },
+    left: { x: travel, y: 0 },
+    right: { x: -travel, y: 0 },
     none: { x: 0, y: 0 },
   }[direction];
 
   return (
     <motion.div
-      initial={{ opacity: 0, ...offset, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-      viewport={{ once, amount: 0.12, margin: "0px 0px -60px 0px" }}
+      initial={
+        coarse
+          ? { opacity: 0, ...offset }
+          : { opacity: 0, ...offset, filter: "blur(8px)" }
+      }
+      whileInView={
+        coarse
+          ? { opacity: 1, x: 0, y: 0 }
+          : { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
+      }
+      viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
       transition={{
-        duration,
+        duration: coarse ? Math.min(duration, 0.45) : duration,
         delay,
         ease: EASE,
       }}

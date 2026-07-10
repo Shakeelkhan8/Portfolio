@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { AppProviders } from "@/components/providers/app-providers";
 import { CustomScripts } from "@/components/seo/custom-scripts";
 import { RootJsonLd } from "@/components/seo/root-json-ld";
@@ -11,6 +11,14 @@ import {
 } from "@/lib/metadata";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#000000",
+  colorScheme: "dark",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getMetadataContext();
