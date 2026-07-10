@@ -29,21 +29,26 @@ export function Reveal({
   ...props
 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
-  const [coarse, setCoarse] = useState(false);
+  const [softMotion, setSoftMotion] = useState(true);
 
   useEffect(() => {
-    const mq = window.matchMedia("(pointer: coarse)");
-    const sync = () => setCoarse(mq.matches);
+    const coarse = window.matchMedia("(pointer: coarse)");
+    const narrow = window.matchMedia("(max-width: 768px)");
+    const sync = () => setSoftMotion(coarse.matches || narrow.matches);
     sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
+    coarse.addEventListener("change", sync);
+    narrow.addEventListener("change", sync);
+    return () => {
+      coarse.removeEventListener("change", sync);
+      narrow.removeEventListener("change", sync);
+    };
   }, []);
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
   }
 
-  const travel = coarse ? Math.min(distance, 20) : distance;
+  const travel = softMotion ? Math.min(distance, 20) : distance;
   const offset = {
     up: { x: 0, y: travel },
     down: { x: 0, y: -travel },
@@ -55,18 +60,18 @@ export function Reveal({
   return (
     <motion.div
       initial={
-        coarse
+        softMotion
           ? { opacity: 0, ...offset }
           : { opacity: 0, ...offset, filter: "blur(8px)" }
       }
       whileInView={
-        coarse
+        softMotion
           ? { opacity: 1, x: 0, y: 0 }
           : { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
       }
       viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
       transition={{
-        duration: coarse ? Math.min(duration, 0.45) : duration,
+        duration: softMotion ? Math.min(duration, 0.45) : duration,
         delay,
         ease: EASE,
       }}

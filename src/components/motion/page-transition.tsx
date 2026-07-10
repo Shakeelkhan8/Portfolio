@@ -11,19 +11,24 @@ type PageTransitionProps = {
 };
 
 /**
- * Route transitions — lighter on coarse pointers (no blur filter) for 60fps mobile.
+ * Route transitions — no CSS filter blur on touch/narrow viewports (avoids soft text).
  */
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
-  const [coarse, setCoarse] = useState(false);
+  const [softMotion, setSoftMotion] = useState(true);
 
   useEffect(() => {
-    const mq = window.matchMedia("(pointer: coarse)");
-    const sync = () => setCoarse(mq.matches);
+    const coarse = window.matchMedia("(pointer: coarse)");
+    const narrow = window.matchMedia("(max-width: 768px)");
+    const sync = () => setSoftMotion(coarse.matches || narrow.matches);
     sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
+    coarse.addEventListener("change", sync);
+    narrow.addEventListener("change", sync);
+    return () => {
+      coarse.removeEventListener("change", sync);
+      narrow.removeEventListener("change", sync);
+    };
   }, []);
 
   if (prefersReducedMotion) {
@@ -34,16 +39,16 @@ export function PageTransition({ children }: PageTransitionProps) {
     <motion.div
       key={pathname}
       initial={
-        coarse
+        softMotion
           ? { opacity: 0, y: 14 }
           : { opacity: 0, y: 22, filter: "blur(10px)" }
       }
       animate={
-        coarse
+        softMotion
           ? { opacity: 1, y: 0 }
           : { opacity: 1, y: 0, filter: "blur(0px)" }
       }
-      transition={{ duration: coarse ? 0.38 : 0.55, ease: EASE }}
+      transition={{ duration: softMotion ? 0.38 : 0.55, ease: EASE }}
     >
       {children}
     </motion.div>

@@ -50,19 +50,12 @@ function HeroFade({
     return <div className={className}>{children}</div>;
   }
 
+  // Opacity + translate only — never CSS filter blur (stays sharp on mobile).
   return (
     <motion.div
       className={className}
-      initial={
-        soft
-          ? { opacity: 0, y: y * 0.7 }
-          : { opacity: 0, y, filter: "blur(10px)" }
-      }
-      animate={
-        soft
-          ? { opacity: 1, y: 0 }
-          : { opacity: 1, y: 0, filter: "blur(0px)" }
-      }
+      initial={{ opacity: 0, y: soft ? y * 0.7 : y }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: soft ? 0.7 : 1, ease: HERO_EASE_SOFT }}
     >
       {children}
@@ -180,13 +173,13 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
               ease: HERO_EASE,
             }}
           >
-            <TextReveal
-              as="h1"
-              text={site.name}
-              intensity={mobile ? "default" : "cinematic"}
-              delay={d(HERO.type.name)}
-              className="font-heading relative z-10 max-w-full text-[clamp(1.75rem,8vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-foreground drop-shadow-[0_4px_40px_rgba(0,0,0,0.85)] sm:text-6xl md:text-7xl lg:text-[5rem]"
-            />
+          <TextReveal
+            as="h1"
+            text={site.name}
+            intensity="default"
+            delay={d(HERO.type.name)}
+            className="font-heading relative z-10 max-w-full text-[clamp(1.75rem,8vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-foreground drop-shadow-[0_4px_40px_rgba(0,0,0,0.85)] sm:text-6xl md:text-7xl lg:text-[5rem]"
+          />
             <div
               aria-hidden="true"
               className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-20 w-[min(100%,22rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/[0.06] blur-3xl sm:h-24 sm:w-[min(90%,28rem)]"
