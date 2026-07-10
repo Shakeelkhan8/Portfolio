@@ -65,7 +65,7 @@ export function ContactForm() {
         <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-success/15 text-success">
           <CheckCircle2 className="size-6" aria-hidden="true" />
         </div>
-        <Text className="font-medium text-foreground">
+        <Text className="font-heading font-medium text-foreground">
           Message sent successfully.
         </Text>
         <Text size="sm" muted className="mt-2">
@@ -95,6 +95,7 @@ export function ContactForm() {
           placeholder="Your name"
           autoComplete="name"
           disabled={isLoading}
+          className="bg-background/50"
         />
       </div>
       <div className="space-y-2">
@@ -107,6 +108,7 @@ export function ContactForm() {
           placeholder="you@example.com"
           autoComplete="email"
           disabled={isLoading}
+          className="bg-background/50"
         />
       </div>
       <div className="space-y-2">
@@ -122,6 +124,7 @@ export function ContactForm() {
           rows={6}
           maxLength={5000}
           disabled={isLoading}
+          className="bg-background/50"
         />
       </div>
 
@@ -156,7 +159,12 @@ export function ContactForm() {
         </div>
       ) : null}
 
-      <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto">
+      <Button
+        type="submit"
+        size="lg"
+        disabled={isLoading}
+        className="w-full sm:w-auto"
+      >
         {isLoading ? (
           <>
             <Loader2 className="size-4 animate-spin" data-icon="inline-start" />

@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { getSiteConfig, getThemeSettings } from "@/lib/content";
+import { getSiteConfig } from "@/lib/content";
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
-  const [site, theme] = await Promise.all([getSiteConfig(), getThemeSettings()]);
+  const site = await getSiteConfig();
 
   return {
     name: `${site.name} — Portfolio`,
@@ -10,8 +10,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     description: site.description,
     start_url: "/",
     display: "standalone",
-    background_color: theme.backgroundColor ?? "#fafafa",
-    theme_color: theme.primaryColor,
+    background_color: "#000000",
+    theme_color: "#000000",
     icons: [
       {
         src: "/icon",

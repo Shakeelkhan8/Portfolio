@@ -16,9 +16,10 @@ export function ArchitectureDiagramPreview({
   return (
     <div
       aria-hidden="true"
-      className="relative aspect-[16/9] w-full overflow-hidden border-b border-border bg-muted/30"
+      className="relative aspect-[16/9] w-full overflow-hidden border-b border-border/60 bg-muted/20"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,var(--accent-muted),transparent_70%)] opacity-60" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,color-mix(in_oklch,var(--foreground)_5%,transparent),transparent_65%)]" />
+      <div className="absolute inset-0 bg-grid opacity-25" />
       <div className="relative flex h-full items-center justify-center p-3 sm:p-4">
         <div className="flex min-w-0 max-w-full items-center gap-1 sm:gap-1.5">
           {layers.map((layer, layerIndex) => {

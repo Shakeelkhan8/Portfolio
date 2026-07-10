@@ -5,6 +5,10 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { MainContent } from "@/components/layout/main-content";
 import { SkipLink } from "@/components/layout/skip-link";
+import { AmbientBackground } from "@/components/motion/ambient-background";
+import { CursorGlow } from "@/components/motion/cursor-glow";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { SoundProvider } from "@/components/providers/sound-provider";
 import type { NavigationData, SiteConfig } from "@/types/cms";
 import type { SearchResult } from "@/types";
 
@@ -22,14 +26,21 @@ export function SiteShell({
   searchIndex,
 }: SiteShellProps) {
   return (
-    <CommandMenuProvider>
-      <SkipLink />
-      <Header site={site} navigation={navigation} />
-      <MainContent>{children}</MainContent>
-      <Footer site={site} navigation={navigation} />
-      <CommandPalette searchIndex={searchIndex} />
-      <CommandPaletteShortcuts />
-      <KeyboardShortcutsDialog />
-    </CommandMenuProvider>
+    <SoundProvider>
+      <div className="site-shell relative flex min-h-full flex-1 flex-col">
+        <AmbientBackground />
+        <CursorGlow />
+        <ScrollProgress />
+        <CommandMenuProvider>
+          <SkipLink />
+          <Header site={site} navigation={navigation} />
+          <MainContent>{children}</MainContent>
+          <Footer site={site} navigation={navigation} />
+          <CommandPalette searchIndex={searchIndex} />
+          <CommandPaletteShortcuts />
+          <KeyboardShortcutsDialog />
+        </CommandMenuProvider>
+      </div>
+    </SoundProvider>
   );
 }

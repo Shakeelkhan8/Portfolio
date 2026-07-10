@@ -25,10 +25,10 @@ export function NavLink({ item, className, onClick }: NavLinkProps) {
       showExternalIcon={false}
       onClick={onClick}
       className={cn(
-        "relative py-2 text-sm font-medium transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-primary after:transition-transform after:duration-300 after:ease-out after:content-['']",
+        "relative py-2 text-[13px] font-medium tracking-wide transition-all duration-300 after:absolute after:inset-x-1 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:rounded-full after:bg-foreground after:transition-transform after:duration-300 after:ease-out after:content-[''] hover:after:scale-x-100",
         isActive
           ? "text-foreground after:scale-x-100"
-          : "text-muted-foreground hover:text-foreground after:scale-x-0 hover:after:scale-x-50 hover:after:bg-border",
+          : "text-muted-foreground hover:text-foreground",
         className,
       )}
       aria-current={isActive ? "page" : undefined}

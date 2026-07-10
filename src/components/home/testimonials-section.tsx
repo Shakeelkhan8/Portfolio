@@ -1,6 +1,6 @@
 ﻿import Image from "next/image";
 import { Quote } from "lucide-react";
-import { FadeIn } from "@/components/motion/fade-in";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { Text } from "@/components/typography/text";
 import type { TestimonialRecord } from "@/types/cms";
 
@@ -24,24 +24,27 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {testimonials.map((item, index) => (
-        <FadeIn key={item.id} delay={index * 0.05}>
-          <figure className="flex h-full flex-col rounded-xl border border-border bg-surface p-6">
-            <Quote className="mb-4 size-5 text-muted-foreground" aria-hidden />
+    <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
+      {testimonials.map((item) => (
+        <StaggerItem key={item.id}>
+          <figure className="site-card flex h-full flex-col rounded-2xl p-6">
+            <Quote
+              className="mb-4 size-5 text-muted-foreground transition-transform duration-300 group-hover:scale-110"
+              aria-hidden
+            />
             <blockquote className="flex-1">
               <Text size="sm" leading="relaxed" muted>
                 {item.content}
               </Text>
             </blockquote>
-            <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-4">
+            <figcaption className="mt-6 flex items-center gap-3 border-t border-border/60 pt-4">
               {item.avatarUrl ? (
                 <Image
                   src={item.avatarUrl}
                   alt={`${item.authorName} avatar`}
                   width={40}
                   height={40}
-                  className="size-10 shrink-0 rounded-full object-cover"
+                  className="size-10 shrink-0 rounded-full object-cover ring-1 ring-border/80"
                 />
               ) : (
                 <span
@@ -63,8 +66,8 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               </span>
             </figcaption>
           </figure>
-        </FadeIn>
+        </StaggerItem>
       ))}
-    </div>
+    </Stagger>
   );
 }

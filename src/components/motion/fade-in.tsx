@@ -7,6 +7,8 @@ import {
 } from "framer-motion";
 import type { ReactNode } from "react";
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 type FadeInProps = Omit<HTMLMotionProps<"div">, "children"> & {
   children: ReactNode;
   delay?: number;
@@ -23,7 +25,7 @@ type FadeInProps = Omit<HTMLMotionProps<"div">, "children"> & {
 export function FadeIn({
   children,
   delay = 0,
-  duration = 0.4,
+  duration = 0.55,
   direction = "up",
   when = "mount",
   className,
@@ -35,14 +37,24 @@ export function FadeIn({
     return <div className={className}>{children}</div>;
   }
 
-  const offset = direction === "up" ? 12 : direction === "down" ? -12 : 0;
-  const transition = { duration, delay, ease: [0.4, 0, 0.2, 1] as const };
+  const offset = direction === "up" ? 22 : direction === "down" ? -22 : 0;
+  const transition = { duration, delay, ease: EASE };
+  const initial = {
+    opacity: 0,
+    y: offset,
+    filter: "blur(6px)",
+  };
+  const visible = {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+  };
 
   if (when === "mount") {
     return (
       <motion.div
-        initial={{ opacity: 0, y: offset }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={initial}
+        animate={visible}
         transition={transition}
         className={className}
         {...props}
@@ -54,9 +66,9 @@ export function FadeIn({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: offset }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15, margin: "0px 0px -48px 0px" }}
+      initial={initial}
+      whileInView={visible}
+      viewport={{ once: true, amount: 0.12, margin: "0px 0px -48px 0px" }}
       transition={transition}
       className={className}
       {...props}

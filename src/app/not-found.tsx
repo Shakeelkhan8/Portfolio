@@ -10,7 +10,7 @@ export default function NotFound() {
     <Section spacing="sm" className="flex flex-1 items-center py-24">
       <Container className="flex flex-col items-center text-center">
         <span
-          className="mb-2 select-none text-gradient font-heading text-7xl font-bold tracking-tighter sm:text-8xl"
+          className="mb-2 select-none font-heading text-7xl font-bold tracking-tighter text-foreground sm:text-8xl"
           aria-hidden="true"
         >
           404

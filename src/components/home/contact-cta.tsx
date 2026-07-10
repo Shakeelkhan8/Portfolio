@@ -1,6 +1,10 @@
+"use client";
+
 import { ButtonLink } from "@/components/shared/button-link";
-import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
+import { Magnetic } from "@/components/motion/magnetic";
+import { Reveal } from "@/components/motion/reveal";
+import { TextReveal } from "@/components/motion/text-reveal";
 import { routes } from "@/config/navigation";
 import {
   getMailtoHref,
@@ -13,35 +17,55 @@ type ContactCTAProps = {
 };
 
 export function ContactCTA({ site }: ContactCTAProps) {
+  const email = site.email?.trim() ?? "";
+
   return (
-    <div className="relative isolate overflow-hidden rounded-3xl border border-border bg-surface px-6 py-14 text-center shadow-sm sm:px-8 sm:py-16">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-50 [mask-image:radial-gradient(70%_70%_at_50%_0%,#000,transparent)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-16 left-1/2 -z-10 h-64 w-[36rem] max-w-[90%] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
-      />
-      <Heading as="h2" size="xl" className="mb-3">
-        Let&apos;s work together
-      </Heading>
-      <Text muted className="mx-auto mb-8 max-w-lg text-balance">
-        {site.availability.message}
-      </Text>
-      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <ButtonLink href={routes.contact} size="lg">
-          Contact me
-        </ButtonLink>
-        <ButtonLink
-          href={getMailtoHref(site.email)}
-          variant="outline"
-          size="lg"
-          aria-label={getPublicEmailLabel(site.email)}
-        >
-          {getPublicEmailLabel(site.email)}
-        </ButtonLink>
+    <Reveal>
+      <div className="relative isolate overflow-hidden rounded-[1.75rem] border border-border bg-surface px-6 py-16 text-center sm:px-10 sm:py-20">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-25 [mask-image:radial-gradient(70%_70%_at_50%_0%,#000,transparent)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-48 w-[28rem] -translate-x-1/2 rounded-full bg-foreground/[0.04] blur-3xl"
+        />
+        <p className="mb-4 font-mono text-[11px] tracking-[0.32em] text-muted-foreground uppercase">
+          Contact
+        </p>
+        <TextReveal
+          as="h2"
+          text="Let's work together"
+          when="inView"
+          className="font-heading mb-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
+        />
+        <Text muted className="mx-auto mb-9 max-w-lg text-balance">
+          {site.availability.message}
+        </Text>
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Magnetic>
+            <ButtonLink
+              href={routes.contact}
+              size="lg"
+              className="transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+            >
+              Contact me
+            </ButtonLink>
+          </Magnetic>
+          {email ? (
+            <Magnetic strength={0.2}>
+              <ButtonLink
+                href={getMailtoHref(email)}
+                variant="outline"
+                size="lg"
+                className="border-border bg-transparent text-foreground transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+              >
+                {getPublicEmailLabel(email)}
+              </ButtonLink>
+            </Magnetic>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </Reveal>
   );
 }

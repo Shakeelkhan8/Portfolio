@@ -16,6 +16,9 @@ export function AppLink({
   href,
   ...props
 }: AppLinkProps) {
+  const hrefString = href?.toString() ?? "";
+  const isMailtoOrTel =
+    hrefString.startsWith("mailto:") || hrefString.startsWith("tel:");
   const isExternal =
     external ??
     (typeof href === "string" &&
@@ -24,25 +27,27 @@ export function AppLink({
         href.startsWith("tel:")));
 
   if (isExternal) {
+    const showIcon = showExternalIcon && !isMailtoOrTel;
+
     return (
       <a
-        href={href as string}
+        href={hrefString}
         className={cn(
           "inline-flex items-center gap-1.5 transition-colors hover:text-primary",
           className,
         )}
-        target={href.toString().startsWith("mailto:") ? undefined : "_blank"}
-        rel={
-          href.toString().startsWith("mailto:")
-            ? undefined
-            : "noopener noreferrer"
-        }
+        target={isMailtoOrTel ? undefined : "_blank"}
+        rel={isMailtoOrTel ? undefined : "noopener noreferrer"}
         {...props}
       >
-        {children}
-        {showExternalIcon && !href.toString().startsWith("mailto:") ? (
-          <ExternalLink className="size-3.5 opacity-60" aria-hidden="true" />
-        ) : null}
+        {showIcon ? (
+          <>
+            {children}
+            <ExternalLink className="size-3.5 opacity-60" aria-hidden="true" />
+          </>
+        ) : (
+          children
+        )}
       </a>
     );
   }

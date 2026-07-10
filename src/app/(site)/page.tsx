@@ -1,14 +1,11 @@
 import { ArrowRight } from "lucide-react";
-import { AvailabilityBadge } from "@/components/shared/availability-badge";
-import { ButtonLink } from "@/components/shared/button-link";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { SectionHeader } from "@/components/layout/section-header";
-import { FadeIn } from "@/components/motion/fade-in";
-import { Heading } from "@/components/typography/heading";
-import { Text } from "@/components/typography/text";
-import { Badge } from "@/components/ui/badge";
+import { Reveal } from "@/components/motion/reveal";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { AppLink } from "@/components/shared/app-link";
+import { HomeHero } from "@/components/home/home-hero";
 import { ExpertiseGrid } from "@/components/home/expertise-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { WritingPreviewList } from "@/components/home/writing-preview-list";
@@ -17,6 +14,7 @@ import { ContactCTA } from "@/components/home/contact-cta";
 import { ServicesSection } from "@/components/home/services-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import {
+  getCtaSection,
   getFeaturedTestimonials,
   getSectionHeader,
   getServices,
@@ -27,6 +25,7 @@ import { routes } from "@/config/navigation";
 export default async function Home() {
   const site = await getSiteConfig();
   const [
+    heroCta,
     expertiseHeader,
     projectsHeader,
     writingHeader,
@@ -36,6 +35,7 @@ export default async function Home() {
     services,
     testimonials,
   ] = await Promise.all([
+    getCtaSection("home_hero"),
     getSectionHeader("home", "expertise"),
     getSectionHeader("home", "projects"),
     getSectionHeader("home", "writing"),
@@ -50,56 +50,34 @@ export default async function Home() {
     <>
       <Section
         spacing="none"
-        className="relative isolate overflow-hidden pt-20 pb-20 md:pt-28 md:pb-28"
+        className="relative isolate overflow-hidden pb-16 md:pb-20"
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_35%,#000,transparent)]"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-[420px] w-[720px] max-w-[95vw] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
-        />
-        <Container>
-          <FadeIn className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <AvailabilityBadge site={site} className="mb-8" />
-            <Heading as="h1" size="hero" className="mb-5 text-gradient">
-              {site.name}
-            </Heading>
-            <Text size="xl" className="mb-5 max-w-xl font-medium">
-              {site.title}
-            </Text>
-            <Text size="lg" leading="relaxed" muted className="mb-10 max-w-2xl">
-              {site.description}
-            </Text>
-            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <ButtonLink href={routes.projects} size="lg" className="group">
-                View Projects
-                <ArrowRight
-                  className="size-4 transition-transform duration-300 group-hover:translate-x-0.5"
-                  data-icon="inline-end"
-                />
-              </ButtonLink>
-              <ButtonLink href={routes.contact} variant="outline" size="lg">
-                Get in Touch
-              </ButtonLink>
-            </div>
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
-              <Badge variant="secondary">
-                {site.yearsOfExperience}+ years
-              </Badge>
-              <Badge variant="secondary">{site.location}</Badge>
+        <Container className="relative">
+          <HomeHero site={site} cta={heroCta} />
+
+          <Reveal delay={0.15} className="mx-auto mt-4 max-w-3xl md:mt-8">
+            <Stagger
+              className="flex flex-wrap items-center justify-center gap-2.5 border-t border-border/40 pt-10"
+              stagger={0.06}
+            >
+              <StaggerItem>
+                <span className="inline-flex rounded-full border border-border/70 bg-surface/60 px-3.5 py-1.5 font-mono text-xs text-muted-foreground backdrop-blur-sm transition-colors duration-300 hover:border-foreground/25 hover:text-foreground">
+                  {site.yearsOfExperience}+ years
+                </span>
+              </StaggerItem>
               {site.expertise.slice(0, 3).map((item) => (
-                <Badge key={item} variant="outline">
-                  {item}
-                </Badge>
+                <StaggerItem key={item}>
+                  <span className="inline-flex rounded-full border border-border/70 bg-surface/40 px-3.5 py-1.5 text-xs text-foreground/80 backdrop-blur-sm transition-colors duration-300 hover:border-foreground/25 hover:text-foreground">
+                    {item}
+                  </span>
+                </StaggerItem>
               ))}
-            </div>
-          </FadeIn>
+            </Stagger>
+          </Reveal>
         </Container>
       </Section>
 
-      <Section spacing="sm" className="border-t border-border">
+      <Section spacing="sm" className="relative border-t border-border/60">
         <Container>
           <SectionHeader
             title={expertiseHeader?.title ?? "Expertise"}
@@ -113,7 +91,7 @@ export default async function Home() {
         </Container>
       </Section>
 
-      <Section spacing="sm" className="border-t border-border bg-muted/30">
+      <Section spacing="sm" className="relative border-t border-border/60">
         <Container>
           <SectionHeader
             title={projectsHeader?.title ?? "Selected Projects"}
@@ -125,18 +103,18 @@ export default async function Home() {
               <AppLink
                 href={routes.projects}
                 showExternalIcon={false}
-                className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary"
+                className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
               >
                 View all
-                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
               </AppLink>
             }
           />
-          <ProjectPreviewGrid limit={2} />
+          <ProjectPreviewGrid limit={2} staggered />
         </Container>
       </Section>
 
-      <Section spacing="sm" className="border-t border-border">
+      <Section spacing="sm" className="relative border-t border-border/60">
         <Container>
           <SectionHeader
             title={writingHeader?.title ?? "Latest Writing"}
@@ -144,10 +122,10 @@ export default async function Home() {
               <AppLink
                 href={routes.writing}
                 showExternalIcon={false}
-                className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary"
+                className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
               >
                 View all
-                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
               </AppLink>
             }
           />
@@ -155,7 +133,7 @@ export default async function Home() {
         </Container>
       </Section>
 
-      <Section spacing="sm" className="border-t border-border bg-muted/30">
+      <Section spacing="sm" className="relative border-t border-border/60">
         <Container>
           <SectionHeader title={experienceHeader?.title ?? "Experience"} />
           <ExperienceSnapshot />
@@ -163,7 +141,7 @@ export default async function Home() {
       </Section>
 
       {services.length > 0 ? (
-        <Section spacing="sm" className="border-t border-border">
+        <Section spacing="sm" className="relative border-t border-border/60">
           <Container>
             <SectionHeader
               title={servicesHeader?.title ?? "Services"}
@@ -179,7 +157,7 @@ export default async function Home() {
       ) : null}
 
       {testimonials.length > 0 ? (
-        <Section spacing="sm" className="border-t border-border bg-muted/30">
+        <Section spacing="sm" className="relative border-t border-border/60">
           <Container>
             <SectionHeader
               title={testimonialsHeader?.title ?? "Testimonials"}
@@ -194,7 +172,7 @@ export default async function Home() {
         </Section>
       ) : null}
 
-      <Section spacing="sm" className="border-t border-border">
+      <Section spacing="sm" className="relative border-t border-border/60">
         <Container>
           <ContactCTA site={site} />
         </Container>

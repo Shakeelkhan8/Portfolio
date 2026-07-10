@@ -85,16 +85,16 @@ export default async function ArticlePage({ params }: PageProps) {
           />
           <FadeIn>
             <header className="space-y-4">
-              <Heading as="h1" size="xl">
+              <Heading as="h1" size="xl" className="text-foreground">
                 {article.title}
               </Heading>
-              <Text muted>
+              <Text muted className="font-mono text-[12px] tracking-wide">
                 {formatDate(article.date)} · {article.readingTime} min read
               </Text>
               {article.tags.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {article.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
+                    <Badge key={tag} variant="secondary" className="bg-muted/60">
                       {tag}
                     </Badge>
                   ))}
@@ -105,7 +105,7 @@ export default async function ArticlePage({ params }: PageProps) {
         </Container>
       </Section>
 
-      <Section spacing="sm">
+      <Section spacing="sm" className="border-t border-border/60">
         <Container className="max-w-3xl">
           <FadeIn delay={0.1}>
             {article.content ? (

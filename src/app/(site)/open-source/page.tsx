@@ -49,7 +49,7 @@ export default async function OpenSourcePage() {
         title="Open Source"
         description="Selected repositories and public GitHub activity."
       />
-      <Section spacing="sm" className="border-t border-border pt-0">
+      <Section spacing="sm" className="border-t border-border/60 pt-0">
         <Container className="space-y-10">
           {hasContent ? (
             <>
