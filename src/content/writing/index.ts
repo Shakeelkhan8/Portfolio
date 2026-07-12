@@ -7,7 +7,7 @@ export const articles: Article[] = [
     excerpt:
       "Practical patterns for tenant scoping, query safety, and operational trade-offs when multiple companies share one application stack.",
     content: `
-      <p>Multi-tenant SaaS products often start with a simple tenant ID column and grow into complex permission boundaries. The goal is not perfect theoretical isolation on day one — it is making incorrect tenant access structurally difficult.</p>
+      <p>Multi-tenant SaaS products often start with a simple tenant ID column and grow into complex permission boundaries. The goal is not perfect theoretical isolation on day one. It is making incorrect tenant access structurally difficult.</p>
       <h2>Enforce scoping at the query layer</h2>
       <p>Do not rely on every developer remembering to add <code>where tenant_id = ?</code>. Centralize tenant scoping in repositories, policies, or middleware so unsafe queries are the exception, not the default.</p>
       <h2>Separate admin and tenant contexts</h2>

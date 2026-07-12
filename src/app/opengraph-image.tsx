@@ -12,7 +12,7 @@ export async function generateImageMetadata() {
   return [
     {
       id: "default",
-      alt: `${site.name} — ${site.title}`,
+      alt: `${site.name} | ${site.title}`,
     },
   ];
 }

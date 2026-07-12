@@ -2,7 +2,7 @@ import type { ArchitectureDiagramData } from "@/types";
 
 export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
   "dispatch-management-saas": {
-    title: "Dispatch Management SaaS — System Architecture",
+    title: "Dispatch Management SaaS: System Architecture",
     nodes: [
       { id: "portal", label: "Admin Portal", type: "frontend", layer: 0 },
       { id: "mobile", label: "Mobile Apps", type: "frontend", layer: 0 },
@@ -34,7 +34,7 @@ export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
     ],
   },
   "isp-management-system": {
-    title: "ISP Management System — Architecture",
+    title: "ISP Management System: Architecture",
     nodes: [
       { id: "admin", label: "Admin Dashboard", type: "frontend", layer: 0 },
       { id: "portal", label: "Customer Portal", type: "frontend", layer: 0 },
@@ -55,7 +55,7 @@ export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
     ],
   },
   "enterprise-reporting-automation": {
-    title: "Reporting Automation — Architecture",
+    title: "Reporting Automation: Architecture",
     nodes: [
       { id: "internal", label: "Internal Apps", type: "frontend", layer: 0 },
       { id: "api", label: "Laravel API", type: "api", layer: 1 },

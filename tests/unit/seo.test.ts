@@ -40,7 +40,7 @@ const ctx: MetadataContext = {
   },
   seo: {
     id: "seo-1",
-    defaultTitle: "Shakeel Khan — Senior Backend Engineer",
+    defaultTitle: "Shakeel Khan | Senior Backend Engineer",
     defaultDescription: "Default SEO description",
     defaultOgImageId: null,
     defaultOgImageUrl: null,
@@ -91,7 +91,7 @@ describe("buildPageMetadata", () => {
 
     expect(metadata.title).toBe("About");
     expect(metadata.alternates?.canonical).toBe("https://example.com/about");
-    expect(metadata.openGraph?.title).toBe("About — Shakeel Khan");
+    expect(metadata.openGraph?.title).toBe("About | Shakeel Khan");
     expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image" }]);
     expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image" }]);
     expect(

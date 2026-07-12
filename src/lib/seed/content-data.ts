@@ -124,7 +124,7 @@ export function getSeedPayload() {
       font_mono: "Geist Mono",
     },
     seoDefaults: {
-      default_title: `${siteConfig.name} — ${siteConfig.title}`,
+      default_title: `${siteConfig.name} | ${siteConfig.title}`,
       default_description: siteConfig.description,
       default_robots: "index, follow",
       twitter_card_type: "summary_large_image",

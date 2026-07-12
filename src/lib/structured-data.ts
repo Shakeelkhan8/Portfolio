@@ -24,7 +24,7 @@ export function getWebSiteSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: `${site.name} — Portfolio`,
+    name: `${site.name} | Portfolio`,
     url: site.url,
     description: site.description,
     author: {

@@ -7,8 +7,8 @@ export const projects: Project[] = [
     summary:
       "Multi-tenant dispatch platform serving 5 companies, 200+ captains, and 500+ daily shipments.",
     problem:
-      "Logistics companies needed a unified platform to manage dispatch operations, captain fleets, financial settlements, and e-commerce integrations — without building custom infrastructure for each client.",
-    role: "Sole Backend Engineer — 80%+ system ownership",
+      "Logistics companies needed a unified platform to manage dispatch operations, captain fleets, financial settlements, and e-commerce integrations, without building custom infrastructure for each client.",
+    role: "Sole Backend Engineer, 80%+ system ownership",
     context: "Elityx · Production SaaS · Nov 2025 – Present",
     stack: ["Laravel", "PostgreSQL", "Vue.js", "Docker", "Redis", "Webhooks"],
     tags: ["SaaS", "Multi-Tenant", "APIs"],
@@ -21,7 +21,7 @@ export const projects: Project[] = [
       { label: "API response target", value: "<1s" },
     ],
     overview:
-      "A live multi-tenant Dispatch Management SaaS that handles the full operational lifecycle — from trip creation and auto-dispatch to financial settlements and e-commerce sync. I architect and maintain the backend end-to-end, including PostgreSQL schema, mobile APIs, webhook integrations, and production deployment.",
+      "A live multi-tenant Dispatch Management SaaS that handles the full operational lifecycle, from trip creation and auto-dispatch to financial settlements and e-commerce sync. I architect and maintain the backend end-to-end, including PostgreSQL schema, mobile APIs, webhook integrations, and production deployment.",
     challenges: [
       "Designing multi-tenant data isolation while sharing infrastructure efficiently across 5 companies.",
       "Building intelligent auto-dispatch that balances location, captain availability, and priority rules under cron-driven configuration.",
@@ -48,7 +48,7 @@ export const projects: Project[] = [
       {
         decision: "Cron-driven auto-dispatch over real-time event streaming",
         rationale:
-          "Dispatch rules involve batch evaluation of availability, zones, and priorities — better suited to scheduled processing.",
+          "Dispatch rules involve batch evaluation of availability, zones, and priorities, better suited to scheduled processing.",
         tradeoff:
           "Slightly higher latency for dispatch assignment vs. event-driven, but simpler to configure and debug.",
       },
@@ -61,7 +61,7 @@ export const projects: Project[] = [
     ],
     lessons: [
       "Multi-tenant systems need tenant scoping enforced at the query builder level, not left to individual developers.",
-      "Financial modules require idempotent webhook handling from day one — payment retries are inevitable.",
+      "Financial modules require idempotent webhook handling from day one. Payment retries are inevitable.",
     ],
     futureImprovements: [
       "Event-driven dispatch for time-critical assignments.",
@@ -72,7 +72,7 @@ export const projects: Project[] = [
     slug: "isp-management-system",
     title: "ISP Management System",
     summary:
-      "Full-stack platform for internet service providers — billing, subscriptions, and customer portal.",
+      "Full-stack platform for internet service providers: billing, subscriptions, and customer portal.",
     problem:
       "Small-to-medium ISPs in Pakistan lacked affordable software to manage customer billing, subscription plans, bandwidth tracking, and self-service portals.",
     role: "Freelance · Solo full-stack developer",
@@ -87,7 +87,7 @@ export const projects: Project[] = [
       { label: "Status", value: "Production" },
     ],
     overview:
-      "A full-stack ISP management platform built as a solo freelance project. It handles customer billing and invoicing, subscription plan management, bandwidth usage tracking, and a self-service customer portal — currently in active daily use by 3 internet service providers.",
+      "A full-stack ISP management platform built as a solo freelance project. It handles customer billing and invoicing, subscription plan management, bandwidth usage tracking, and a self-service customer portal, currently in active daily use by 3 internet service providers.",
     challenges: [
       "Designing a multi-role permission system for ISP staff, agents, and customers.",
       "Building reliable billing cycles with subscription plan changes mid-cycle.",
@@ -99,7 +99,7 @@ export const projects: Project[] = [
       {
         decision: "Monolithic Laravel over microservices",
         rationale:
-          "Solo project serving 3 ISPs — operational simplicity outweighed distributed architecture benefits.",
+          "Solo project serving 3 ISPs. Operational simplicity outweighed distributed architecture benefits.",
         tradeoff:
           "Scaling beyond current load would require horizontal scaling strategy later.",
       },
@@ -115,7 +115,7 @@ export const projects: Project[] = [
       "Complete billing, subscription, and customer self-service workflow.",
     ],
     lessons: [
-      "For solo production systems, invest in admin tooling early — support requests come from edge cases you didn't anticipate.",
+      "For solo production systems, invest in admin tooling early. Support requests come from edge cases you didn't anticipate.",
     ],
   },
   {
@@ -124,7 +124,7 @@ export const projects: Project[] = [
     summary:
       "Automated backend system replacing a 3-day manual Excel reporting workflow.",
     problem:
-      "Hum Network's operations team spent 3 days per cycle manually compiling Excel reports from multiple data sources — a bottleneck that delayed decision-making and consumed 100+ hours monthly.",
+      "Hum Network's operations team spent 3 days per cycle manually compiling Excel reports from multiple data sources, a bottleneck that delayed decision-making and consumed 100+ hours monthly.",
     role: "Backend Developer",
     context: "Hum Network Limited · Sep 2023 – Oct 2025",
     stack: ["Laravel", "PHP", "MySQL", "Excel Generation", "PDF"],
@@ -159,7 +159,7 @@ export const projects: Project[] = [
       "Real-time data sync via WebSockets across internal applications.",
     ],
     lessons: [
-      "Automating manual processes requires shadow-running both systems in parallel before cutover — stakeholders need proof of parity.",
+      "Automating manual processes requires shadow-running both systems in parallel before cutover. Stakeholders need proof of parity.",
     ],
   },
 ];

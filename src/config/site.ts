@@ -3,7 +3,7 @@ export const siteConfig = {
   legalName: "Muhammad Shakeel",
   title: "Senior Backend Engineer",
   description:
-    "Sole backend owner of a live multi-tenant dispatch platform — 5 companies onboarded, 500+ daily shipments, 80%+ system ownership.",
+    "Sole backend owner of a live multi-tenant dispatch platform: 5 companies onboarded, 500+ daily shipments, 80%+ system ownership.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Pakistan",
   city: "Islamabad",
@@ -48,7 +48,7 @@ export const siteConfig = {
     {
       title: "Optimize what you measure",
       description:
-        "Target real bottlenecks with data — not premature optimization.",
+        "Target real bottlenecks with data, not premature optimization.",
     },
     {
       title: "Software others enjoy maintaining",

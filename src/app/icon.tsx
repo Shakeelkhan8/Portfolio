@@ -25,15 +25,30 @@ export default async function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#2563eb",
-          color: "#ffffff",
-          fontSize: 16,
-          fontWeight: 700,
-          fontFamily: "system-ui, sans-serif",
-          letterSpacing: "-0.02em",
+          background: "#000000",
+          padding: 2,
         }}
       >
-        {initials}
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1.5px solid #f5f5f5",
+            borderRadius: 4,
+            color: "#f5f5f5",
+            fontSize: 14,
+            fontWeight: 700,
+            fontFamily:
+              "ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif",
+            letterSpacing: "0.02em",
+            lineHeight: 1,
+          }}
+        >
+          {initials}
+        </div>
       </div>
     ),
     { ...size },

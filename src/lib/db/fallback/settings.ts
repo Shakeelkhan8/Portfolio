@@ -10,7 +10,7 @@ import type {
 export function getFallbackSeoDefaults(): SeoDefaultsRecord {
   return {
     id: "fallback-seo",
-    defaultTitle: `${siteConfig.name} — ${siteConfig.title}`,
+    defaultTitle: `${siteConfig.name} | ${siteConfig.title}`,
     defaultDescription: siteConfig.description,
     defaultOgImageId: null,
     defaultOgImageUrl: null,

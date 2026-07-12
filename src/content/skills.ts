@@ -49,5 +49,5 @@ export const skillGroups: SkillGroup[] = [
 export const aboutIntro = [
   "Senior Backend Engineer with 5+ years of experience building and shipping production-grade SaaS platforms, enterprise automation systems, and API-driven architectures.",
   "Currently architecting and owning 80%+ of the backend for a live multi-tenant Dispatch Management SaaS serving 5 onboarded companies, 200+ captains, and 500+ daily shipments.",
-  "I focus on systems that remain reliable under real operational load — from database design and API contracts to webhook integrations and deployment pipelines.",
+  "I focus on systems that remain reliable under real operational load, from database design and API contracts to webhook integrations and deployment pipelines.",
 ];

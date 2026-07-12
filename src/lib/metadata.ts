@@ -41,14 +41,14 @@ export function resolveSocialImages(
 
 export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
   const { site, seo } = ctx;
-  const defaultTitle = seo.defaultTitle || `${site.name} — ${site.title}`;
+  const defaultTitle = seo.defaultTitle || `${site.name} | ${site.title}`;
   const defaultDescription = seo.defaultDescription || site.description;
   const socialImages = resolveSocialImages(null, seo.defaultOgImageUrl);
 
   return {
     title: {
       default: defaultTitle,
-      template: `%s — ${site.name}`,
+      template: `%s | ${site.name}`,
     },
     description: defaultDescription,
     metadataBase: new URL(site.url),
@@ -135,7 +135,7 @@ export function buildPageMetadata(
     alternates: { canonical: url },
     ...(parsedRobots ? { robots: parsedRobots } : {}),
     openGraph: {
-      title: `${title} — ${site.name}`,
+      title: `${title} | ${site.name}`,
       description: metaDescription,
       url,
       siteName: site.name,
@@ -143,7 +143,7 @@ export function buildPageMetadata(
     },
     twitter: {
       card: resolveTwitterCard(seo.twitterCardType),
-      title: `${title} — ${site.name}`,
+      title: `${title} | ${site.name}`,
       description: metaDescription,
       images: socialImages,
     },

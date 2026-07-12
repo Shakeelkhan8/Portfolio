@@ -148,7 +148,7 @@ export function ContactForm() {
             {errorMessage}
           </Text>
           <Text size="sm" muted className="mt-2">
-            Or email directly —{" "}
+            Or email directly:{" "}
             <a
               href={getMailtoHref(site.email)}
               className="font-medium text-primary hover:underline"
