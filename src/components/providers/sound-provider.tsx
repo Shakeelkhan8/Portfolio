@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-type SoundName = "click" | "whoosh" | "unmute";
+type SoundName = "click" | "whoosh";
 
 type SoundContextValue = {
   muted: boolean;
@@ -86,26 +86,6 @@ function playWhoosh(ctx: AudioContext) {
   filter.connect(gain);
   gain.connect(ctx.destination);
   noise.start(now);
-}
-
-/** Confirmation when enabling sound */
-function playUnmute(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const notes = [523.25, 659.25, 783.99];
-  notes.forEach((freq, index) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = freq;
-    const start = now + index * 0.05;
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(0.14, start + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start + 0.18);
-  });
 }
 
 const BGM_SRC = "/bg-music.mp3";
@@ -227,7 +207,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
 
   const play = useCallback(
     (name: SoundName) => {
-      if (mutedRef.current && name !== "unmute") return;
+      if (mutedRef.current) return;
       if (prefersReducedMotion()) return;
 
       void (async () => {
@@ -239,42 +219,51 @@ export function SoundProvider({ children }: { children: ReactNode }) {
           if (buffer && !mutedRef.current) playClickSample(ctx, buffer);
           return;
         }
-        if (name === "whoosh") {
-          playWhoosh(ctx);
-          return;
-        }
-        playUnmute(ctx);
+        playWhoosh(ctx);
       })();
     },
     [ensureContext, ensureClickBuffer],
   );
 
   const toggleMuted = useCallback(() => {
-    const nextMuted = !mutedRef.current;
-    mutedRef.current = nextMuted;
-    setMuted(nextMuted);
+    const wasMuted = mutedRef.current;
+    const nextMuted = !wasMuted;
 
-    if (!nextMuted) {
-      // Unlock AudioContext on the same user gesture, then play confirm + BGM.
-      void (async () => {
-        const ctx = await ensureContext();
-        if (!ctx || prefersReducedMotion()) return;
-        // Warm the click sample while audio is unlocked.
-        void ensureClickBuffer(ctx);
-        playUnmute(ctx);
-        await syncBgm();
-      })();
-    } else {
-      bgmRef.current?.pause();
+    if (prefersReducedMotion()) {
+      mutedRef.current = nextMuted;
+      setMuted(nextMuted);
+      if (nextMuted) bgmRef.current?.pause();
+      else void syncBgm();
+      return;
     }
-  }, [ensureContext, ensureClickBuffer, setMuted, syncBgm]);
+
+    if (nextMuted) {
+      // Still unmuted — play the normal click, then mute.
+      play("click");
+      mutedRef.current = true;
+      setMuted(true);
+      bgmRef.current?.pause();
+      return;
+    }
+
+    // Unmuting — unlock audio, play click, then start BGM.
+    mutedRef.current = false;
+    setMuted(false);
+    void (async () => {
+      const ctx = await ensureContext();
+      if (!ctx) return;
+      const buffer = await ensureClickBuffer(ctx);
+      if (buffer && !mutedRef.current) playClickSample(ctx, buffer);
+      await syncBgm();
+    })();
+  }, [ensureContext, ensureClickBuffer, play, setMuted, syncBgm]);
 
   useEffect(() => {
     function onPointerDown(event: PointerEvent) {
       if (mutedRef.current) return;
       const target = event.target as HTMLElement | null;
       if (!target) return;
-      // Sound toggle handles its own unmute chime
+      // Toggle plays click itself so mute/unmute both get the same SFX
       if (target.closest("[data-sound-toggle]")) return;
       if (target.closest("a, button, [role='button'], summary, [data-slot='button']")) {
         play("click");

@@ -50,74 +50,41 @@ export default async function AboutPage() {
             <p className="mb-3 font-mono text-[11px] font-medium tracking-[0.28em] text-muted-foreground uppercase">
               Toolkit
             </p>
-            <Heading as="h2" size="lg" className="mb-6 text-foreground">
+            <Heading as="h2" size="lg" className="mb-8 text-foreground sm:mb-10">
               Skills
             </Heading>
           </Reveal>
 
-          <div className="rounded-2xl bg-foreground/[0.035] px-5 py-6 sm:px-7 sm:py-8">
-            <div className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
-              {skillGroups.map((group, index) => (
-                <Reveal key={group.category} delay={index * 0.04}>
-                  <div>
-                    <Text className="mb-3 font-heading text-[0.95rem] font-semibold tracking-tight text-foreground">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+            {skillGroups.map((group, index) => (
+              <Reveal key={group.category} delay={index * 0.045} className="h-full">
+                <article className="flex h-full flex-col rounded-2xl border border-foreground/[0.06] bg-foreground/[0.03] p-5 transition-[border-color,background-color] duration-300 hover:border-foreground/12 hover:bg-foreground/[0.045] sm:p-6">
+                  <div className="mb-4 flex items-baseline gap-3 border-b border-foreground/[0.06] pb-3.5">
+                    <span
+                      className="font-mono text-[11px] font-medium tracking-wide text-muted-foreground tabular-nums"
+                      aria-hidden="true"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <Text className="font-heading text-[0.98rem] font-semibold tracking-tight text-foreground">
                       {group.category}
                     </Text>
-                    <div className="flex flex-wrap gap-2">
-                      {group.skills.map((skill) => (
+                  </div>
+                  <ul className="flex flex-wrap gap-2">
+                    {group.skills.map((skill) => (
+                      <li key={skill}>
                         <Badge
-                          key={skill}
                           variant="secondary"
-                          className="border border-foreground/10 bg-background/60 px-2.5 py-1 text-[0.75rem] font-medium text-foreground/90"
+                          className="border border-foreground/8 bg-background/50 px-2.5 py-1 text-[0.75rem] font-medium text-foreground/85"
                         >
                           {skill}
                         </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-10 sm:mt-12">
-            <Heading as="h2" size="lg" className="mb-6 text-foreground">
-              Details
-            </Heading>
-            <dl className="grid gap-6 sm:grid-cols-2 sm:gap-8">
-              <Reveal>
-                <div>
-                  <dt className="mb-1.5 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-                    Location
-                  </dt>
-                  <dd className="text-sm text-foreground/90">
-                    {site.location} ({site.timezone})
-                  </dd>
-                </div>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
               </Reveal>
-              <Reveal delay={0.05}>
-                <div>
-                  <dt className="mb-1.5 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-                    Availability
-                  </dt>
-                  <dd className="text-sm text-foreground/90">
-                    {site.availability.message}
-                  </dd>
-                </div>
-              </Reveal>
-              <Reveal delay={0.1} className="sm:col-span-2">
-                <div>
-                  <dt className="mb-1.5 font-mono text-[10px] tracking-[0.22em] text-muted-foreground uppercase">
-                    Languages
-                  </dt>
-                  <dd className="text-sm text-foreground/90">
-                    {site.languages
-                      .map((lang) => `${lang.name} (${lang.level})`)
-                      .join(" · ")}
-                  </dd>
-                </div>
-              </Reveal>
-            </dl>
+            ))}
           </div>
         </Container>
       </Section>
