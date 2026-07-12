@@ -166,6 +166,9 @@ function playUnmute(ctx: AudioContext) {
   });
 }
 
+const BGM_SRC = "/bg-music.mp3";
+const BGM_VOLUME = 0.28;
+
 export function SoundProvider({ children }: { children: ReactNode }) {
   const muted = useSyncExternalStore(
     subscribeMute,
@@ -174,11 +177,54 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   );
   const mutedRef = useRef(muted);
   const ctxRef = useRef<AudioContext | null>(null);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
   const lastHoverAt = useRef(0);
 
   useEffect(() => {
     mutedRef.current = muted;
   }, [muted]);
+
+  const ensureBgm = useCallback(() => {
+    if (typeof window === "undefined") return null;
+    if (!bgmRef.current) {
+      const audio = new Audio(BGM_SRC);
+      audio.loop = true;
+      audio.preload = "auto";
+      audio.volume = BGM_VOLUME;
+      bgmRef.current = audio;
+    }
+    return bgmRef.current;
+  }, []);
+
+  const syncBgm = useCallback(async () => {
+    const audio = ensureBgm();
+    if (!audio) return;
+
+    if (mutedRef.current || prefersReducedMotion()) {
+      audio.pause();
+      return;
+    }
+
+    try {
+      await audio.play();
+    } catch {
+      // Autoplay blocked until a user gesture (unmute toggle).
+    }
+  }, [ensureBgm]);
+
+  useEffect(() => {
+    void syncBgm();
+  }, [muted, syncBgm]);
+
+  useEffect(() => {
+    return () => {
+      const audio = bgmRef.current;
+      if (!audio) return;
+      audio.pause();
+      audio.src = "";
+      bgmRef.current = null;
+    };
+  }, []);
 
   const setMuted = useCallback((next: boolean) => {
     try {
@@ -224,17 +270,21 @@ export function SoundProvider({ children }: { children: ReactNode }) {
 
   const toggleMuted = useCallback(() => {
     const nextMuted = !mutedRef.current;
+    mutedRef.current = nextMuted;
     setMuted(nextMuted);
 
     if (!nextMuted) {
-      // Unlock AudioContext on the same user gesture, then play confirm.
+      // Unlock AudioContext on the same user gesture, then play confirm + BGM.
       void (async () => {
         const ctx = await ensureContext();
         if (!ctx || prefersReducedMotion()) return;
         playUnmute(ctx);
+        await syncBgm();
       })();
+    } else {
+      bgmRef.current?.pause();
     }
-  }, [ensureContext, setMuted]);
+  }, [ensureContext, setMuted, syncBgm]);
 
   useEffect(() => {
     function onPointerDown(event: PointerEvent) {

@@ -21,7 +21,7 @@ export function SoundToggle() {
             variant="ghost"
             size="icon"
             data-sound-toggle=""
-            aria-label={muted ? "Unmute interface sounds" : "Mute interface sounds"}
+            aria-label={muted ? "Unmute background music" : "Mute background music"}
             aria-pressed={!muted}
             onClick={toggleMuted}
             className="size-11 md:size-9"
@@ -30,7 +30,7 @@ export function SoundToggle() {
           </Button>
         }
       />
-      <TooltipContent>{muted ? "Unmute sounds" : "Mute sounds"}</TooltipContent>
+      <TooltipContent>{muted ? "Unmute music" : "Mute music"}</TooltipContent>
     </Tooltip>
   );
 }
