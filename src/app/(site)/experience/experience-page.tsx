@@ -13,10 +13,11 @@ export default async function ExperiencePage() {
   return (
     <>
       <PageHeader
+        eyebrow="Experience"
         title="Experience"
         description={`${site.yearsOfExperience}+ years building production systems across SaaS, enterprise, and freelance projects.`}
       />
-      <Section spacing="sm" className="border-t border-border/60 pt-0">
+      <Section spacing="sm" className="pt-0">
         <Container className="max-w-3xl">
           <Timeline entries={experience} />
         </Container>

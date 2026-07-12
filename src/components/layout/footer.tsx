@@ -18,15 +18,8 @@ export function Footer({ site, navigation, className }: FooterProps) {
   return (
     <footer
       role="contentinfo"
-      className={cn(
-        "relative mt-auto overflow-hidden border-t border-border/70",
-        className,
-      )}
+      className={cn("relative mt-auto overflow-hidden", className)}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-border"
-      />
       <Container className="py-12 md:py-14">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm space-y-3">
@@ -69,7 +62,7 @@ export function Footer({ site, navigation, className }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-border/60 pt-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-4 pt-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>{copyright.replace(String(year), String(year))}</p>
           <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-5 gap-y-2">
             {navigation.footerNav.map((item) => (

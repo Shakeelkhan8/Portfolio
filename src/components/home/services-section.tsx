@@ -14,14 +14,14 @@ export function ServicesSection({ services }: ServicesSectionProps) {
   }
 
   return (
-    <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
+    <Stagger className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
       {services.map((service) => {
         const Icon = resolveLucideIcon(service.icon) ?? Wrench;
 
         return (
           <StaggerItem key={service.id}>
-            <div className="site-card group h-full rounded-2xl p-6">
-              <div className="mb-5 flex size-11 items-center justify-center rounded-xl border border-border bg-muted text-foreground transition-all duration-300 group-hover:scale-105 group-hover:bg-surface-elevated">
+            <div className="group h-full">
+              <div className="mb-4 flex size-10 items-center justify-center text-foreground transition-transform duration-300 group-hover:scale-105">
                 <Icon className="size-5" aria-hidden />
               </div>
               <Text className="mb-2 font-heading font-medium tracking-tight">

@@ -44,17 +44,17 @@ export async function DecisionHighlight() {
   const { project, decision } = highlight;
 
   return (
-    <Section spacing="sm" className="border-y border-border/60">
+    <Section spacing="none" className="py-10 sm:py-12">
       <Container className="max-w-3xl">
         <Reveal>
           <Heading as="h2" size="lg" className="mb-3 text-foreground">
             How I decide
           </Heading>
-          <Text muted leading="relaxed" className="mb-8 max-w-2xl">
+          <Text muted leading="relaxed" className="mb-6 max-w-2xl">
             Senior judgment shows up in tradeoffs, not slogans. One concrete call
             from a live system:
           </Text>
-          <div className="site-card relative overflow-hidden rounded-2xl p-6 sm:p-8">
+          <div className="relative">
             <Text
               size="sm"
               muted
@@ -88,7 +88,7 @@ export async function DecisionHighlight() {
             <AppLink
               href={routes.project(project.slug)}
               showExternalIcon={false}
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+              className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
             >
               Read the full case study
               <ArrowRight className="size-4" aria-hidden="true" />

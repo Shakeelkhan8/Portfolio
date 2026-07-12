@@ -16,10 +16,11 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
+        eyebrow="Projects"
         title="Projects"
         description="Engineering case studies from production systems. Not demos, but real operational software."
       />
-      <Section spacing="sm" className="border-t border-border/60 pt-0">
+      <Section spacing="sm" className="pt-0">
         <Container>
           <ProjectList projects={projects} diagrams={diagrams} />
         </Container>

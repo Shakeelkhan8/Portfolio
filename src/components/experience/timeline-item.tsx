@@ -30,13 +30,13 @@ export function TimelineItem({
         />
         {!isLast ? (
           <div
-            className="mt-2 w-px flex-1 bg-border"
+            className="mt-2 w-px flex-1 bg-foreground/10"
             aria-hidden="true"
           />
         ) : null}
       </div>
 
-      <div className="site-card min-w-0 flex-1 space-y-3 rounded-2xl p-5 sm:p-6">
+      <div className="min-w-0 flex-1 space-y-3 pt-0.5">
         <div>
           <Heading as="h3" size="sm" balance={false}>
             {entry.role}

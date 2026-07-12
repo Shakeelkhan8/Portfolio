@@ -13,7 +13,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
   return (
     <FadeIn className="space-y-6">
       {project.thumbnailUrl ? (
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/70 bg-muted shadow-lg">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-muted">
           <Image
             src={project.thumbnailUrl}
             alt={`${project.title} thumbnail`}

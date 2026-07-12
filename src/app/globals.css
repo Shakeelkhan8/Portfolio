@@ -296,7 +296,7 @@
 
 @utility site-card {
   background: var(--surface);
-  border: 1px solid color-mix(in oklch, var(--foreground) 8%, transparent);
+  border: 1px solid color-mix(in oklch, var(--foreground) 5%, transparent);
   box-shadow: none;
   transition:
     transform var(--duration-normal) var(--ease-out),
@@ -305,9 +305,9 @@
 }
 
 .site-card:hover {
-  border-color: color-mix(in oklch, var(--foreground) 18%, transparent);
+  border-color: color-mix(in oklch, var(--foreground) 12%, transparent);
   background: var(--surface-elevated);
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
 .site-card img {

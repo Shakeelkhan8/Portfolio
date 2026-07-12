@@ -105,7 +105,7 @@ export default async function ArticlePage({ params }: PageProps) {
         </Container>
       </Section>
 
-      <Section spacing="sm" className="border-t border-border/60">
+      <Section spacing="sm" className="pt-0">
         <Container className="max-w-3xl">
           <FadeIn delay={0.1}>
             {article.content ? (
