@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-type SoundName = "hover" | "click" | "whoosh" | "unmute";
+type SoundName = "click" | "whoosh" | "unmute";
 
 type SoundContextValue = {
   muted: boolean;
@@ -62,21 +62,6 @@ function scheduleGain(
   gain.gain.setValueAtTime(0.0001, now);
   gain.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), now + attack);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + attack + release);
-}
-
-/** Soft hover tick */
-function playHover(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(1400, now);
-  osc.frequency.exponentialRampToValueAtTime(1100, now + 0.04);
-  scheduleGain(gain, ctx, 0.09, 0.003, 0.04);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(now);
-  osc.stop(now + 0.06);
 }
 
 /** Soft whoosh / transition */
@@ -149,7 +134,6 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   const bgmRef = useRef<HTMLAudioElement | null>(null);
   const clickBufferRef = useRef<AudioBuffer | null>(null);
   const clickLoadRef = useRef<Promise<AudioBuffer | null> | null>(null);
-  const lastHoverAt = useRef(0);
 
   useEffect(() => {
     mutedRef.current = muted;
@@ -250,10 +234,6 @@ export function SoundProvider({ children }: { children: ReactNode }) {
         const ctx = await ensureContext();
         if (!ctx) return;
 
-        if (name === "hover") {
-          playHover(ctx);
-          return;
-        }
         if (name === "click") {
           const buffer = await ensureClickBuffer(ctx);
           if (buffer && !mutedRef.current) playClickSample(ctx, buffer);
@@ -301,26 +281,9 @@ export function SoundProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    function onPointerOver(event: PointerEvent) {
-      if (mutedRef.current) return;
-      const target = event.target as HTMLElement | null;
-      if (!target) return;
-      const interactive = target.closest(
-        "a, button, [role='button'], summary, [data-slot='button']",
-      );
-      if (!interactive) return;
-
-      const now = performance.now();
-      if (now - lastHoverAt.current < 80) return;
-      lastHoverAt.current = now;
-      play("hover");
-    }
-
     window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("pointerover", onPointerOver);
     return () => {
       window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("pointerover", onPointerOver);
     };
   }, [play]);
 
