@@ -64,60 +64,6 @@ function scheduleGain(
   gain.gain.exponentialRampToValueAtTime(0.0001, now + attack + release);
 }
 
-/** Cinematic cyber UI click — soft dual-tone “access” blip */
-function playClick(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const master = ctx.createGain();
-  master.gain.value = 1;
-  master.connect(ctx.destination);
-
-  // Low glassy body (terminal confirm)
-  const body = ctx.createOscillator();
-  const bodyGain = ctx.createGain();
-  const bodyFilter = ctx.createBiquadFilter();
-  body.type = "sine";
-  body.frequency.setValueAtTime(520, now);
-  body.frequency.exponentialRampToValueAtTime(310, now + 0.11);
-  bodyFilter.type = "lowpass";
-  bodyFilter.frequency.value = 1600;
-  bodyGain.gain.setValueAtTime(0.0001, now);
-  bodyGain.gain.exponentialRampToValueAtTime(0.16, now + 0.008);
-  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
-  body.connect(bodyFilter);
-  bodyFilter.connect(bodyGain);
-  bodyGain.connect(master);
-  body.start(now);
-  body.stop(now + 0.16);
-
-  // High crystalline overtone (HUD chirp)
-  const chirp = ctx.createOscillator();
-  const chirpGain = ctx.createGain();
-  chirp.type = "triangle";
-  chirp.frequency.setValueAtTime(1880, now);
-  chirp.frequency.exponentialRampToValueAtTime(2400, now + 0.045);
-  chirpGain.gain.setValueAtTime(0.0001, now);
-  chirpGain.gain.exponentialRampToValueAtTime(0.07, now + 0.004);
-  chirpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
-  chirp.connect(chirpGain);
-  chirpGain.connect(master);
-  chirp.start(now);
-  chirp.stop(now + 0.08);
-
-  // Quiet octave harmony for depth
-  const harm = ctx.createOscillator();
-  const harmGain = ctx.createGain();
-  harm.type = "sine";
-  harm.frequency.setValueAtTime(1040, now);
-  harm.frequency.exponentialRampToValueAtTime(620, now + 0.1);
-  harmGain.gain.setValueAtTime(0.0001, now + 0.01);
-  harmGain.gain.exponentialRampToValueAtTime(0.05, now + 0.02);
-  harmGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-  harm.connect(harmGain);
-  harmGain.connect(master);
-  harm.start(now);
-  harm.stop(now + 0.13);
-}
-
 /** Soft hover tick */
 function playHover(ctx: AudioContext) {
   const now = ctx.currentTime;
@@ -179,6 +125,18 @@ function playUnmute(ctx: AudioContext) {
 
 const BGM_SRC = "/bg-music.mp3";
 const BGM_VOLUME = 0.28;
+const CLICK_SRC = "/clicks.mp3";
+const CLICK_VOLUME = 0.5;
+
+function playClickSample(ctx: AudioContext, buffer: AudioBuffer) {
+  const source = ctx.createBufferSource();
+  const gain = ctx.createGain();
+  source.buffer = buffer;
+  gain.gain.value = CLICK_VOLUME;
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(0);
+}
 
 export function SoundProvider({ children }: { children: ReactNode }) {
   const muted = useSyncExternalStore(
@@ -189,6 +147,8 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   const mutedRef = useRef(muted);
   const ctxRef = useRef<AudioContext | null>(null);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const clickBufferRef = useRef<AudioBuffer | null>(null);
+  const clickLoadRef = useRef<Promise<AudioBuffer | null> | null>(null);
   const lastHoverAt = useRef(0);
 
   useEffect(() => {
@@ -261,6 +221,26 @@ export function SoundProvider({ children }: { children: ReactNode }) {
     return ctxRef.current;
   }, []);
 
+  const ensureClickBuffer = useCallback(async (ctx: AudioContext) => {
+    if (clickBufferRef.current) return clickBufferRef.current;
+    if (!clickLoadRef.current) {
+      clickLoadRef.current = (async () => {
+        try {
+          const response = await fetch(CLICK_SRC);
+          if (!response.ok) return null;
+          const data = await response.arrayBuffer();
+          const buffer = await ctx.decodeAudioData(data.slice(0));
+          clickBufferRef.current = buffer;
+          return buffer;
+        } catch {
+          clickLoadRef.current = null;
+          return null;
+        }
+      })();
+    }
+    return clickLoadRef.current;
+  }, []);
+
   const play = useCallback(
     (name: SoundName) => {
       if (mutedRef.current && name !== "unmute") return;
@@ -270,13 +250,23 @@ export function SoundProvider({ children }: { children: ReactNode }) {
         const ctx = await ensureContext();
         if (!ctx) return;
 
-        if (name === "hover") playHover(ctx);
-        else if (name === "click") playClick(ctx);
-        else if (name === "whoosh") playWhoosh(ctx);
-        else playUnmute(ctx);
+        if (name === "hover") {
+          playHover(ctx);
+          return;
+        }
+        if (name === "click") {
+          const buffer = await ensureClickBuffer(ctx);
+          if (buffer && !mutedRef.current) playClickSample(ctx, buffer);
+          return;
+        }
+        if (name === "whoosh") {
+          playWhoosh(ctx);
+          return;
+        }
+        playUnmute(ctx);
       })();
     },
-    [ensureContext],
+    [ensureContext, ensureClickBuffer],
   );
 
   const toggleMuted = useCallback(() => {
@@ -289,13 +279,15 @@ export function SoundProvider({ children }: { children: ReactNode }) {
       void (async () => {
         const ctx = await ensureContext();
         if (!ctx || prefersReducedMotion()) return;
+        // Warm the click sample while audio is unlocked.
+        void ensureClickBuffer(ctx);
         playUnmute(ctx);
         await syncBgm();
       })();
     } else {
       bgmRef.current?.pause();
     }
-  }, [ensureContext, setMuted, syncBgm]);
+  }, [ensureContext, ensureClickBuffer, setMuted, syncBgm]);
 
   useEffect(() => {
     function onPointerDown(event: PointerEvent) {
