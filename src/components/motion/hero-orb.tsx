@@ -42,6 +42,32 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
+function isFiniteNumber(n: number) {
+  return Number.isFinite(n);
+}
+
+/** Canvas gradients reject NaN/Infinity; keep radii strictly positive. */
+function safeRadialGradient(
+  ctx: CanvasRenderingContext2D,
+  x0: number,
+  y0: number,
+  r0: number,
+  x1: number,
+  y1: number,
+  r1: number,
+) {
+  if (
+    ![x0, y0, r0, x1, y1, r1].every(isFiniteNumber) ||
+    r0 < 0 ||
+    r1 < 0
+  ) {
+    return null;
+  }
+  const outer = Math.max(r1, 1e-6);
+  const inner = Math.min(Math.max(r0, 0), outer);
+  return ctx.createRadialGradient(x0, y0, inner, x1, y1, outer);
+}
+
 function fibonacciSphere(count: number, radius: number): Vec3[] {
   const pts: Vec3[] = [];
   const golden = Math.PI * (3 - Math.sqrt(5));
@@ -123,6 +149,11 @@ export function HeroOrb({ className }: HeroOrbProps) {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = parent!.clientWidth;
       height = parent!.clientHeight;
+      if (!isFiniteNumber(width) || !isFiniteNumber(height) || width < 1 || height < 1) {
+        width = 0;
+        height = 0;
+        return;
+      }
       canvas!.width = Math.floor(width * dpr);
       canvas!.height = Math.floor(height * dpr);
       canvas!.style.width = `${width}px`;
@@ -156,16 +187,26 @@ export function HeroOrb({ className }: HeroOrbProps) {
     function onMove(e: PointerEvent) {
       if (!fine) return;
       const rect = canvas!.getBoundingClientRect();
-      mouseTX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      mouseTY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      if (rect.width < 1 || rect.height < 1) return;
+      const nx = (e.clientX - rect.left) / rect.width - 0.5;
+      const ny = (e.clientY - rect.top) / rect.height - 0.5;
+      if (!isFiniteNumber(nx) || !isFiniteNumber(ny)) return;
+      mouseTX = nx * 2;
+      mouseTY = ny * 2;
     }
 
     function drawFrame(now: number) {
       if (!running) return;
+      if (width < 1 || height < 1) {
+        raf = requestAnimationFrame(drawFrame);
+        return;
+      }
       const t = (now - start) / 1000;
 
       mouseX += (mouseTX - mouseX) * 0.025;
       mouseY += (mouseTY - mouseY) * 0.025;
+      if (!isFiniteNumber(mouseX)) mouseX = 0;
+      if (!isFiniteNumber(mouseY)) mouseY = 0;
 
       const spark = prefersReducedMotion
         ? 1
@@ -236,13 +277,15 @@ export function HeroOrb({ className }: HeroOrbProps) {
 
       // Soft nebula atmosphere
       const atmR = Math.min(width, height) * (0.22 + awaken * 0.42) * scale;
-      const atm = ctx!.createRadialGradient(cx, cy, 0, cx, cy, atmR);
-      atm.addColorStop(0, `rgba(255,255,255,${0.065 * presence * spark})`);
-      atm.addColorStop(0.35, `rgba(255,255,255,${0.022 * presence})`);
-      atm.addColorStop(0.7, `rgba(255,255,255,${0.006 * presence})`);
-      atm.addColorStop(1, "rgba(255,255,255,0)");
-      ctx!.fillStyle = atm;
-      ctx!.fillRect(0, 0, width, height);
+      const atm = safeRadialGradient(ctx!, cx, cy, 0, cx, cy, atmR);
+      if (atm) {
+        atm.addColorStop(0, `rgba(255,255,255,${0.065 * presence * spark})`);
+        atm.addColorStop(0.35, `rgba(255,255,255,${0.022 * presence})`);
+        atm.addColorStop(0.7, `rgba(255,255,255,${0.006 * presence})`);
+        atm.addColorStop(1, "rgba(255,255,255,0)");
+        ctx!.fillStyle = atm;
+        ctx!.fillRect(0, 0, width, height);
+      }
 
       // Living heart of creation
       const corePulse =
@@ -253,22 +296,24 @@ export function HeroOrb({ className }: HeroOrbProps) {
         Math.min(width, height) *
         (0.016 + spark * 0.038 + awaken * 0.055) *
         scale;
-      const heart = ctx!.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.6);
-      heart.addColorStop(
-        0,
-        `rgba(255,255,255,${0.82 * presence * corePulse})`,
-      );
-      heart.addColorStop(
-        0.1,
-        `rgba(255,255,255,${0.32 * presence * spark})`,
-      );
-      heart.addColorStop(0.28, `rgba(255,255,255,${0.09 * presence})`);
-      heart.addColorStop(0.55, `rgba(255,255,255,${0.025 * presence})`);
-      heart.addColorStop(1, "rgba(255,255,255,0)");
-      ctx!.fillStyle = heart;
-      ctx!.beginPath();
-      ctx!.arc(cx, cy, coreR * 3.6, 0, Math.PI * 2);
-      ctx!.fill();
+      const heart = safeRadialGradient(ctx!, cx, cy, 0, cx, cy, coreR * 3.6);
+      if (heart) {
+        heart.addColorStop(
+          0,
+          `rgba(255,255,255,${0.82 * presence * corePulse})`,
+        );
+        heart.addColorStop(
+          0.1,
+          `rgba(255,255,255,${0.32 * presence * spark})`,
+        );
+        heart.addColorStop(0.28, `rgba(255,255,255,${0.09 * presence})`);
+        heart.addColorStop(0.55, `rgba(255,255,255,${0.025 * presence})`);
+        heart.addColorStop(1, "rgba(255,255,255,0)");
+        ctx!.fillStyle = heart;
+        ctx!.beginPath();
+        ctx!.arc(cx, cy, Math.max(coreR * 3.6, 1e-6), 0, Math.PI * 2);
+        ctx!.fill();
+      }
 
       // Single intentional orbit — draws during gathering
       if (!mobile && gather > 0.02) {
@@ -383,7 +428,8 @@ export function HeroOrb({ className }: HeroOrbProps) {
         const peak = 1 - Math.abs(awaken - 0.82) / 0.13;
         const bloom = Math.max(0, peak) ** 2 * 0.13 * presence;
         if (bloom > 0.002) {
-          const g = ctx!.createRadialGradient(
+          const g = safeRadialGradient(
+            ctx!,
             cx,
             cy,
             0,
@@ -391,11 +437,13 @@ export function HeroOrb({ className }: HeroOrbProps) {
             cy,
             Math.min(width, height) * 0.58 * scale,
           );
-          g.addColorStop(0, `rgba(255,255,255,${bloom})`);
-          g.addColorStop(0.35, `rgba(255,255,255,${bloom * 0.28})`);
-          g.addColorStop(1, "rgba(255,255,255,0)");
-          ctx!.fillStyle = g;
-          ctx!.fillRect(0, 0, width, height);
+          if (g) {
+            g.addColorStop(0, `rgba(255,255,255,${bloom})`);
+            g.addColorStop(0.35, `rgba(255,255,255,${bloom * 0.28})`);
+            g.addColorStop(1, "rgba(255,255,255,0)");
+            ctx!.fillStyle = g;
+            ctx!.fillRect(0, 0, width, height);
+          }
         }
       }
 
@@ -403,10 +451,12 @@ export function HeroOrb({ className }: HeroOrbProps) {
     }
 
     function drawStatic() {
+      if (width < 1 || height < 1) return;
       const cx = width * 0.5;
       const cy = height * 0.46;
       ctx!.clearRect(0, 0, width, height);
-      const g = ctx!.createRadialGradient(
+      const g = safeRadialGradient(
+        ctx!,
         cx,
         cy,
         0,
@@ -414,11 +464,13 @@ export function HeroOrb({ className }: HeroOrbProps) {
         cy,
         Math.min(width, height) * 0.4,
       );
-      g.addColorStop(0, "rgba(255,255,255,0.35)");
-      g.addColorStop(0.28, "rgba(255,255,255,0.09)");
-      g.addColorStop(1, "rgba(255,255,255,0)");
-      ctx!.fillStyle = g;
-      ctx!.fillRect(0, 0, width, height);
+      if (g) {
+        g.addColorStop(0, "rgba(255,255,255,0.35)");
+        g.addColorStop(0.28, "rgba(255,255,255,0.09)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx!.fillStyle = g;
+        ctx!.fillRect(0, 0, width, height);
+      }
       for (const p of shell) {
         ctx!.beginPath();
         ctx!.fillStyle = "rgba(255,255,255,0.5)";
@@ -440,6 +492,8 @@ export function HeroOrb({ className }: HeroOrbProps) {
     io.observe(parent);
 
     resize();
+    const ro = new ResizeObserver(() => resize());
+    ro.observe(parent);
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true });
 
@@ -454,6 +508,7 @@ export function HeroOrb({ className }: HeroOrbProps) {
       running = false;
       cancelAnimationFrame(raf);
       io.disconnect();
+      ro.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
     };
