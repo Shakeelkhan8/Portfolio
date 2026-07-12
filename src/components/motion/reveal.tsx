@@ -48,33 +48,40 @@ export function Reveal({
     return <div className={className}>{children}</div>;
   }
 
-  const travel = softMotion ? Math.min(distance, 20) : distance;
+  // Mobile/touch: opacity only. Transforms on text ancestors stay soft on GPU.
+  if (softMotion) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
+        transition={{
+          duration: Math.min(duration, 0.45),
+          delay,
+          ease: EASE,
+        }}
+        className={className}
+        {...props}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+
   const offset = {
-    up: { x: 0, y: travel },
-    down: { x: 0, y: -travel },
-    left: { x: travel, y: 0 },
-    right: { x: -travel, y: 0 },
+    up: { x: 0, y: distance },
+    down: { x: 0, y: -distance },
+    left: { x: distance, y: 0 },
+    right: { x: -distance, y: 0 },
     none: { x: 0, y: 0 },
   }[direction];
 
   return (
     <motion.div
-      initial={
-        softMotion
-          ? { opacity: 0, ...offset }
-          : { opacity: 0, ...offset, filter: "blur(8px)" }
-      }
-      whileInView={
-        softMotion
-          ? { opacity: 1, x: 0, y: 0 }
-          : { opacity: 1, x: 0, y: 0, filter: "blur(0px)" }
-      }
+      initial={{ opacity: 0, ...offset }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
-      transition={{
-        duration: softMotion ? Math.min(duration, 0.45) : duration,
-        delay,
-        ease: EASE,
-      }}
+      transition={{ duration, delay, ease: EASE }}
       className={className}
       {...props}
     >

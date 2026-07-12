@@ -11,7 +11,8 @@ type PageTransitionProps = {
 };
 
 /**
- * Route transitions — no CSS filter blur on touch/narrow viewports (avoids soft text).
+ * Route transitions. On mobile/touch, opacity-only so the whole page is not
+ * left on a transformed compositor layer (which softens all text).
  */
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
@@ -38,16 +39,8 @@ export function PageTransition({ children }: PageTransitionProps) {
   return (
     <motion.div
       key={pathname}
-      initial={
-        softMotion
-          ? { opacity: 0, y: 14 }
-          : { opacity: 0, y: 22, filter: "blur(10px)" }
-      }
-      animate={
-        softMotion
-          ? { opacity: 1, y: 0 }
-          : { opacity: 1, y: 0, filter: "blur(0px)" }
-      }
+      initial={softMotion ? { opacity: 0 } : { opacity: 0, y: 22 }}
+      animate={softMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
       transition={{ duration: softMotion ? 0.38 : 0.55, ease: EASE }}
     >
       {children}

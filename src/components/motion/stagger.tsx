@@ -60,15 +60,15 @@ export function StaggerItem({ children, className }: StaggerItemProps) {
     return <div className={className}>{children}</div>;
   }
 
+  // No CSS filter — filter (even blur(0)) rasterizes text soft on mobile GPUs.
   return (
     <motion.div
       className={cn(className)}
       variants={{
-        hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
+        hidden: { opacity: 0, y: 24 },
         show: {
           opacity: 1,
           y: 0,
-          filter: "blur(0px)",
           transition: { duration: 0.55, ease: EASE },
         },
       }}

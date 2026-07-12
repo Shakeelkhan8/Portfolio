@@ -35,12 +35,12 @@ function HeroFade({
   children,
   delay,
   className,
-  y = 22,
   soft,
 }: {
   children: ReactNode;
   delay: number;
   className?: string;
+  /** Accepted for call-site compatibility; hero fades are opacity-only. */
   y?: number;
   soft?: boolean;
 }) {
@@ -50,12 +50,12 @@ function HeroFade({
     return <div className={className}>{children}</div>;
   }
 
-  // Opacity + translate only — never CSS filter blur (stays sharp on mobile).
+  // Opacity only — transforms on text ancestors rasterize soft on mobile GPUs.
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: soft ? y * 0.7 : y }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ delay, duration: soft ? 0.7 : 1, ease: HERO_EASE_SOFT }}
     >
       {children}
@@ -99,7 +99,6 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
   const orbY = useTransform(smooth, [0, 1], [0, mobile ? 64 : 140]);
   const orbScale = useTransform(smooth, [0, 1], [1, mobile ? 1.18 : 1.55]);
   const orbOpacity = useTransform(smooth, [0, 0.8], [1, 0.05]);
-  const contentY = useTransform(smooth, [0, 1], [0, mobile ? 32 : 64]);
   const contentOpacity = useTransform(smooth, [0, 0.5], [1, 0]);
   const cueOpacity = useTransform(smooth, [0, 0.18], [1, 0]);
 
@@ -136,13 +135,13 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
           style={
             prefersReducedMotion
               ? undefined
-              : { y: contentY, opacity: contentOpacity }
+              : // Opacity only — translateY on this text tree softens glyphs on mobile GPUs.
+                { opacity: contentOpacity }
           }
         >
           <HeroFade
             delay={d(HERO.type.badge)}
             className="mb-5 sm:mb-7"
-            y={14}
             soft={mobile}
           >
             <AvailabilityBadge site={site} />
@@ -152,7 +151,6 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
             <HeroFade
               delay={d(HERO.type.location)}
               className="mb-4 sm:mb-5"
-              y={12}
               soft={mobile}
             >
               <p className="font-mono text-[10px] tracking-[0.28em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.4em]">
@@ -163,23 +161,21 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
 
           <motion.div
             className="relative mb-5 w-full max-w-full sm:mb-6"
-            initial={
-              prefersReducedMotion ? false : { opacity: 0, scale: 0.97 }
-            }
-            animate={{ opacity: 1, scale: 1 }}
+            initial={prefersReducedMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{
               delay: d(HERO.type.name),
               duration: mobile ? 0.85 : 1.2,
               ease: HERO_EASE,
             }}
           >
-          <TextReveal
-            as="h1"
-            text={site.name}
-            intensity="default"
-            delay={d(HERO.type.name)}
-            className="font-heading relative z-10 max-w-full text-[clamp(1.75rem,8vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-foreground drop-shadow-[0_4px_40px_rgba(0,0,0,0.85)] sm:text-6xl md:text-7xl lg:text-[5rem]"
-          />
+            <TextReveal
+              as="h1"
+              text={site.name}
+              intensity="default"
+              delay={d(HERO.type.name)}
+              className="font-heading relative z-10 max-w-full text-[clamp(1.75rem,8vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-6xl md:text-7xl lg:text-[5rem]"
+            />
             <div
               aria-hidden="true"
               className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-20 w-[min(100%,22rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/[0.06] blur-3xl sm:h-24 sm:w-[min(90%,28rem)]"

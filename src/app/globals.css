@@ -589,12 +589,13 @@
   );
 }
 
-/* Kill Framer motion filter-blur on small screens — keeps type sharp on mobile */
-@media (max-width: 768px) {
-  .site-shell main [style*="blur("] {
-    filter: none !important;
+@media print {
+  header,
+  footer,
+  .mobile-tab-bar,
+  .no-print {
+    display: none !important;
   }
-}
 
   /* Full web resume lives in a collapsed <details>; force it open for print. */
   details summary {

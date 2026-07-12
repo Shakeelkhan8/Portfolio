@@ -39,16 +39,9 @@ export function FadeIn({
 
   const offset = direction === "up" ? 22 : direction === "down" ? -22 : 0;
   const transition = { duration, delay, ease: EASE };
-  const initial = {
-    opacity: 0,
-    y: offset,
-    filter: "blur(6px)",
-  };
-  const visible = {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-  };
+  // Opacity + translate only — CSS filter blur rasterizes glyphs on mobile.
+  const initial = { opacity: 0, y: offset };
+  const visible = { opacity: 1, y: 0 };
 
   if (when === "mount") {
     return (

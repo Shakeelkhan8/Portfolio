@@ -17,7 +17,7 @@ type TextRevealProps = {
   /** `mount` for hero; `inView` for scroll sections */
   when?: "mount" | "inView";
   /**
-   * `cinematic` — blur + mask + soft scale (hero opening)
+   * `cinematic` — longer mask reveal (no CSS filter — filters blur mobile type)
    * `default` — clean mask reveal
    */
   intensity?: "default" | "cinematic";
@@ -50,19 +50,13 @@ export function TextReveal({
     },
   };
 
+  // Mask reveal via translate only — never CSS filter/scale (softens glyphs).
   const wordVariants = cinematic
     ? {
-        hidden: {
-          y: "115%",
-          opacity: 0,
-          filter: "blur(12px)",
-          scale: 0.96,
-        },
+        hidden: { y: "115%", opacity: 0 },
         show: {
           y: "0%",
           opacity: 1,
-          filter: "blur(0px)",
-          scale: 1,
           transition: { duration: 1.05, ease: HERO_EASE_DRAMATIC },
         },
       }
@@ -95,10 +89,7 @@ export function TextReveal({
             key={`${part}-${index}`}
             className="inline-block max-w-full overflow-hidden align-bottom pb-[0.08em]"
           >
-            <motion.span
-              className="inline-block max-w-full will-change-transform"
-              variants={wordVariants}
-            >
+            <motion.span className="inline-block max-w-full" variants={wordVariants}>
               {part}
               {mode === "word" && index < parts.length - 1 ? "\u00A0" : null}
             </motion.span>
