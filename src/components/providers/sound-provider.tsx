@@ -64,47 +64,58 @@ function scheduleGain(
   gain.gain.exponentialRampToValueAtTime(0.0001, now + attack + release);
 }
 
-/** Soft UI click — short digital tick similar to premium agency sites */
+/** Cinematic cyber UI click — soft dual-tone “access” blip */
 function playClick(ctx: AudioContext) {
   const now = ctx.currentTime;
+  const master = ctx.createGain();
+  master.gain.value = 1;
+  master.connect(ctx.destination);
 
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  const filter = ctx.createBiquadFilter();
+  // Low glassy body (terminal confirm)
+  const body = ctx.createOscillator();
+  const bodyGain = ctx.createGain();
+  const bodyFilter = ctx.createBiquadFilter();
+  body.type = "sine";
+  body.frequency.setValueAtTime(520, now);
+  body.frequency.exponentialRampToValueAtTime(310, now + 0.11);
+  bodyFilter.type = "lowpass";
+  bodyFilter.frequency.value = 1600;
+  bodyGain.gain.setValueAtTime(0.0001, now);
+  bodyGain.gain.exponentialRampToValueAtTime(0.16, now + 0.008);
+  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+  body.connect(bodyFilter);
+  bodyFilter.connect(bodyGain);
+  bodyGain.connect(master);
+  body.start(now);
+  body.stop(now + 0.16);
 
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(920, now);
-  osc.frequency.exponentialRampToValueAtTime(420, now + 0.06);
+  // High crystalline overtone (HUD chirp)
+  const chirp = ctx.createOscillator();
+  const chirpGain = ctx.createGain();
+  chirp.type = "triangle";
+  chirp.frequency.setValueAtTime(1880, now);
+  chirp.frequency.exponentialRampToValueAtTime(2400, now + 0.045);
+  chirpGain.gain.setValueAtTime(0.0001, now);
+  chirpGain.gain.exponentialRampToValueAtTime(0.07, now + 0.004);
+  chirpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+  chirp.connect(chirpGain);
+  chirpGain.connect(master);
+  chirp.start(now);
+  chirp.stop(now + 0.08);
 
-  filter.type = "lowpass";
-  filter.frequency.value = 2400;
-
-  scheduleGain(gain, ctx, 0.22, 0.004, 0.07);
-  osc.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(now);
-  osc.stop(now + 0.1);
-
-  // Soft noise transient for a tactile “tap”
-  const bufferSize = Math.floor(ctx.sampleRate * 0.03);
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i += 1) {
-    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-  }
-  const noise = ctx.createBufferSource();
-  const noiseGain = ctx.createGain();
-  const noiseFilter = ctx.createBiquadFilter();
-  noise.buffer = buffer;
-  noiseFilter.type = "bandpass";
-  noiseFilter.frequency.value = 1800;
-  noiseFilter.Q.value = 0.8;
-  scheduleGain(noiseGain, ctx, 0.08, 0.001, 0.028);
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(ctx.destination);
-  noise.start(now);
+  // Quiet octave harmony for depth
+  const harm = ctx.createOscillator();
+  const harmGain = ctx.createGain();
+  harm.type = "sine";
+  harm.frequency.setValueAtTime(1040, now);
+  harm.frequency.exponentialRampToValueAtTime(620, now + 0.1);
+  harmGain.gain.setValueAtTime(0.0001, now + 0.01);
+  harmGain.gain.exponentialRampToValueAtTime(0.05, now + 0.02);
+  harmGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  harm.connect(harmGain);
+  harmGain.connect(master);
+  harm.start(now);
+  harm.stop(now + 0.13);
 }
 
 /** Soft hover tick */
