@@ -48,10 +48,11 @@ export default async function ResumePage() {
   return (
     <>
       <PageHeader
+        eyebrow="Resume"
         title="Resume"
         description="One-page snapshot for hiring managers. Prefer the PDF for full detail."
       >
-        <div className="no-print mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="no-print flex flex-col gap-3 sm:flex-row sm:items-center">
           <DownloadResumeButton
             pdfUrl={activeResume?.fileUrl}
             fileName={activeResume?.fileName}
@@ -62,10 +63,10 @@ export default async function ResumePage() {
         </div>
       </PageHeader>
 
-      <Section spacing="sm" className="border-t border-border/60 pt-0">
-        <Container className="max-w-3xl space-y-8">
+      <Section spacing="sm" className="pt-0">
+        <Container className="max-w-3xl space-y-10">
           <Reveal>
-            <div className="site-card rounded-2xl p-6 sm:p-8">
+            <div>
               <Text
                 size="sm"
                 muted
@@ -79,7 +80,7 @@ export default async function ResumePage() {
 
           {currentRole ? (
             <Reveal delay={0.06}>
-              <div className="site-card rounded-2xl p-6 sm:p-8">
+              <div>
                 <Text
                   size="sm"
                   muted
@@ -107,8 +108,8 @@ export default async function ResumePage() {
           ) : null}
 
           <Reveal delay={0.1}>
-            <details className="group site-card rounded-2xl open:bg-surface/80">
-              <summary className="no-print cursor-pointer list-none px-6 py-4 text-sm font-medium marker:content-none sm:px-8 [&::-webkit-details-marker]:hidden">
+            <details className="group">
+              <summary className="no-print cursor-pointer list-none py-1 text-sm font-medium marker:content-none [&::-webkit-details-marker]:hidden">
                 <span className="flex items-center justify-between gap-3">
                   <span>View full web resume</span>
                   <span className="text-muted-foreground transition-transform group-open:rotate-180">
@@ -116,7 +117,7 @@ export default async function ResumePage() {
                   </span>
                 </span>
               </summary>
-              <div className="border-t border-border/60 px-6 py-8 sm:px-8">
+              <div className="mt-6 pt-2">
                 <ResumeView
                   site={site}
                   resumeSummary={resumeSummary}
@@ -128,7 +129,7 @@ export default async function ResumePage() {
                   }))}
                 />
                 {certifications.length > 0 ? (
-                  <div className="mt-10 border-t border-border/60 pt-10">
+                  <div className="mt-10 pt-2">
                     <CertificationsSection certifications={certifications} />
                   </div>
                 ) : null}

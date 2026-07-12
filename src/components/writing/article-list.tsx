@@ -61,28 +61,28 @@ export function ArticleList({ articles }: ArticleListProps) {
         />
       ) : (
         <Reveal>
-          <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface/50 divide-y divide-border/60">
+          <div className="flex flex-col">
             {filteredArticles.map((article) => (
               <AppLink
                 key={article.slug}
                 href={routes.article(article.slug)}
                 showExternalIcon={false}
-                className="group flex items-center justify-between gap-4 px-6 py-5 transition-colors hover:bg-primary/5"
+                className="group -mx-3 flex items-start justify-between gap-6 rounded-xl px-3 py-6 transition-colors duration-300 hover:bg-foreground/[0.03] sm:-mx-4 sm:px-4 sm:py-7"
               >
-                <div>
-                  <p className="font-heading font-medium tracking-tight text-foreground transition-colors group-hover:text-primary">
+                <div className="min-w-0">
+                  <p className="font-heading text-base font-medium tracking-tight text-foreground sm:text-lg">
                     {article.title}
                   </p>
-                  <p className="mt-1.5 text-sm text-muted-foreground">
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {article.excerpt}
                   </p>
-                  <p className="mt-2 font-mono text-[11px] tracking-wide text-muted-foreground">
+                  <p className="mt-3 font-mono text-[11px] tracking-wide text-muted-foreground">
                     {[formatDate(article.date), `${article.readingTime} min read`]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
                 </div>
-                <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
+                <ArrowRight className="mt-1 size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-foreground" />
               </AppLink>
             ))}
           </div>

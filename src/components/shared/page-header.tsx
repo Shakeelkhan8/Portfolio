@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 type PageHeaderProps = {
   title: string;
   description?: string;
+  /** Mono label above the title. Defaults to `title` when omitted. */
+  eyebrow?: string;
   children?: ReactNode;
   className?: string;
   align?: "left" | "center";
@@ -16,36 +18,69 @@ type PageHeaderProps = {
 export function PageHeader({
   title,
   description,
+  eyebrow,
   children,
   className,
   align = "left",
 }: PageHeaderProps) {
+  const label = eyebrow ?? title;
+
   return (
-    <Container className={cn("relative overflow-x-clip pt-10 pb-8 sm:pt-16 sm:pb-12 md:pt-24 md:pb-16", className)}>
+    <header className={cn("relative overflow-x-clip", className)}>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-10 left-0 h-40 w-72 max-w-full rounded-full bg-foreground/[0.03] blur-3xl"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[min(48vh,24rem)] bg-[radial-gradient(ellipse_70%_65%_at_0%_0%,rgb(245_245_245/0.04),transparent_58%)]"
       />
-      <div
-        className={cn(
-          "relative max-w-3xl space-y-3 sm:space-y-4",
-          align === "center" && "mx-auto text-center",
-        )}
-      >
-        <TextReveal
-          as="h1"
-          text={title}
-          className="font-heading text-[1.85rem] font-semibold leading-tight tracking-tight text-foreground -tracking-[0.01em] sm:text-3xl md:text-4xl"
-        />
-        {description ? (
-          <FadeIn delay={0.15}>
-            <Text size="lg" muted leading="relaxed" className="max-w-2xl text-base text-balance sm:text-lg">
-              {description}
-            </Text>
+
+      <Container className="relative pt-12 pb-8 sm:pt-16 sm:pb-10 md:pt-20 md:pb-12 lg:pt-24 lg:pb-14">
+        <div
+          className={cn(
+            "relative flex max-w-3xl flex-col",
+            align === "center" && "mx-auto items-center text-center",
+          )}
+        >
+          <FadeIn delay={0.02} direction="none" duration={0.5}>
+            <p
+              aria-hidden={label === title ? true : undefined}
+              className={cn(
+                "mb-4 font-mono text-[11px] font-medium tracking-[0.28em] text-muted-foreground uppercase sm:mb-5",
+                align === "center" && "text-center",
+              )}
+            >
+              {label}
+            </p>
           </FadeIn>
-        ) : null}
-        {children ? <FadeIn delay={0.22}>{children}</FadeIn> : null}
-      </div>
-    </Container>
+
+          <TextReveal
+            as="h1"
+            text={title}
+            delay={0.06}
+            className="font-heading text-[2.125rem] font-semibold leading-[1.05] tracking-tight text-foreground -tracking-[0.03em] sm:text-5xl md:text-5xl lg:text-6xl"
+          />
+
+          {description ? (
+            <FadeIn delay={0.18} direction="none" duration={0.65} className="mt-5 sm:mt-6">
+              <Text
+                size="lg"
+                muted
+                leading="relaxed"
+                className={cn(
+                  "max-w-2xl text-base text-pretty sm:text-lg",
+                  align === "center" && "mx-auto text-balance",
+                )}
+              >
+                {description}
+              </Text>
+            </FadeIn>
+          ) : null}
+
+          {children ? (
+            <FadeIn delay={0.26} direction="none" duration={0.6} className="mt-7 sm:mt-8">
+              {children}
+            </FadeIn>
+          ) : null}
+        </div>
+      </Container>
+    </header>
   );
 }

@@ -25,14 +25,15 @@ export async function ProjectPreviewGrid({
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
       {items.map((project, index) => (
-        <ProjectCard
-          key={project.slug}
-          project={project}
-          diagram={diagrams[project.slug] ?? null}
-          delay={staggered ? index * 0.08 : 0}
-        />
+        <div key={project.slug} className="min-w-0">
+          <ProjectCard
+            project={project}
+            diagram={diagrams[project.slug] ?? null}
+            delay={staggered ? index * 0.08 : 0}
+          />
+        </div>
       ))}
     </div>
   );

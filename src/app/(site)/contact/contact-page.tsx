@@ -15,17 +15,21 @@ export default async function ContactPage() {
 
   return (
     <>
-      <PageHeader title="Contact" description={site.availability.message}>
-        <AvailabilityBadge site={site} className="mt-4" />
+      <PageHeader
+        eyebrow="Contact"
+        title="Contact"
+        description={site.availability.message}
+      >
+        <AvailabilityBadge site={site} />
       </PageHeader>
-      <Section spacing="sm" className="border-t border-border/60 pt-0">
-        <Container className="grid max-w-5xl gap-10 lg:grid-cols-5 lg:gap-12">
-          <Reveal className="site-card rounded-2xl p-6 sm:p-8 lg:col-span-3">
+      <Section spacing="sm" className="pt-0">
+        <Container className="grid max-w-5xl gap-12 lg:grid-cols-5 lg:gap-16">
+          <Reveal className="lg:col-span-3">
             <ContactForm />
           </Reveal>
-          <Reveal delay={0.08} className="space-y-4 lg:col-span-2">
-            <aside className="space-y-4" aria-label="Contact details">
-              <div className="site-card rounded-2xl p-5">
+          <Reveal delay={0.08} className="lg:col-span-2">
+            <aside className="space-y-8" aria-label="Contact details">
+              <div>
                 <Text
                   size="sm"
                   className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
@@ -42,7 +46,7 @@ export default async function ContactPage() {
                   </a>
                 </Text>
               </div>
-              <div className="site-card rounded-2xl p-5">
+              <div>
                 <Text
                   size="sm"
                   className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
@@ -54,7 +58,7 @@ export default async function ContactPage() {
                   {site.location} ({site.timezone})
                 </Text>
               </div>
-              <div className="site-card rounded-2xl p-5">
+              <div>
                 <Text
                   size="sm"
                   className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
@@ -72,7 +76,7 @@ export default async function ContactPage() {
       </Section>
 
       {services.length > 0 ? (
-        <Section spacing="sm" className="border-t border-border/60">
+        <Section spacing="sm">
           <Container>
             <SectionHeader
               title="Services"

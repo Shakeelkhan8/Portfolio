@@ -7,10 +7,10 @@ type MetricGridProps = {
 
 export function MetricGrid({ metrics }: MetricGridProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       {metrics.map((metric, index) => (
         <Reveal key={metric.label} delay={index * 0.05}>
-          <div className="site-card rounded-2xl p-5">
+          <div>
             <p className="font-heading text-2xl font-semibold tracking-tight text-foreground">
               {metric.value}
             </p>

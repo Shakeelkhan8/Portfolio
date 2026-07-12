@@ -18,10 +18,10 @@ export function GitHubStats({ profile }: GitHubStatsProps) {
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => (
         <Reveal key={stat.label} delay={index * 0.05}>
-          <div className="site-card rounded-2xl p-5">
+          <div>
             <p className="font-heading text-2xl font-semibold tracking-tight text-foreground">
               {stat.value}
             </p>
@@ -40,13 +40,13 @@ type GitHubProfileCardProps = {
 export function GitHubProfileCard({ profile }: GitHubProfileCardProps) {
   return (
     <Reveal>
-      <div className="site-card flex flex-col gap-6 rounded-2xl p-6 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
         <Image
           src={profile.avatarUrl}
           alt={`${profile.login} GitHub avatar`}
           width={80}
           height={80}
-          className="size-20 rounded-full border border-border"
+          className="size-20 rounded-full"
           unoptimized
         />
         <div className="min-w-0 flex-1">
@@ -90,7 +90,7 @@ export function GitHubProfileFallback({
 }: GitHubProfileFallbackProps) {
   return (
     <Reveal>
-      <div className="site-card rounded-2xl p-6">
+      <div>
         <div className="mb-1 flex items-center gap-2">
           <GitHubIcon className="size-4" />
           <a

@@ -25,7 +25,7 @@ export function ResumeView({
 }: ResumeViewProps) {
   return (
     <div className="space-y-10">
-      <header className="space-y-2 border-b border-border pb-8">
+      <header className="space-y-2 pb-2">
         <Heading as="h2" size="lg" balance={false}>
           {site.legalName}
         </Heading>

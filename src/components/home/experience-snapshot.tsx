@@ -13,11 +13,7 @@ export async function ExperienceSnapshot() {
 
   return (
     <Reveal>
-      <div className="site-card group relative overflow-hidden rounded-2xl p-8 md:p-10">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-foreground/[0.03] blur-3xl transition-opacity duration-500 group-hover:opacity-100"
-        />
+      <div className="relative max-w-3xl">
         <Text
           size="sm"
           muted

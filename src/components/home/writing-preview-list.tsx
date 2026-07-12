@@ -25,16 +25,13 @@ export async function WritingPreviewList() {
   }
 
   return (
-    <Stagger
-      className="overflow-hidden rounded-2xl border border-border/70 bg-surface/50 divide-y divide-border/60"
-      stagger={0.08}
-    >
+    <Stagger className="flex flex-col" stagger={0.08}>
       {articles.map((article) => (
         <StaggerItem key={article.slug}>
           <AppLink
             href={routes.article(article.slug)}
             showExternalIcon={false}
-            className="group flex items-center justify-between gap-4 px-6 py-5 transition-colors duration-300 hover:bg-foreground/[0.03]"
+            className="group -mx-3 flex items-center justify-between gap-4 rounded-xl px-3 py-5 transition-colors duration-300 hover:bg-foreground/[0.03] sm:-mx-4 sm:px-4 sm:py-6"
           >
             <div className="min-w-0 transition-transform duration-300 group-hover:translate-x-1">
               <p className="font-heading font-medium tracking-tight text-foreground">
