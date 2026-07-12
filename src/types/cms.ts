@@ -79,6 +79,14 @@ export type GitHubSettingsRecord = {
   showLiveStats: boolean;
 };
 
+/** Public portfolio QR configured in admin (null when unset/disabled). */
+export type PortfolioQrConfig = {
+  imageUrl: string;
+  targetUrl: string | null;
+  label: string;
+  mediaId: string;
+};
+
 export type PageRecord = {
   id: string;
   slug: string;

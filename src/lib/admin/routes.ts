@@ -15,6 +15,7 @@ import {
   Mail,
   Menu,
   MessageSquareQuote,
+  QrCode,
   Settings,
   Sparkles,
   Target,
@@ -77,6 +78,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     label: "Assets & inbox",
     items: [
       { title: "Media", href: "/admin/media", icon: Image },
+      { title: "QR Code", href: "/admin/qr", icon: QrCode },
       { title: "Resume", href: "/admin/resume", icon: FileText },
       { title: "Contact", href: "/admin/contact", icon: Mail },
     ],

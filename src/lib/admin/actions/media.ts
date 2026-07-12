@@ -47,6 +47,7 @@ async function getMediaReferenceCount(
     pageRefs,
     seoRefs,
     themeRefs,
+    siteQrRefs,
   ] = await Promise.all([
     supabase
       .from("projects")
@@ -84,6 +85,10 @@ async function getMediaReferenceCount(
       .from("theme_settings")
       .select("id", { count: "exact", head: true })
       .or(`logo_media_id.eq.${id},favicon_media_id.eq.${id}`),
+    supabase
+      .from("site_settings")
+      .select("id", { count: "exact", head: true })
+      .eq("qr_code_media_id", id),
   ]);
 
   return (
@@ -95,7 +100,8 @@ async function getMediaReferenceCount(
     (testimonialRefs.count ?? 0) +
     (pageRefs.count ?? 0) +
     (seoRefs.count ?? 0) +
-    (themeRefs.count ?? 0)
+    (themeRefs.count ?? 0) +
+    (siteQrRefs.count ?? 0)
   );
 }
 

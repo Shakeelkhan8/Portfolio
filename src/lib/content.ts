@@ -51,6 +51,7 @@ export {
   getAllCustomScripts,
   getSettingsBundle,
 } from "@/lib/db/queries/settings";
+export { getPortfolioQr } from "@/lib/db/queries/portfolio-qr";
 export {
   getCuratedRepos,
 } from "@/lib/db/queries/curated-repos";

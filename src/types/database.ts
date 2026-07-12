@@ -48,6 +48,10 @@ export type Database = {
         maintenance_enabled: boolean;
         maintenance_message: string | null;
         response_time_text: string | null;
+        qr_code_media_id: string | null;
+        qr_target_url: string | null;
+        qr_label: string | null;
+        qr_enabled: boolean;
         updated_at: string;
       }>;
       theme_settings: TableDef<{

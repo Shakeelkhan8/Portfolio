@@ -31,7 +31,7 @@ export default async function AboutPage() {
       </PageHeader>
 
       <Section spacing="none" className="pb-10 sm:pb-12">
-        <Container className="max-w-3xl space-y-5">
+        <Container className="space-y-5">
           {about.paragraphs.map((paragraph, index) => (
             <Reveal key={paragraph.slice(0, 30)} delay={index * 0.05}>
               <Text leading="relaxed" muted className="text-pretty">
@@ -45,7 +45,7 @@ export default async function AboutPage() {
       <DecisionHighlight />
 
       <Section spacing="none" className="pb-16 pt-10 sm:pb-20 sm:pt-12">
-        <Container className="max-w-3xl">
+        <Container>
           <Reveal>
             <p className="mb-3 font-mono text-[11px] font-medium tracking-[0.28em] text-muted-foreground uppercase">
               Toolkit
@@ -55,7 +55,7 @@ export default async function AboutPage() {
             </Heading>
           </Reveal>
 
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {skillGroups.map((group, index) => (
               <Reveal key={group.category} delay={index * 0.045} className="h-full">
                 <article className="flex h-full flex-col rounded-2xl border border-foreground/[0.06] bg-foreground/[0.03] p-5 transition-[border-color,background-color] duration-300 hover:border-foreground/12 hover:bg-foreground/[0.045] sm:p-6">

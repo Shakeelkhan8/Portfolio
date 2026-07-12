@@ -2,6 +2,7 @@ import { ButtonLink } from "@/components/shared/button-link";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
+import { PortfolioQr } from "@/components/shared/portfolio-qr";
 import { ResumeView } from "@/components/resume/resume-view";
 import { DownloadResumeButton } from "@/components/resume/download-resume-button";
 import { CertificationsSection } from "@/components/resume/certifications-section";
@@ -16,6 +17,7 @@ import {
   getCertifications,
   getExperience,
   getFeaturedExperience,
+  getPortfolioQr,
   getPrimaryEducation,
   getResumeSummary,
   getSiteConfig,
@@ -33,6 +35,7 @@ export default async function ResumePage() {
     certifications,
     activeResume,
     currentRole,
+    portfolioQr,
   ] = await Promise.all([
     getSiteConfig(),
     getResumeSummary(),
@@ -43,6 +46,7 @@ export default async function ResumePage() {
     getCertifications(),
     getActiveResumeVersion(),
     getFeaturedExperience(),
+    getPortfolioQr(),
   ]);
 
   return (
@@ -52,14 +56,17 @@ export default async function ResumePage() {
         title="Resume"
         description="One-page snapshot for hiring managers. Prefer the PDF for full detail."
       >
-        <div className="no-print flex flex-col gap-3 sm:flex-row sm:items-center">
-          <DownloadResumeButton
-            pdfUrl={activeResume?.fileUrl}
-            fileName={activeResume?.fileName}
-          />
-          <ButtonLink href={routes.experience} variant="outline" size="lg">
-            View experience timeline
-          </ButtonLink>
+        <div className="no-print flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <DownloadResumeButton
+              pdfUrl={activeResume?.fileUrl}
+              fileName={activeResume?.fileName}
+            />
+            <ButtonLink href={routes.experience} variant="outline" size="lg">
+              View experience timeline
+            </ButtonLink>
+          </div>
+          <PortfolioQr qr={portfolioQr} siteName={site.name} size={112} />
         </div>
       </PageHeader>
 

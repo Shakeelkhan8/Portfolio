@@ -18,7 +18,7 @@ export default async function ExperiencePage() {
         description={`${site.yearsOfExperience}+ years building production systems across SaaS, enterprise, and freelance projects.`}
       />
       <Section spacing="sm" className="pt-0">
-        <Container className="max-w-3xl">
+        <Container>
           <Timeline entries={experience} />
         </Container>
       </Section>

@@ -35,8 +35,8 @@ export function PageHeader({
       <Container className="relative pt-12 pb-8 sm:pt-16 sm:pb-10 md:pt-20 md:pb-12 lg:pt-24 lg:pb-14">
         <div
           className={cn(
-            "relative flex max-w-3xl flex-col",
-            align === "center" && "mx-auto items-center text-center",
+            "relative flex flex-col",
+            align === "center" && "mx-auto max-w-3xl items-center text-center",
           )}
         >
           <FadeIn delay={0.02} direction="none" duration={0.5}>
@@ -65,8 +65,8 @@ export function PageHeader({
                 muted
                 leading="relaxed"
                 className={cn(
-                  "max-w-2xl text-base text-pretty sm:text-lg",
-                  align === "center" && "mx-auto text-balance",
+                  "text-base text-pretty sm:text-lg",
+                  align === "center" && "mx-auto max-w-3xl text-balance",
                 )}
               >
                 {description}
