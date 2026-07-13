@@ -89,7 +89,7 @@ export default async function AboutPage() {
         </Container>
       </Section>
 
-      {site.languagesVisible && site.languages.length > 0 ? (
+      {site.languagesVisible !== false && site.languages.length > 0 ? (
         <Section spacing="none" className="pb-16 pt-2 sm:pb-20 sm:pt-4">
           <Container>
             <Reveal>
