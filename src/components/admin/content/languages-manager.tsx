@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useActionState } from "react";
 import {
   deleteLanguageAction,
+  updateLanguagesVisibilityAction,
   upsertLanguageAction,
 } from "@/lib/admin/actions/identity";
 import { DeleteItemButton } from "@/components/admin/shared/delete-item-button";
@@ -18,6 +19,8 @@ import type { LanguageRecord } from "@/types/cms";
 
 type LanguagesManagerProps = {
   languages: LanguageRecord[];
+  /** Whether the Languages section is shown on the public About page. */
+  sectionVisible: boolean;
 };
 
 function LanguageForm({
@@ -85,11 +88,51 @@ function LanguageForm({
   );
 }
 
-export function LanguagesManager({ languages }: LanguagesManagerProps) {
+function LanguagesVisibilityForm({ visible }: { visible: boolean }) {
+  const [state, save] = useActionState(updateLanguagesVisibilityAction, {});
+
+  return (
+    <section className="rounded-xl border border-border p-6">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold">About page visibility</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Control whether the Languages section appears on the public About
+          page. Your language list is kept either way.
+        </p>
+      </div>
+      <form action={save} className="space-y-4">
+        <div className="flex items-center gap-2">
+          <input
+            id="visible"
+            name="visible"
+            type="checkbox"
+            defaultChecked={visible}
+          />
+          <Label htmlFor="visible">Show Languages section on About page</Label>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Current status:{" "}
+          <span className="font-medium text-foreground">
+            {visible ? "Visible" : "Hidden"}
+          </span>
+        </p>
+        <SubmitButton label="Save visibility" />
+        <FormMessage {...state} />
+      </form>
+    </section>
+  );
+}
+
+export function LanguagesManager({
+  languages,
+  sectionVisible,
+}: LanguagesManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   return (
     <div className="space-y-10">
+      <LanguagesVisibilityForm visible={sectionVisible} />
+
       <section className="rounded-xl border border-border p-6">
         <h2 className="mb-4 text-lg font-semibold">Add language</h2>
         <LanguageForm

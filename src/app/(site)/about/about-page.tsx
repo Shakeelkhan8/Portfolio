@@ -88,6 +88,40 @@ export default async function AboutPage() {
           </div>
         </Container>
       </Section>
+
+      {site.languagesVisible && site.languages.length > 0 ? (
+        <Section spacing="none" className="pb-16 pt-2 sm:pb-20 sm:pt-4">
+          <Container>
+            <Reveal>
+              <p className="mb-3 font-mono text-[11px] font-medium tracking-[0.28em] text-muted-foreground uppercase">
+                Communication
+              </p>
+              <Heading as="h2" size="lg" className="mb-8 text-foreground sm:mb-10">
+                Languages
+              </Heading>
+            </Reveal>
+
+            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+              {site.languages.map((language, index) => (
+                <Reveal
+                  key={`${language.name}-${language.level}`}
+                  delay={index * 0.045}
+                  className="h-full"
+                >
+                  <article className="flex h-full flex-col justify-between rounded-2xl border border-foreground/[0.06] bg-foreground/[0.03] p-5 transition-[border-color,background-color] duration-300 hover:border-foreground/12 hover:bg-foreground/[0.045] sm:p-6">
+                    <Text className="font-heading text-[0.98rem] font-semibold tracking-tight text-foreground">
+                      {language.name}
+                    </Text>
+                    <p className="mt-3 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">
+                      {language.level}
+                    </p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
     </>
   );
 }

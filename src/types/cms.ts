@@ -20,6 +20,8 @@ export type SiteConfig = {
   };
   githubUsername: string;
   languages: Array<{ name: string; level: string }>;
+  /** When false, About page hides the Languages section (default true). */
+  languagesVisible: boolean;
   availability: {
     status: AvailabilityStatus;
     message: string;

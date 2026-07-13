@@ -77,6 +77,26 @@ export async function getLanguageRecords(): Promise<LanguageRecord[]> {
   }));
 }
 
+/** About-page Languages section visibility (defaults to shown). */
+export async function getLanguagesSectionVisible(): Promise<boolean> {
+  if (!isSupabaseConfigured()) {
+    return true;
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("languages_visible")
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) {
+    return true;
+  }
+
+  return data.languages_visible ?? true;
+}
+
 export async function getSocialLinkRecords(): Promise<SocialLinkRecord[]> {
   if (!isSupabaseConfigured()) {
     return [];

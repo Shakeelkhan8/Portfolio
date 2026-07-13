@@ -193,6 +193,45 @@ export async function deleteLanguageAction(formData: FormData) {
   return { success: "Language deleted." };
 }
 
+export async function updateLanguagesVisibilityAction(
+  _prev: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const visible = formData.get("visible") === "on";
+
+  const { supabase, user } = await requireAdmin();
+  const { data: site, error: siteError } = await supabase
+    .from("site_settings")
+    .select("id")
+    .limit(1)
+    .maybeSingle();
+
+  if (siteError || !site) {
+    return { error: siteError?.message ?? "Site settings not found." };
+  }
+
+  const { error } = await supabase
+    .from("site_settings")
+    .update({ languages_visible: visible })
+    .eq("id", site.id);
+
+  if (error) return { error: error.message };
+
+  await logAdminAction(
+    supabase,
+    user.id,
+    "update",
+    "site_settings",
+    site.id,
+  );
+  revalidateAfterContentChange(CACHE_TAGS.site);
+  return {
+    success: visible
+      ? "Languages section is now visible on the About page."
+      : "Languages section is now hidden on the About page.",
+  };
+}
+
 export async function upsertSocialLinkAction(
   _prev: AdminActionState,
   formData: FormData,

@@ -2,12 +2,18 @@ import type { Metadata } from "next";
 import { LanguagesManager } from "@/components/admin/content/languages-manager";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
-import { getLanguageRecords } from "@/lib/db/queries/admin/identity";
+import {
+  getLanguageRecords,
+  getLanguagesSectionVisible,
+} from "@/lib/db/queries/admin/identity";
 
 export const metadata: Metadata = { title: "Languages" };
 
 export default async function AdminLanguagesPage() {
-  const languages = await getLanguageRecords();
+  const [languages, sectionVisible] = await Promise.all([
+    getLanguageRecords(),
+    getLanguagesSectionVisible(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -16,10 +22,14 @@ export default async function AdminLanguagesPage() {
           Languages
         </Heading>
         <Text muted className="mt-1">
-          Spoken languages shown on the about page.
+          Spoken languages shown on the about page. Use the visibility toggle to
+          hide the section without deleting entries.
         </Text>
       </div>
-      <LanguagesManager languages={languages} />
+      <LanguagesManager
+        languages={languages}
+        sectionVisible={sectionVisible}
+      />
     </div>
   );
 }

@@ -52,6 +52,7 @@ export type Database = {
         qr_target_url: string | null;
         qr_label: string | null;
         qr_enabled: boolean;
+        languages_visible: boolean;
         updated_at: string;
       }>;
       theme_settings: TableDef<{

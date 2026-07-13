@@ -41,6 +41,7 @@ export function getFallbackSiteConfig(): SiteConfig {
     links: defaultSiteConfig.links,
     githubUsername: defaultSiteConfig.githubUsername,
     languages: [...defaultSiteConfig.languages],
+    languagesVisible: true,
     availability: { ...defaultSiteConfig.availability },
     expertise: [...defaultSiteConfig.expertise],
     philosophy: defaultSiteConfig.philosophy.map((item) => ({ ...item })),

@@ -35,6 +35,7 @@ const ctx: MetadataContext = {
     },
     githubUsername: "test",
     languages: [],
+    languagesVisible: true,
     availability: { status: "available", message: "Open to work" },
     expertise: ["Node.js"],
     philosophy: [],

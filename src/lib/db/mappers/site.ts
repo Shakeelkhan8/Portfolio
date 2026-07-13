@@ -33,6 +33,7 @@ export function mapSiteConfig(input: {
     maintenance_message: string | null;
     response_time_text: string | null;
     copyright_text: string | null;
+    languages_visible?: boolean | null;
   };
   expertise: Array<{ title: string }>;
   philosophy: Array<{ title: string; description: string }>;
@@ -62,6 +63,7 @@ export function mapSiteConfig(input: {
       name: language.name,
       level: language.level,
     })),
+    languagesVisible: input.site.languages_visible ?? true,
     availability: {
       status: input.site.availability_status,
       message: input.site.availability_message,
