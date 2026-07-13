@@ -11,6 +11,11 @@ export type MetadataContext = {
 
 const DEFAULT_SOCIAL_IMAGE = "/opengraph-image";
 
+/** Legacy CMS titles may still use em/en dash separators. */
+function withPipeSeparator(title: string): string {
+  return title.replace(/\s*[—–]\s*/g, " | ").trim();
+}
+
 export async function getMetadataContext(): Promise<MetadataContext> {
   const [site, seo] = await Promise.all([getSiteConfig(), getSeoDefaults()]);
   return { site, seo };
@@ -41,7 +46,9 @@ export function resolveSocialImages(
 
 export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
   const { site, seo } = ctx;
-  const defaultTitle = seo.defaultTitle || `${site.name} | ${site.title}`;
+  const defaultTitle = withPipeSeparator(
+    seo.defaultTitle || `${site.name} | ${site.title}`,
+  );
   const defaultDescription = seo.defaultDescription || site.description;
   const socialImages = resolveSocialImages(null, seo.defaultOgImageUrl);
 

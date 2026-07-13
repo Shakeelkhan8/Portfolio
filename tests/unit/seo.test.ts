@@ -9,7 +9,10 @@ import type { MetadataContext } from "@/lib/metadata";
 
 function isRobotsObject(
   robots: ReturnType<typeof parseRobotsDirective>,
-): robots is Exclude<ReturnType<typeof parseRobotsDirective>, string | null | undefined> {
+): robots is Exclude<
+  ReturnType<typeof parseRobotsDirective>,
+  string | null | undefined
+> {
   return Boolean(robots) && typeof robots === "object" && !Array.isArray(robots);
 }
 
@@ -26,7 +29,10 @@ const ctx: MetadataContext = {
     phone: "",
     email: "test@example.com",
     yearsOfExperience: 8,
-    links: { github: "https://github.com/test", linkedin: "https://linkedin.com/in/test" },
+    links: {
+      github: "https://github.com/test",
+      linkedin: "https://linkedin.com/in/test",
+    },
     githubUsername: "test",
     languages: [],
     availability: { status: "available", message: "Open to work" },
@@ -76,7 +82,10 @@ describe("resolveSocialImages", () => {
 
   it("prefers page OG image over CMS default", () => {
     expect(
-      resolveSocialImages("https://cdn.example/page.png", "https://cdn.example/default.png"),
+      resolveSocialImages(
+        "https://cdn.example/page.png",
+        "https://cdn.example/default.png",
+      ),
     ).toEqual([{ url: "https://cdn.example/page.png" }]);
   });
 });
@@ -95,9 +104,7 @@ describe("buildPageMetadata", () => {
     expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image" }]);
     expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image" }]);
     expect(
-      metadata.twitter &&
-        "card" in metadata.twitter &&
-        metadata.twitter.card,
+      metadata.twitter && "card" in metadata.twitter && metadata.twitter.card,
     ).toBe("summary_large_image");
   });
 
@@ -105,6 +112,20 @@ describe("buildPageMetadata", () => {
     const metadata = buildDefaultMetadata(ctx);
     expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image" }]);
     expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image" }]);
+  });
+
+  it("normalizes legacy em-dash CMS default titles at the metadata boundary", () => {
+    const metadata = buildDefaultMetadata({
+      ...ctx,
+      seo: {
+        ...ctx.seo,
+        defaultTitle: "Shakeel Khan — Senior Backend Engineer",
+      },
+    });
+    expect(metadata.title).toEqual({
+      default: "Shakeel Khan | Senior Backend Engineer",
+      template: "%s | Shakeel Khan",
+    });
   });
 
   it("applies page-level robots overrides", () => {
