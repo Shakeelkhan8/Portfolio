@@ -69,11 +69,13 @@ export function TextReveal({
         },
       };
 
+  // The animated words are the only copy of the text: a separate sr-only
+  // duplicate made crawlers and `textContent` read the heading twice
+  // ("Shakeel KhanShakeel Khan"). Words are joined by non-breaking spaces, so
+  // screen readers still hear a normal phrase.
   return (
     <Tag className={cn("max-w-full", className)}>
-      <span className="sr-only">{text}</span>
       <motion.span
-        aria-hidden="true"
         className="inline"
         initial="hidden"
         {...(when === "inView"
