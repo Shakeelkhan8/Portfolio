@@ -31,9 +31,8 @@ export const homeSectionHeaders = [
   {
     page_key: "home",
     section_key: "philosophy",
-    title: "How I make decisions",
-    description:
-      "One call from a live system, written up the way I'd write it for a team.",
+    title: "How I work",
+    description: "Rules I hold myself to on every system I build.",
     display_order: 2,
   },
   {
@@ -55,7 +54,7 @@ export const homeSectionHeaders = [
     page_key: "home",
     section_key: "services",
     title: "Working together",
-    description: null,
+    description: "Project work I take on alongside my main role.",
     display_order: 5,
   },
   {

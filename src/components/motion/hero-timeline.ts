@@ -1,31 +1,34 @@
 /**
- * Shared cinematic timeline for the home hero.
- * Visual beats and typography stay locked to the same story clock.
+ * Shared cinematic timeline for the home hero (seconds from mount).
  *
  * Story:
  *   silence → spark → gather → awaken → identity → presence
+ *
+ * The orb tells the story; the type does not wait for it. Copy, actions and
+ * the header land in the first second so the page is readable (and its LCP
+ * element painted) while the orb is still gathering behind it.
  */
 export const HERO = {
   /** Anticipation in darkness */
-  silence: 0.45,
+  silence: 0.2,
   /** First light appears */
-  spark: 1.35,
+  spark: 0.8,
   /** Particles discover form */
-  gather: 2.75,
+  gather: 1.8,
   /** Spark becomes a world */
-  awaken: 4.1,
+  awaken: 2.8,
   /** Settles into living presence */
-  live: 5.2,
-  /** Typography chapter — begins as the world opens */
+  live: 3.6,
+  /** Typography chapter: starts almost immediately, sequenced in ~0.8s. */
   type: {
-    badge: 3.15,
-    location: 3.35,
-    name: 3.5,
-    title: 4.15,
-    description: 4.5,
-    actions: 4.85,
-    cue: 5.45,
-    header: 2.15,
+    header: 0,
+    badge: 0.1,
+    location: 0.15,
+    name: 0.2,
+    title: 0.45,
+    description: 0.55,
+    actions: 0.7,
+    cue: 1.6,
   },
 } as const;
 

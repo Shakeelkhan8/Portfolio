@@ -21,9 +21,9 @@ type RevealProps = Omit<HTMLMotionProps<"div">, "children"> & {
 export function Reveal({
   children,
   delay = 0,
-  duration = 0.65,
+  duration = 0.55,
   direction = "up",
-  distance = 32,
+  distance = 24,
   once = true,
   className,
   ...props

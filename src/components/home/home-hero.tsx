@@ -84,6 +84,9 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
   const primaryHref = cta?.primaryHref?.trim() || routes.projects;
   const secondaryLabel = cta?.secondaryLabel?.trim() || null;
   const secondaryHref = cta?.secondaryHref?.trim() || routes.contact;
+  // The CMS hero intro is specific (current role and integrations); the site
+  // description stays generic for meta tags and is only the fallback here.
+  const intro = cta?.description?.trim() || site.description;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -130,6 +133,11 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
       </div>
 
       <Container className="relative z-10 flex flex-1 flex-col">
+        {/* Dark scrim under the copy so text stays legible over the orb's core. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-[14%] bottom-[18%] -z-10 mx-auto max-w-4xl bg-[radial-gradient(ellipse_closest-side,rgb(0_0_0/0.78),rgb(0_0_0/0.45)_55%,transparent)]"
+        />
         <motion.div
           className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-0 pb-24 pt-4 text-center sm:pb-28 sm:pt-6"
           style={
@@ -154,7 +162,7 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
               soft={mobile}
             >
               <p className="font-mono text-[10px] tracking-[0.28em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.4em]">
-                {site.location}
+                {[site.city, site.location].filter(Boolean).join(", ")}
               </p>
             </HeroFade>
           ) : null}
@@ -176,10 +184,6 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
               delay={d(HERO.type.name)}
               className="font-heading relative z-10 max-w-full text-[clamp(1.75rem,8vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-6xl md:text-7xl lg:text-[5rem]"
             />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-20 w-[min(100%,22rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/[0.06] blur-3xl sm:h-24 sm:w-[min(90%,28rem)]"
-            />
           </motion.div>
 
           {site.title ? (
@@ -198,7 +202,7 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
             </HeroFade>
           ) : null}
 
-          {site.description ? (
+          {intro ? (
             <HeroFade
               delay={d(HERO.type.description)}
               className="mb-8 w-full max-w-md sm:mb-10 sm:max-w-2xl"
@@ -208,10 +212,9 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
               <Text
                 size="lg"
                 leading="relaxed"
-                muted
-                className="relative z-10 text-[0.9375rem] leading-relaxed text-pretty sm:text-lg"
+                className="relative z-10 text-[0.9375rem] leading-relaxed text-pretty text-foreground/72 [text-shadow:0_1px_18px_rgb(0_0_0/0.9)] sm:text-lg"
               >
-                {site.description}
+                {intro}
               </Text>
             </HeroFade>
           ) : null}

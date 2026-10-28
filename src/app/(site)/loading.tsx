@@ -9,7 +9,7 @@ export default function SiteLoading() {
     >
       <Container>
         <div
-          className="flex min-h-[calc(100svh-var(--header-height)-var(--mobile-tab-bar-height)-4rem)] flex-col items-center justify-center gap-5 md:min-h-[60vh]"
+          className="animate-loading-in flex min-h-[calc(100svh-var(--header-height)-var(--mobile-tab-bar-height)-4rem)] flex-col items-center justify-center gap-5 md:min-h-[60vh]"
           role="status"
           aria-live="polite"
         >
