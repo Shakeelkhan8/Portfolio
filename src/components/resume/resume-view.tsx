@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Heading } from "@/components/typography/heading";
+import { Text } from "@/components/typography/text";
 import { formatDateRange } from "@/lib/formatters";
 import type { SiteConfig } from "@/types/cms";
 import type { Education, ExperienceEntry, SkillGroup } from "@/types";
@@ -12,22 +15,6 @@ type ResumeViewProps = {
   accomplishments: Array<{ text: string }>;
 };
 
-function ResumeSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="border-t border-border py-8 sm:grid sm:grid-cols-[9rem_1fr] sm:gap-8">
-      <h2 className="label-mono pt-1">{title}</h2>
-      <div className="mt-4 min-w-0 sm:mt-0">{children}</div>
-    </section>
-  );
-}
-
-/** The web resume, laid out to read well on screen and to print on A4/Letter. */
 export function ResumeView({
   site,
   resumeSummary,
@@ -37,104 +24,111 @@ export function ResumeView({
   accomplishments,
 }: ResumeViewProps) {
   return (
-    <article>
-      <header className="pb-8">
-        <p className="font-heading text-3xl text-foreground">{site.name}</p>
-        <p className="mt-1 font-medium text-foreground">{site.title}</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {[
-            site.email,
-            site.phone,
-            [site.city, site.location].filter(Boolean).join(", "),
-          ]
-            .filter(Boolean)
-            .join(" · ")}
-        </p>
+    <div className="space-y-10">
+      <header className="space-y-2 pb-2">
+        <Heading as="h2" size="lg" balance={false}>
+          {site.legalName}
+        </Heading>
+        <Text className="font-medium">{site.title}</Text>
+        <Text size="sm" muted>
+          {site.email} · {site.phone} · {site.location}
+        </Text>
       </header>
 
-      <ResumeSection title="Summary">
-        <p className="max-w-[65ch] leading-relaxed text-pretty text-foreground/85">
+      <section className="space-y-3">
+        <Heading as="h3" size="sm" balance={false}>
+          Summary
+        </Heading>
+        <Text muted leading="relaxed">
           {resumeSummary}
-        </p>
-      </ResumeSection>
+        </Text>
+      </section>
 
-      <ResumeSection title="Experience">
-        <ol className="space-y-8">
-          {experience.map((entry) => (
-            <li key={entry.id}>
-              <h3 className="font-medium text-foreground">
-                {entry.role}
-                <span className="text-muted-foreground">, {entry.company}</span>
-              </h3>
-              <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-                {formatDateRange(entry.startDate, entry.endDate)} ·{" "}
-                {entry.location}
-              </p>
-              <ul className="mt-3 max-w-[65ch] space-y-1.5">
-                {entry.highlights.map((item) => (
-                  <li
-                    key={item.slice(0, 40)}
-                    className="relative pl-4 text-sm leading-relaxed text-pretty text-foreground/85 before:absolute before:top-[0.65em] before:left-0 before:h-px before:w-2 before:bg-signal before:content-['']"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
-      </ResumeSection>
-
-      <ResumeSection title="Skills">
-        <dl className="space-y-2.5">
+      <section className="space-y-4">
+        <Heading as="h3" size="sm" balance={false}>
+          Skills
+        </Heading>
+        <div className="grid gap-4 sm:grid-cols-2">
           {skillGroups.map((group) => (
-            <div
-              key={group.category}
-              className="grid gap-1 sm:grid-cols-[8rem_1fr] sm:gap-4"
-            >
-              <dt className="text-sm font-medium text-foreground">
+            <div key={group.category}>
+              <Text size="sm" className="mb-2 font-medium">
                 {group.category}
-              </dt>
-              <dd className="text-sm leading-relaxed text-muted-foreground">
-                {group.skills.join(", ")}
-              </dd>
+              </Text>
+              <div className="flex flex-wrap gap-1.5">
+                {group.skills.map((skill) => (
+                  <Badge key={skill} variant="outline">
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
             </div>
           ))}
-        </dl>
-      </ResumeSection>
+        </div>
+      </section>
 
-      {accomplishments.length > 0 ? (
-        <ResumeSection title="Highlights">
-          <ul className="max-w-[65ch] space-y-1.5">
-            {accomplishments.map((item) => (
-              <li
-                key={item.text.slice(0, 40)}
-                className="relative pl-4 text-sm leading-relaxed text-pretty text-foreground/85 before:absolute before:top-[0.65em] before:left-0 before:h-px before:w-2 before:bg-signal before:content-['']"
-              >
-                {item.text}
-              </li>
-            ))}
-          </ul>
-        </ResumeSection>
-      ) : null}
+      <Separator />
 
-      <ResumeSection title="Education">
-        <p className="font-medium text-foreground">{education.degree}</p>
-        <p className="mt-0.5 text-sm text-muted-foreground">
-          {education.institution}, {education.location} ·{" "}
+      <section className="space-y-6">
+        <Heading as="h3" size="sm" balance={false}>
+          Experience
+        </Heading>
+        {experience.map((entry) => (
+          <div key={entry.id} className="space-y-2">
+            <div>
+              <Text className="font-medium">{entry.role}</Text>
+              <Text size="sm" muted>
+                {entry.company} ·{" "}
+                {formatDateRange(entry.startDate, entry.endDate)} ·{" "}
+                {entry.location}
+              </Text>
+            </div>
+            <ul className="list-disc space-y-1 pl-5">
+              {entry.highlights.map((item) => (
+                <li key={item.slice(0, 40)} className="text-sm text-muted-foreground">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <Separator />
+
+      <section className="space-y-3">
+        <Heading as="h3" size="sm" balance={false}>
+          Education
+        </Heading>
+        <Text className="font-medium">{education.degree}</Text>
+        <Text size="sm" muted>
+          {education.institution} · {education.location} ·{" "}
           {formatDateRange(education.startDate, education.endDate)}
-        </p>
-      </ResumeSection>
+        </Text>
+      </section>
 
-      {site.languages.length > 0 ? (
-        <ResumeSection title="Languages">
-          <p className="text-sm text-foreground/85">
-            {site.languages
-              .map((lang) => `${lang.name} (${lang.level})`)
-              .join(" · ")}
-          </p>
-        </ResumeSection>
-      ) : null}
-    </article>
+      <section className="space-y-3">
+        <Heading as="h3" size="sm" balance={false}>
+          Accomplishments
+        </Heading>
+        <ul className="list-disc space-y-2 pl-5">
+          {accomplishments.map((item) => (
+            <li key={item.text.slice(0, 40)} className="text-sm text-muted-foreground">
+              {item.text}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="space-y-3">
+        <Heading as="h3" size="sm" balance={false}>
+          Languages
+        </Heading>
+        <Text size="sm" muted>
+          {site.languages
+            .map((lang) => `${lang.name} (${lang.level})`)
+            .join(" · ")}
+        </Text>
+      </section>
+    </div>
   );
 }

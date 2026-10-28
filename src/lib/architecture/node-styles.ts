@@ -1,23 +1,11 @@
 import type { DiagramNodeType } from "@/types";
 
-/** Short labels printed above each node so the diagram reads without colour. */
-export const diagramNodeTypeLabels: Record<DiagramNodeType, string> = {
-  frontend: "Client",
-  api: "API",
-  service: "Service",
-  database: "Database",
-  cache: "Cache",
-  queue: "Jobs",
-  external: "External",
-};
-
-/** The API layer is the system's centre of gravity, so it alone carries the accent. */
 export const diagramNodeStyles: Record<DiagramNodeType, string> = {
-  frontend: "border-border bg-background",
-  api: "border-signal/60 bg-background",
-  service: "border-border bg-background",
-  database: "border-border bg-muted",
-  cache: "border-border bg-muted",
-  queue: "border-border bg-muted",
-  external: "border-dashed border-border bg-transparent",
+  frontend: "border-blue-500/30 bg-blue-500/5",
+  api: "border-primary/30 bg-primary/5",
+  service: "border-violet-500/30 bg-violet-500/5",
+  database: "border-emerald-500/30 bg-emerald-500/5",
+  cache: "border-amber-500/30 bg-amber-500/5",
+  queue: "border-orange-500/30 bg-orange-500/5",
+  external: "border-border bg-muted/40",
 };

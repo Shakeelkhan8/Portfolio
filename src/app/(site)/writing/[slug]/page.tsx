@@ -3,8 +3,12 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { Badge } from "@/components/ui/badge";
+import { FadeIn } from "@/components/motion/fade-in";
 import { JsonLd } from "@/components/seo/json-ld";
+import { Heading } from "@/components/typography/heading";
 import { Prose } from "@/components/typography/prose";
+import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
 import { getSiteConfig } from "@/lib/db/queries/site";
 import {
@@ -14,7 +18,10 @@ import {
 } from "@/lib/content";
 import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
 import { sanitizeRichHtml } from "@/lib/security/sanitize";
-import { getArticleSchema, getBreadcrumbSchema } from "@/lib/structured-data";
+import {
+  getArticleSchema,
+  getBreadcrumbSchema,
+} from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -68,10 +75,7 @@ export default async function ArticlePage({ params }: PageProps) {
   return (
     <>
       <JsonLd data={structuredData} />
-      <Section
-        spacing="none"
-        className="border-b border-border pt-10 pb-12 sm:pt-14 sm:pb-14"
-      >
+      <Section spacing="sm" className="pt-16 pb-8 md:pt-20">
         <Container className="max-w-3xl">
           <Breadcrumbs
             items={[
@@ -79,34 +83,43 @@ export default async function ArticlePage({ params }: PageProps) {
               { label: article.title },
             ]}
           />
-          <header>
-            <p className="label-mono">
-              {formatDate(article.date)} · {article.readingTime} min read
-              {article.tags.length > 0 ? ` · ${article.tags.join(", ")}` : null}
-            </p>
-            <h1 className="mt-4 font-heading text-[2.25rem] leading-[1.08] text-foreground sm:text-5xl">
-              {article.title}
-            </h1>
-            <p className="mt-5 text-lg leading-relaxed text-pretty text-muted-foreground">
-              {article.excerpt}
-            </p>
-          </header>
+          <FadeIn>
+            <header className="space-y-4">
+              <Heading as="h1" size="xl" className="text-foreground">
+                {article.title}
+              </Heading>
+              <Text muted className="font-mono text-[12px] tracking-wide">
+                {formatDate(article.date)} · {article.readingTime} min read
+              </Text>
+              {article.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {article.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="bg-muted/60">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              ) : null}
+            </header>
+          </FadeIn>
         </Container>
       </Section>
 
-      <Section spacing="sm">
+      <Section spacing="sm" className="pt-0">
         <Container className="max-w-3xl">
-          {article.content ? (
-            <Prose
-              dangerouslySetInnerHTML={{
-                __html: sanitizeRichHtml(article.content),
-              }}
-            />
-          ) : (
-            <Prose>
-              <p>{article.excerpt}</p>
-            </Prose>
-          )}
+          <FadeIn delay={0.1}>
+            {article.content ? (
+              <Prose
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeRichHtml(article.content),
+                }}
+              />
+            ) : (
+              <Prose>
+                <p>{article.excerpt}</p>
+              </Prose>
+            )}
+          </FadeIn>
         </Container>
       </Section>
     </>

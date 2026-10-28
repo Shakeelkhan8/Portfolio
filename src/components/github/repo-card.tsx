@@ -18,14 +18,14 @@ function formatUpdatedDate(date: string): string {
 export function RepoCard({ repo }: RepoCardProps) {
   return (
     <Reveal className="h-full">
-      <article className="flex h-full flex-col border-t border-border pt-5">
+      <article className="site-card flex h-full flex-col rounded-2xl p-5 sm:p-6">
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="font-heading text-2xl leading-tight">
+          <h3 className="font-heading text-base font-semibold tracking-tight">
             <a
               href={repo.htmlUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-signal"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
             >
               {repo.name}
               <ExternalLink className="size-3.5 opacity-60" />
@@ -48,20 +48,14 @@ export function RepoCard({ repo }: RepoCardProps) {
                 {repo.language}
               </Badge>
             ) : null}
-            {repo.stargazersCount > 0 ? (
-              <span className="inline-flex items-center gap-1">
-                <Star className="size-3.5" aria-hidden="true" />
-                {repo.stargazersCount}
-                <span className="sr-only">stars</span>
-              </span>
-            ) : null}
-            {repo.forksCount > 0 ? (
-              <span className="inline-flex items-center gap-1">
-                <GitFork className="size-3.5" aria-hidden="true" />
-                {repo.forksCount}
-                <span className="sr-only">forks</span>
-              </span>
-            ) : null}
+            <span className="inline-flex items-center gap-1">
+              <Star className="size-3.5" />
+              {repo.stargazersCount}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <GitFork className="size-3.5" />
+              {repo.forksCount}
+            </span>
             <span className="font-mono text-[11px]">
               Updated {formatUpdatedDate(repo.updatedAt)}
             </span>
@@ -69,11 +63,7 @@ export function RepoCard({ repo }: RepoCardProps) {
           {repo.topics.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
               {repo.topics.slice(0, 4).map((topic) => (
-                <Badge
-                  key={topic}
-                  variant="outline"
-                  className="border-border/80"
-                >
+                <Badge key={topic} variant="outline" className="border-border/80">
                   {topic}
                 </Badge>
               ))}

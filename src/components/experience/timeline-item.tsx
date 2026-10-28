@@ -1,61 +1,81 @@
 import { formatDateRange } from "@/lib/formatters";
 import type { ExperienceEntry } from "@/types";
+import { cn } from "@/lib/utils";
+import { Heading } from "@/components/typography/heading";
+import { Text } from "@/components/typography/text";
 import { Reveal } from "@/components/motion/reveal";
 
 type TimelineItemProps = {
   entry: ExperienceEntry;
+  isLast?: boolean;
+  defaultOpen?: boolean;
 };
 
-function HighlightList({ items }: { items: string[] }) {
+export function TimelineItem({
+  entry,
+  isLast = false,
+  defaultOpen = false,
+}: TimelineItemProps) {
   return (
-    <ul className="space-y-2">
-      {items.map((highlight) => (
-        <li
-          key={highlight.slice(0, 40)}
-          className="relative max-w-[65ch] pl-5 leading-relaxed text-pretty text-foreground/85 before:absolute before:top-[0.7em] before:left-0 before:h-px before:w-2.5 before:bg-signal before:content-['']"
-        >
-          {highlight}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-const VISIBLE_HIGHLIGHTS = 3;
-
-export function TimelineItem({ entry }: TimelineItemProps) {
-  const showAll =
-    entry.featured || entry.highlights.length <= VISIBLE_HIGHLIGHTS;
-  const visible = showAll
-    ? entry.highlights
-    : entry.highlights.slice(0, VISIBLE_HIGHLIGHTS);
-  const hidden = showAll ? [] : entry.highlights.slice(VISIBLE_HIGHLIGHTS);
-
-  return (
-    <Reveal className="border-t border-border py-10 md:grid md:grid-cols-12 md:gap-12">
-      <div className="md:col-span-3">
-        <p className="font-mono text-xs leading-6 text-muted-foreground">
-          {formatDateRange(entry.startDate, entry.endDate)}
-        </p>
-        <p className="text-sm text-muted-foreground">{entry.location}</p>
+    <Reveal className="relative flex gap-6 pb-12 last:pb-0">
+      <div className="flex flex-col items-center">
+        <div
+          className={cn(
+            "mt-1.5 size-3 shrink-0 rounded-full border-2",
+            entry.featured
+              ? "border-foreground bg-foreground"
+              : "border-border bg-background",
+          )}
+          aria-hidden="true"
+        />
+        {!isLast ? (
+          <div
+            className="mt-2 w-px flex-1 bg-foreground/10"
+            aria-hidden="true"
+          />
+        ) : null}
       </div>
 
-      <div className="mt-3 min-w-0 md:col-span-9 md:mt-0">
-        <h2 className="font-heading text-2xl leading-tight text-foreground">
-          {entry.role}
-        </h2>
-        <p className="mt-1 font-medium text-foreground">{entry.company}</p>
-        <div className="mt-5">
-          <HighlightList items={visible} />
+      <div className="min-w-0 flex-1 space-y-3 pt-0.5">
+        <div>
+          <Heading as="h3" size="sm" balance={false}>
+            {entry.role}
+          </Heading>
+          <Text className="font-medium text-foreground/90">{entry.company}</Text>
+          <Text size="sm" muted className="font-mono text-[12px] tracking-wide">
+            {formatDateRange(entry.startDate, entry.endDate)} ·{" "}
+            {entry.location}
+          </Text>
         </div>
-        {hidden.length > 0 ? (
-          <details className="group mt-3">
-            <summary className="cursor-pointer text-sm font-medium text-foreground hover:text-signal">
-              Show {hidden.length} more
+
+        <ul className="space-y-2">
+          {entry.highlights
+            .slice(0, defaultOpen ? entry.highlights.length : 3)
+            .map((highlight) => (
+              <li
+                key={highlight.slice(0, 40)}
+                className="relative pl-5 text-sm leading-relaxed text-muted-foreground before:absolute before:top-2.5 before:left-0 before:size-1.5 before:rounded-full before:bg-muted-foreground/50 before:content-['']"
+              >
+                {highlight}
+              </li>
+            ))}
+        </ul>
+
+        {!defaultOpen && entry.highlights.length > 3 ? (
+          <details className="group">
+            <summary className="cursor-pointer text-sm font-medium text-primary hover:underline">
+              Show {entry.highlights.length - 3} more
             </summary>
-            <div className="mt-3">
-              <HighlightList items={hidden} />
-            </div>
+            <ul className="mt-3 space-y-2">
+              {entry.highlights.slice(3).map((highlight) => (
+                <li
+                  key={highlight.slice(0, 40)}
+                  className="relative pl-5 text-sm leading-relaxed text-muted-foreground before:absolute before:top-2.5 before:left-0 before:size-1.5 before:rounded-full before:bg-muted-foreground/40 before:content-['']"
+                >
+                  {highlight}
+                </li>
+              ))}
+            </ul>
           </details>
         ) : null}
       </div>

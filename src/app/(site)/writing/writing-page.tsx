@@ -12,9 +12,9 @@ export default async function WritingPage() {
       <PageHeader
         eyebrow="Writing"
         title="Writing"
-        description="Short notes on backend problems I've worked through: tenant isolation, payments and keeping systems reliable."
+        description="Technical articles on backend systems, architecture, and engineering decisions."
       />
-      <Section spacing="sm">
+      <Section spacing="sm" className="pt-0">
         <Container>
           <ArticleList articles={articles} />
         </Container>

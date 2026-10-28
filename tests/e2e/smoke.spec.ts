@@ -19,7 +19,7 @@ test.describe("Portfolio smoke tests", () => {
       .click();
     await expect(page).toHaveURL(/\/about$/);
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Backend engineer",
+      "About",
     );
   });
 
@@ -39,9 +39,7 @@ test.describe("Portfolio smoke tests", () => {
     await expect(
       page.getByRole("heading", { name: "Page not found" }),
     ).toBeVisible();
-    await expect(
-      page.locator('a[href="/"]', { hasText: "Go Home" }),
-    ).toBeVisible();
+    await expect(page.locator('a[href="/"]', { hasText: "Go Home" })).toBeVisible();
   });
 
   test("admin login page is reachable", async ({ page }) => {

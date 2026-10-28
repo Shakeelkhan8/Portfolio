@@ -1,46 +1,44 @@
-import { ContentSection } from "@/components/layout/content-section";
-import { ArrowLink } from "@/components/shared/arrow-link";
+import { ArrowRight } from "lucide-react";
+import { Container } from "@/components/layout/container";
+import { Section } from "@/components/layout/section";
+import { SectionHeader } from "@/components/layout/section-header";
+import { Reveal } from "@/components/motion/reveal";
+import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { AppLink } from "@/components/shared/app-link";
 import { HomeHero } from "@/components/home/home-hero";
+import { ExpertiseGrid } from "@/components/home/expertise-grid";
+import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
+import { WritingPreviewList } from "@/components/home/writing-preview-list";
 import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
 import { ContactCTA } from "@/components/home/contact-cta";
-import { SideProjects } from "@/components/home/side-projects";
+import { ServicesSection } from "@/components/home/services-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
-import { DecisionHighlight } from "@/components/about/decision-highlight";
-import { WorkRow } from "@/components/projects/work-row";
 import {
   getCtaSection,
-  getExperience,
   getFeaturedTestimonials,
-  getProjects,
   getSectionHeader,
   getServices,
   getSiteConfig,
 } from "@/lib/content";
-import { isSideProject } from "@/lib/projects";
 import { routes } from "@/config/navigation";
 
 export default async function Home() {
+  const site = await getSiteConfig();
   const [
-    site,
     heroCta,
-    projects,
-    experience,
+    expertiseHeader,
     projectsHeader,
-    decisionsHeader,
-    sideProjectsHeader,
+    writingHeader,
     experienceHeader,
     servicesHeader,
     testimonialsHeader,
     services,
     testimonials,
   ] = await Promise.all([
-    getSiteConfig(),
     getCtaSection("home_hero"),
-    getProjects(),
-    getExperience(),
+    getSectionHeader("home", "expertise"),
     getSectionHeader("home", "projects"),
-    getSectionHeader("home", "philosophy"),
-    getSectionHeader("home", "side_projects"),
+    getSectionHeader("home", "writing"),
     getSectionHeader("home", "experience"),
     getSectionHeader("home", "services"),
     getSectionHeader("home", "testimonials"),
@@ -48,75 +46,137 @@ export default async function Home() {
     getFeaturedTestimonials(),
   ]);
 
-  const selectedWork = projects.filter(
-    (project) => project.featured && !isSideProject(project),
-  );
-  const sideProjects = projects.filter(isSideProject);
-  const currentRole =
-    experience.find((entry) => entry.featured) ?? experience[0];
-
   return (
     <>
-      <HomeHero site={site} cta={heroCta} currentRole={currentRole} />
-
-      {selectedWork.length > 0 ? (
-        <ContentSection
-          id="work"
-          title={projectsHeader?.title ?? "Selected work"}
-          description={projectsHeader?.description}
-          action={<ArrowLink href={routes.projects}>All projects</ArrowLink>}
-        >
-          <div>
-            {selectedWork.map((project) => (
-              <WorkRow key={project.slug} project={project} />
-            ))}
-          </div>
-        </ContentSection>
-      ) : null}
-
-      <ContentSection
-        id="decisions"
-        title={decisionsHeader?.title ?? "How I make decisions"}
-        description={decisionsHeader?.description}
+      <Section
+        spacing="none"
+        className="relative isolate max-w-full overflow-x-clip pb-12 sm:pb-16 md:pb-20"
       >
-        <DecisionHighlight projects={projects} />
-      </ContentSection>
+        <HomeHero site={site} cta={heroCta} />
 
-      {sideProjects.length > 0 ? (
-        <ContentSection
-          id="side-projects"
-          title={sideProjectsHeader?.title ?? "Side projects"}
-          description={sideProjectsHeader?.description}
-        >
-          <SideProjects projects={sideProjects} />
-        </ContentSection>
+        <Container className="relative">
+          <Reveal delay={0.15} className="mx-auto mt-2 max-w-3xl sm:mt-4 md:mt-8">
+            <Stagger
+              className="flex flex-wrap items-center justify-center gap-2 pt-8 sm:gap-2.5 sm:pt-10"
+              stagger={0.06}
+            >
+              <StaggerItem>
+                <span className="inline-flex min-h-9 items-center rounded-full bg-foreground/[0.05] px-3 py-1.5 font-mono text-[0.7rem] text-muted-foreground transition-colors duration-300 active:bg-foreground/[0.08] sm:px-3.5 sm:text-xs hover:bg-foreground/[0.08] hover:text-foreground">
+                  {site.yearsOfExperience}+ years
+                </span>
+              </StaggerItem>
+              {site.expertise.slice(0, 3).map((item) => (
+                <StaggerItem key={item}>
+                  <span className="inline-flex min-h-9 max-w-full items-center rounded-full bg-foreground/[0.04] px-3 py-1.5 text-[0.7rem] text-foreground/80 transition-colors duration-300 active:bg-foreground/[0.08] sm:px-3.5 sm:text-xs hover:bg-foreground/[0.08] hover:text-foreground">
+                    {item}
+                  </span>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </Reveal>
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader
+            title={expertiseHeader?.title ?? "Expertise"}
+            description={
+              expertiseHeader?.description ??
+              "Areas where I deliver the most impact."
+            }
+            align="center"
+          />
+          <ExpertiseGrid site={site} />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader
+            title={projectsHeader?.title ?? "Selected Projects"}
+            description={
+              projectsHeader?.description ??
+              "Engineering case studies from production systems."
+            }
+            action={
+              <AppLink
+                href={routes.projects}
+                showExternalIcon={false}
+                className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                View all
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </AppLink>
+            }
+          />
+          <ProjectPreviewGrid limit={2} staggered />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader
+            title={writingHeader?.title ?? "Latest Writing"}
+            action={
+              <AppLink
+                href={routes.writing}
+                showExternalIcon={false}
+                className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                View all
+                <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </AppLink>
+            }
+          />
+          <WritingPreviewList />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader title={experienceHeader?.title ?? "Experience"} />
+          <ExperienceSnapshot />
+        </Container>
+      </Section>
+
+      {services.length > 0 ? (
+        <Section spacing="sm" className="relative">
+          <Container>
+            <SectionHeader
+              title={servicesHeader?.title ?? "Services"}
+              description={
+                servicesHeader?.description ??
+                "Ways I can help your team ship reliable software."
+              }
+              align="center"
+            />
+            <ServicesSection services={services} />
+          </Container>
+        </Section>
       ) : null}
-
-      <ContentSection
-        id="experience"
-        title={experienceHeader?.title ?? "Experience"}
-        description={experienceHeader?.description}
-      >
-        <ExperienceSnapshot experience={experience} />
-      </ContentSection>
 
       {testimonials.length > 0 ? (
-        <ContentSection
-          id="testimonials"
-          title={testimonialsHeader?.title ?? "What people say"}
-          description={testimonialsHeader?.description}
-        >
-          <TestimonialsSection testimonials={testimonials} />
-        </ContentSection>
+        <Section spacing="sm" className="relative">
+          <Container>
+            <SectionHeader
+              title={testimonialsHeader?.title ?? "Testimonials"}
+              description={
+                testimonialsHeader?.description ??
+                "What colleagues and clients say about working together."
+              }
+              align="center"
+            />
+            <TestimonialsSection testimonials={testimonials} />
+          </Container>
+        </Section>
       ) : null}
 
-      <ContentSection
-        id="contact"
-        title={servicesHeader?.title ?? "Working together"}
-        description={servicesHeader?.description}
-      >
-        <ContactCTA site={site} services={services} />
-      </ContentSection>
+      <Section spacing="sm" className="relative">
+        <Container>
+          <ContactCTA site={site} />
+        </Container>
+      </Section>
     </>
   );
 }

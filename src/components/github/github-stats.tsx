@@ -3,6 +3,36 @@ import { GitHubIcon } from "@/components/shared/brand-icons";
 import { Reveal } from "@/components/motion/reveal";
 import type { GitHubProfile } from "@/types";
 
+type GitHubStatsProps = {
+  profile: GitHubProfile;
+};
+
+export function GitHubStats({ profile }: GitHubStatsProps) {
+  const memberSince = new Date(profile.createdAt).getFullYear();
+
+  const stats = [
+    { label: "Public repos", value: profile.publicRepos },
+    { label: "Followers", value: profile.followers },
+    { label: "Following", value: profile.following },
+    { label: "Member since", value: memberSince },
+  ];
+
+  return (
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat, index) => (
+        <Reveal key={stat.label} delay={index * 0.05}>
+          <div>
+            <p className="font-heading text-2xl font-semibold tracking-tight text-foreground">
+              {stat.value}
+            </p>
+            <p className="mt-1.5 text-sm text-muted-foreground">{stat.label}</p>
+          </div>
+        </Reveal>
+      ))}
+    </div>
+  );
+}
+
 type GitHubProfileCardProps = {
   profile: GitHubProfile;
 };

@@ -14,10 +14,10 @@ export default async function ExperiencePage() {
     <>
       <PageHeader
         eyebrow="Experience"
-        title="Where I've worked"
-        description={`${site.yearsOfExperience}+ years full-time across logistics SaaS, media and freelance work, after two internships.`}
+        title="Experience"
+        description={`${site.yearsOfExperience}+ years building production systems across SaaS, enterprise, and freelance projects.`}
       />
-      <Section spacing="none" className="pb-16 sm:pb-24">
+      <Section spacing="sm" className="pt-0">
         <Container>
           <Timeline entries={experience} />
         </Container>
