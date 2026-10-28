@@ -1,10 +1,5 @@
 import { siteConfig } from "@/config/site";
-import {
-  footerNav,
-  mainNav,
-  socialNav,
-  utilityNav,
-} from "@/config/navigation";
+import { footerNav, mainNav, socialNav, utilityNav } from "@/config/navigation";
 import { architectureDiagrams } from "@/content/architecture";
 import {
   accomplishments,
@@ -16,76 +11,78 @@ import { aboutIntro, skillGroups } from "@/content/skills";
 import { projects } from "@/content/projects";
 import { articles } from "@/content/writing";
 import { parseMonthDate, slugify } from "@/lib/seed/helpers";
+import { defaultServices } from "@/content/services";
+import {
+  DEFAULT_SEO_DESCRIPTION,
+  DEFAULT_SEO_TITLE,
+} from "@/lib/db/fallback/settings";
 
 export const SEED_META_KEY = "seed_completed";
 
 export const homeSectionHeaders = [
   {
     page_key: "home",
-    section_key: "expertise",
-    title: "Expertise",
-    description: "Areas where I deliver the most impact.",
+    section_key: "projects",
+    title: "Selected work",
+    description:
+      "Production systems I've designed and run. Each write-up covers the problem, the decisions and their trade-offs.",
     display_order: 1,
   },
   {
     page_key: "home",
-    section_key: "projects",
-    title: "Selected Projects",
-    description: "Engineering case studies from production systems.",
+    section_key: "philosophy",
+    title: "How I make decisions",
+    description:
+      "One call from a live system, written up the way I'd write it for a team.",
     display_order: 2,
   },
   {
     page_key: "home",
-    section_key: "philosophy",
-    title: "How I Think",
-    description: "Principles that guide my engineering decisions.",
+    section_key: "side_projects",
+    title: "Side projects",
+    description:
+      "Things I build in my own time, mostly to solve problems I have.",
     display_order: 3,
-  },
-  {
-    page_key: "home",
-    section_key: "writing",
-    title: "Latest Writing",
-    description: null,
-    display_order: 4,
   },
   {
     page_key: "home",
     section_key: "experience",
     title: "Experience",
     description: null,
-    display_order: 5,
+    display_order: 4,
   },
   {
     page_key: "home",
     section_key: "services",
-    title: "Services",
-    description: "Ways I can help your team ship reliable software.",
-    display_order: 6,
+    title: "Working together",
+    description: null,
+    display_order: 5,
   },
   {
     page_key: "home",
     section_key: "testimonials",
-    title: "Testimonials",
-    description: "What colleagues and clients say about working together.",
-    display_order: 7,
+    title: "What people say",
+    description: null,
+    display_order: 6,
   },
 ] as const;
 
 export const ctaSections = [
   {
     section_key: "home_hero",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    primary_label: "View Projects",
+    title: "I build the backend for SaaS that moves money and shipments.",
+    description:
+      "Right now I'm the primary backend engineer on a multi-tenant logistics platform for the Saudi market: dispatch, ledgers, ZATCA e-invoicing, and integrations with Salla, Zid, Shopify, WASL, HyperPay and EdfaPay.",
+    primary_label: "See the work",
     primary_href: "/projects",
-    secondary_label: "Get in Touch",
+    secondary_label: "Get in touch",
     secondary_href: "/contact",
   },
   {
     section_key: "home_contact",
-    title: "Let's work together",
+    title: "Working together",
     description: siteConfig.availability.message,
-    primary_label: "Contact me",
+    primary_label: "Start a conversation",
     primary_href: "/contact",
     secondary_label: siteConfig.email,
     secondary_href: `mailto:${siteConfig.email}`,
@@ -124,8 +121,8 @@ export function getSeedPayload() {
       font_mono: "Geist Mono",
     },
     seoDefaults: {
-      default_title: `${siteConfig.name} | ${siteConfig.title}`,
-      default_description: siteConfig.description,
+      default_title: DEFAULT_SEO_TITLE,
+      default_description: DEFAULT_SEO_DESCRIPTION,
       default_robots: "index, follow",
       twitter_card_type: "summary_large_image",
     },
@@ -288,56 +285,15 @@ export function getSeedPayload() {
       meta_title: "Privacy Policy",
       meta_description: "Privacy policy for this portfolio website.",
     },
-    services: [
-      {
-        title: "Backend Architecture",
-        description:
-          "Design and build scalable APIs, multi-tenant systems, and production-grade services.",
-        icon: "Server",
-        display_order: 0,
-        visible: true,
-      },
-      {
-        title: "System Modernization",
-        description:
-          "Migrate legacy systems, improve reliability, and reduce operational risk.",
-        icon: "RefreshCw",
-        display_order: 1,
-        visible: true,
-      },
-      {
-        title: "Technical Consulting",
-        description:
-          "Architecture reviews, performance tuning, and hands-on engineering leadership.",
-        icon: "Lightbulb",
-        display_order: 2,
-        visible: true,
-      },
-    ],
-    testimonials: [
-      {
-        author_name: "Engineering Lead",
-        author_role: "Staff Engineer",
-        author_company: "Enterprise SaaS",
-        content:
-          "Shakeel consistently delivers well-architected backend systems with clear documentation and strong ownership.",
-        rating: 5,
-        featured: true,
-        display_order: 0,
-        visible: true,
-      },
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Solutions Architect",
-        issuer: "Amazon Web Services",
-        issue_date: "2024-06-01",
-        credential_id: null,
-        verification_url: null,
-        display_order: 0,
-        visible: true,
-      },
-    ],
+    services: defaultServices.map((service, index) => ({
+      ...service,
+      display_order: index,
+      visible: true,
+    })),
+    // Testimonials and certifications are entered through the admin panel.
+    // The seed ships none, so nothing unverified can reach the public site.
+    testimonials: [],
+    certifications: [],
     sectionHeaders: homeSectionHeaders,
     ctaSections,
   };

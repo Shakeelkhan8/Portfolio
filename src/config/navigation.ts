@@ -3,16 +3,16 @@ import { getMailtoHref } from "@/lib/contact/email-display";
 import type { NavItem } from "@/types";
 
 export const mainNav: NavItem[] = [
+  { title: "Work", href: "/projects" },
   { title: "About", href: "/about" },
-  { title: "Projects", href: "/projects" },
   { title: "Writing", href: "/writing" },
-  { title: "Experience", href: "/experience" },
+  { title: "Resume", href: "/resume" },
   { title: "Contact", href: "/contact" },
 ];
 
 export const utilityNav: NavItem[] = [
-  { title: "Resume", href: "/resume" },
-  { title: "Open Source", href: "/open-source" },
+  { title: "Experience", href: "/experience" },
+  { title: "Open source", href: "/open-source" },
 ];
 
 export const footerNav: NavItem[] = [

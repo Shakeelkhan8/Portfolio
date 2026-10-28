@@ -2,20 +2,35 @@ import type { ArchitectureDiagramData } from "@/types";
 
 export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
   "dispatch-management-saas": {
-    title: "Dispatch Management SaaS: System Architecture",
+    title: "Dispatch Management SaaS: system architecture",
     nodes: [
       { id: "portal", label: "Admin Portal", type: "frontend", layer: 0 },
       { id: "mobile", label: "Mobile Apps", type: "frontend", layer: 0 },
       { id: "api", label: "Laravel API", type: "api", layer: 1 },
       { id: "dispatch", label: "Auto-Dispatch", type: "service", layer: 2 },
       { id: "financial", label: "Financial System", type: "service", layer: 2 },
-      { id: "integrations", label: "Integration Layer", type: "service", layer: 2 },
+      {
+        id: "integrations",
+        label: "Integration Layer",
+        type: "service",
+        layer: 2,
+      },
       { id: "postgres", label: "PostgreSQL", type: "database", layer: 3 },
       { id: "redis", label: "Redis Cache", type: "cache", layer: 3 },
       { id: "cron", label: "Scheduled Jobs", type: "queue", layer: 3 },
-      { id: "shopify", label: "Shopify", type: "external", layer: 4 },
-      { id: "salla", label: "Salla", type: "external", layer: 4 },
-      { id: "payments", label: "Payment Gateway", type: "external", layer: 4 },
+      {
+        id: "stores",
+        label: "Salla · Zid · Shopify",
+        type: "external",
+        layer: 4,
+      },
+      { id: "gov", label: "WASL · ZATCA", type: "external", layer: 4 },
+      {
+        id: "payments",
+        label: "HyperPay · EdfaPay",
+        type: "external",
+        layer: 4,
+      },
     ],
     edges: [
       { from: "portal", to: "api" },
@@ -28,8 +43,8 @@ export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
       { from: "financial", to: "postgres" },
       { from: "financial", to: "payments" },
       { from: "integrations", to: "postgres" },
-      { from: "integrations", to: "shopify" },
-      { from: "integrations", to: "salla" },
+      { from: "integrations", to: "stores" },
+      { from: "integrations", to: "gov" },
       { from: "api", to: "redis" },
     ],
   },

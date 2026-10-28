@@ -19,7 +19,7 @@ describe("seed content payload", () => {
     const payload = getSeedPayload();
 
     expect(payload.siteSettings.site_name).toBe("Shakeel Khan");
-    expect(payload.projects).toHaveLength(3);
+    expect(payload.projects).toHaveLength(7);
     expect(payload.articles).toHaveLength(2);
     expect(payload.experience).toHaveLength(5);
     expect(payload.skillGroups).toHaveLength(6);
@@ -27,11 +27,40 @@ describe("seed content payload", () => {
     expect(payload.privacyPage.slug).toBe("privacy");
   });
 
+  it("ships no testimonials or certifications", () => {
+    // The seed used to ship a sample testimonial and certification. Anything
+    // seeded can reach the public site, so nothing unverified belongs here.
+    const payload = getSeedPayload();
+
+    expect(payload.testimonials).toEqual([]);
+    expect(payload.certifications).toEqual([]);
+  });
+
+  it("splits professional work from side projects", () => {
+    const payload = getSeedPayload();
+    const side = payload.projects.filter((project) =>
+      project.tags.includes("Side project"),
+    );
+    const featured = payload.projects.filter((project) => project.featured);
+
+    expect(side.map((project) => project.slug)).toEqual([
+      "vantage",
+      "keystone",
+      "hearback",
+      "ai-mentor-health",
+    ]);
+    expect(featured.map((project) => project.slug)).toEqual([
+      "dispatch-management-saas",
+      "enterprise-reporting-automation",
+      "isp-management-system",
+    ]);
+  });
+
   it("marks seeded projects as published", () => {
     const payload = getSeedPayload();
 
-    expect(payload.projects.every((project) => project.status === "published")).toBe(
-      true,
-    );
+    expect(
+      payload.projects.every((project) => project.status === "published"),
+    ).toBe(true);
   });
 });

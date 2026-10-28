@@ -7,11 +7,18 @@ import type {
   ThemeSettingsRecord,
 } from "@/types/cms";
 
+/** ~60 characters: name first for branded searches, then the role people search for. */
+export const DEFAULT_SEO_TITLE = `${siteConfig.name} | Senior Backend Engineer (Laravel, PostgreSQL)`;
+
+/** Under 160 characters so search results show it whole. */
+export const DEFAULT_SEO_DESCRIPTION =
+  "Senior backend engineer in PHP, Laravel and PostgreSQL. I build multi-tenant SaaS for logistics and payments. Open to remote roles and project work.";
+
 export function getFallbackSeoDefaults(): SeoDefaultsRecord {
   return {
     id: "fallback-seo",
-    defaultTitle: `${siteConfig.name} | ${siteConfig.title}`,
-    defaultDescription: siteConfig.description,
+    defaultTitle: DEFAULT_SEO_TITLE,
+    defaultDescription: DEFAULT_SEO_DESCRIPTION,
     defaultOgImageId: null,
     defaultOgImageUrl: null,
     defaultRobots: "index, follow",
@@ -72,7 +79,7 @@ export function getFallbackPrivacyPage(): PageRecord {
       <h2>Error Monitoring</h2>
       <p>Error monitoring may be provided by Sentry to help diagnose production issues. When enabled, Sentry may collect error details, browser information, and session replays around errors.</p>
       <h2>Cookies</h2>
-      <p>This site uses minimal local storage for theme preference (light/dark mode). No tracking cookies are used at this time.</p>
+      <p>This site does not set cookies or store preferences in your browser. Light and dark mode follow your device settings.</p>
       <h2>Contact</h2>
       <p>Questions about this policy? Email <a href="mailto:${siteConfig.email}">${siteConfig.email}</a>.</p>
     `.trim(),
