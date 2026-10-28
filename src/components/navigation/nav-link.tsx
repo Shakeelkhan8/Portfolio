@@ -25,9 +25,9 @@ export function NavLink({ item, className, onClick }: NavLinkProps) {
       showExternalIcon={false}
       onClick={onClick}
       className={cn(
-        "relative py-2 text-[13px] font-medium tracking-wide transition-all duration-300 after:absolute after:inset-x-1 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:rounded-full after:bg-foreground after:transition-transform after:duration-300 after:ease-out after:content-[''] hover:after:scale-x-100",
+        "relative py-2 text-sm transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-0.5 after:h-px after:bg-signal after:opacity-0 after:transition-opacity after:content-['']",
         isActive
-          ? "text-foreground after:scale-x-100"
+          ? "text-foreground after:opacity-100"
           : "text-muted-foreground hover:text-foreground",
         className,
       )}

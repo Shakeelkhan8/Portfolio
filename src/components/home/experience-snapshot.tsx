@@ -1,48 +1,50 @@
-import { ArrowRight } from "lucide-react";
-import { ButtonLink } from "@/components/shared/button-link";
-import { Text } from "@/components/typography/text";
-import { Heading } from "@/components/typography/heading";
 import { Reveal } from "@/components/motion/reveal";
-import { formatDateRange, getFeaturedExperience } from "@/lib/content";
+import { ArrowLink } from "@/components/shared/arrow-link";
+import { formatDateRange } from "@/lib/content";
 import { routes } from "@/config/navigation";
+import type { ExperienceEntry } from "@/types";
 
-export async function ExperienceSnapshot() {
-  const current = await getFeaturedExperience();
+type ExperienceSnapshotProps = {
+  experience: ExperienceEntry[];
+  /** How many of the most recent roles to list. */
+  limit?: number;
+};
 
-  if (!current) return null;
+export function ExperienceSnapshot({
+  experience,
+  limit = 3,
+}: ExperienceSnapshotProps) {
+  const roles = experience.slice(0, limit);
+  if (roles.length === 0) return null;
 
   return (
     <Reveal>
-      <div className="relative max-w-3xl">
-        <Text
-          size="sm"
-          muted
-          className="mb-3 font-mono text-[11px] tracking-[0.28em] uppercase"
-        >
-          Current Role
-        </Text>
-        <Heading as="h3" size="md" balance={false} className="mb-1">
-          {current.role}
-        </Heading>
-        <Text className="mb-1 font-medium text-foreground/90">{current.company}</Text>
-        <Text size="sm" muted className="mb-5">
-          {formatDateRange(current.startDate, current.endDate)} ·{" "}
-          {current.location}
-        </Text>
-        <Text size="sm" muted leading="relaxed" className="mb-7 max-w-2xl">
-          {current.highlights[0]}
-        </Text>
-        <ButtonLink
-          href={routes.experience}
-          variant="outline"
-          className="group/btn bg-transparent"
-        >
-          View full timeline
-          <ArrowRight
-            className="size-4 transition-transform duration-300 group-hover/btn:translate-x-1"
-            data-icon="inline-end"
-          />
-        </ButtonLink>
+      <ol className="border-t border-border">
+        {roles.map((entry) => (
+          <li
+            key={entry.id}
+            className="grid gap-1 border-b border-border py-5 sm:grid-cols-[11rem_1fr] sm:gap-6"
+          >
+            <p className="font-mono text-xs leading-6 text-muted-foreground">
+              {formatDateRange(entry.startDate, entry.endDate)}
+            </p>
+            <div>
+              <h3 className="font-medium text-foreground">
+                {entry.role}
+                <span className="text-muted-foreground">, {entry.company}</span>
+              </h3>
+              {entry.highlights[0] ? (
+                <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-pretty text-muted-foreground">
+                  {entry.highlights[0]}
+                </p>
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+        <ArrowLink href={routes.experience}>Full timeline</ArrowLink>
+        <ArrowLink href={routes.resume}>Resume</ArrowLink>
       </div>
     </Reveal>
   );

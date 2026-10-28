@@ -7,14 +7,9 @@ type TimelineProps = {
 
 export function Timeline({ entries }: TimelineProps) {
   return (
-    <div>
-      {entries.map((entry, index) => (
-        <TimelineItem
-          key={entry.id}
-          entry={entry}
-          isLast={index === entries.length - 1}
-          defaultOpen={entry.featured}
-        />
+    <div className="border-b border-border">
+      {entries.map((entry) => (
+        <TimelineItem key={entry.id} entry={entry} />
       ))}
     </div>
   );

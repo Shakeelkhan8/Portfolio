@@ -6,21 +6,25 @@ import { EmptyState } from "@/components/shared/empty-state";
 import {
   GitHubProfileCard,
   GitHubProfileFallback,
-  GitHubStats,
 } from "@/components/github/github-stats";
 import { RepoCard } from "@/components/github/repo-card";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
-import { getCuratedRepos, getGitHubSettings, getSiteConfig } from "@/lib/content";
+import {
+  getCuratedRepos,
+  getGitHubSettings,
+  getSiteConfig,
+} from "@/lib/content";
 import { resolveOpenSourcePageData } from "@/lib/github/resolve-open-source";
 import { buildPageMetadata, getMetadataContext } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getMetadataContext();
   return buildPageMetadata(ctx, {
-    title: "Open Source",
-    description: "Open source contributions and GitHub activity.",
+    title: "Open source",
+    description:
+      "Public repositories by Shakeel Khan: Laravel and PHP side projects with their code on GitHub.",
     path: routes.openSource,
   });
 }
@@ -47,18 +51,15 @@ export default async function OpenSourcePage() {
     <>
       <PageHeader
         eyebrow="GitHub"
-        title="Open Source"
-        description="Selected repositories and public GitHub activity."
+        title="Open source"
+        description="Most of my production work is private. These are the side projects whose code I've made public."
       />
-      <Section spacing="sm" className="pt-0">
+      <Section spacing="sm">
         <Container className="space-y-10">
           {hasContent ? (
             <>
               {profile ? (
-                <>
-                  <GitHubProfileCard profile={profile} />
-                  <GitHubStats profile={profile} />
-                </>
+                <GitHubProfileCard profile={profile} />
               ) : (
                 <GitHubProfileFallback
                   username={githubSettings.username}

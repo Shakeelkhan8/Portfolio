@@ -5,10 +5,7 @@ import { RootJsonLd } from "@/components/seo/root-json-ld";
 import { SiteAnalytics } from "@/components/seo/site-analytics";
 import { ThemeVariables } from "@/components/seo/theme-variables";
 import { fontVariables } from "@/config/fonts";
-import {
-  buildDefaultMetadata,
-  getMetadataContext,
-} from "@/lib/metadata";
+import { buildDefaultMetadata, getMetadataContext } from "@/lib/metadata";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -16,8 +13,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f4ef" },
+    { media: "(prefers-color-scheme: dark)", color: "#131210" },
+  ],
+  colorScheme: "light dark",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -35,7 +35,7 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={cn("dark h-full", fontVariables)}
+      className={cn("h-full", fontVariables)}
     >
       <head>
         <ThemeVariables />

@@ -1,20 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import type { ArchitectureDiagramData } from "@/types";
 import { cn } from "@/lib/utils";
-import { Text } from "@/components/typography/text";
-
-import { diagramNodeStyles } from "@/lib/architecture/node-styles";
+import {
+  diagramNodeStyles,
+  diagramNodeTypeLabels,
+} from "@/lib/architecture/node-styles";
 
 type ArchitectureDiagramProps = {
   diagram: ArchitectureDiagramData;
 };
 
+/**
+ * Layered system diagram. Hovering or focusing a node dims everything it
+ * isn't directly connected to.
+ */
 export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
   const [activeNode, setActiveNode] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
 
   const layers = useMemo(() => {
     const layerSet = new Set(diagram.nodes.map((node) => node.layer));
@@ -33,70 +36,61 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
   }, [activeNode, diagram.edges]);
 
   return (
-    <div className="rounded-2xl bg-foreground/[0.02] p-4 md:p-6">
-      <Text size="sm" className="mb-6 font-heading font-medium tracking-tight">
-        {diagram.title}
-      </Text>
+    <figure className="rounded-lg border border-border bg-surface">
+      <figcaption className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3">
+        <span className="label-mono">{diagram.title}</span>
+        <span className="label-mono hidden sm:inline">
+          Hover a node to trace it
+        </span>
+      </figcaption>
 
-      <div className="overflow-x-auto pb-2">
-        <div className="flex min-w-max items-stretch gap-3 md:gap-4">
+      <div className="overflow-x-auto p-4 sm:p-5">
+        <div className="flex min-w-max items-center gap-2.5">
           {layers.map((layer, layerIndex) => {
             const nodes = diagram.nodes.filter((node) => node.layer === layer);
 
             return (
-              <div key={layer} className="flex items-center gap-3 md:gap-4">
-                <div className="flex flex-col gap-3">
+              <div key={layer} className="flex items-center gap-2.5">
+                <div className="flex flex-col gap-2.5">
                   {nodes.map((node) => {
-                    const isActive =
-                      !activeNode || connectedNodes.has(node.id);
-                    const isFocused = activeNode === node.id;
+                    const dimmed =
+                      activeNode !== null && !connectedNodes.has(node.id);
 
                     return (
-                      <motion.button
+                      <button
                         key={node.id}
                         type="button"
                         onMouseEnter={() => setActiveNode(node.id)}
                         onMouseLeave={() => setActiveNode(null)}
                         onFocus={() => setActiveNode(node.id)}
                         onBlur={() => setActiveNode(null)}
-                        animate={
-                          prefersReducedMotion
-                            ? undefined
-                            : {
-                                opacity: isActive ? 1 : 0.45,
-                                scale: isFocused ? 1.02 : 1,
-                              }
-                        }
-                        transition={{ duration: 0.2 }}
                         className={cn(
-                          "min-w-[9rem] rounded-lg border px-3 py-2.5 text-left text-sm font-medium transition-shadow",
+                          "min-w-[8rem] max-w-[11rem] rounded-md border px-3 py-2 text-left transition-opacity duration-200",
                           diagramNodeStyles[node.type],
-                          isFocused && "shadow-md ring-2 ring-ring/40",
+                          dimmed && "opacity-35",
                         )}
                       >
-                        {node.label}
-                      </motion.button>
+                        <span className="block font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+                          {diagramNodeTypeLabels[node.type]}
+                        </span>
+                        <span className="mt-0.5 block text-sm font-medium text-foreground">
+                          {node.label}
+                        </span>
+                      </button>
                     );
                   })}
                 </div>
 
                 {layerIndex < layers.length - 1 ? (
-                  <div
-                    className="hidden text-muted-foreground md:block"
-                    aria-hidden="true"
-                  >
+                  <span className="text-muted-foreground" aria-hidden="true">
                     →
-                  </div>
+                  </span>
                 ) : null}
               </div>
             );
           })}
         </div>
       </div>
-
-      <Text size="xs" muted className="mt-4">
-        Hover a component to highlight connected services.
-      </Text>
-    </div>
+    </figure>
   );
 }

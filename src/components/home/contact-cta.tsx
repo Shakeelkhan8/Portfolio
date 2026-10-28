@@ -1,67 +1,82 @@
-"use client";
-
 import { ButtonLink } from "@/components/shared/button-link";
-import { Text } from "@/components/typography/text";
-import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
-import { TextReveal } from "@/components/motion/text-reveal";
 import { routes } from "@/config/navigation";
 import {
   getMailtoHref,
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
-import type { SiteConfig } from "@/types/cms";
+import type { ServiceRecord, SiteConfig } from "@/types/cms";
 
 type ContactCTAProps = {
   site: SiteConfig;
+  services: ServiceRecord[];
 };
 
-export function ContactCTA({ site }: ContactCTAProps) {
+/**
+ * Two ways in: hiring managers looking at a role, and clients with a project.
+ * Each path gets its own call to action rather than one generic "contact me".
+ */
+export function ContactCTA({ site, services }: ContactCTAProps) {
   const email = site.email?.trim() ?? "";
 
   return (
-    <Reveal>
-      <div className="relative isolate overflow-hidden px-2 py-8 text-center sm:px-6 sm:py-12">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgb(245_245_245/0.04),transparent_70%)]"
-        />
-        <p className="mb-4 font-mono text-[11px] tracking-[0.32em] text-muted-foreground uppercase">
-          Contact
+    <div className="grid gap-12 lg:grid-cols-2 lg:gap-10">
+      <Reveal className="flex flex-col border-t border-border pt-6">
+        <h3 className="font-heading text-2xl text-foreground">
+          Hiring for a backend role?
+        </h3>
+        <p className="mt-3 leading-relaxed text-pretty text-muted-foreground">
+          I&apos;m looking for remote senior backend roles on product teams that
+          care about reliability. The resume has the detail; email is the
+          quickest way to reach me.
         </p>
-        <TextReveal
-          as="h2"
-          text="Let's work together"
-          when="inView"
-          className="font-heading mb-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
-        />
-        <Text muted className="mx-auto mb-9 max-w-lg text-balance">
-          {site.availability.message}
-        </Text>
-        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Magnetic>
-            <ButtonLink
-              href={routes.contact}
-              size="lg"
-              className="transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-            >
-              Contact me
-            </ButtonLink>
-          </Magnetic>
+        <div className="mt-auto flex flex-col gap-3 pt-7 sm:flex-row">
+          <ButtonLink href={routes.resume} size="lg" className="min-h-11 px-5">
+            Read the resume
+          </ButtonLink>
           {email ? (
-            <Magnetic strength={0.2}>
-              <ButtonLink
-                href={getMailtoHref(email)}
-                variant="outline"
-                size="lg"
-                className="border-border bg-transparent text-foreground transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-              >
-                {getPublicEmailLabel(email)}
-              </ButtonLink>
-            </Magnetic>
+            <ButtonLink
+              href={getMailtoHref(email)}
+              variant="outline"
+              size="lg"
+              className="min-h-11 bg-transparent px-5"
+            >
+              {getPublicEmailLabel(email)}
+            </ButtonLink>
           ) : null}
         </div>
-      </div>
-    </Reveal>
+      </Reveal>
+
+      <Reveal className="flex flex-col border-t border-border pt-6">
+        <h3 className="font-heading text-2xl text-foreground">
+          Need something built or fixed?
+        </h3>
+        <p className="mt-3 leading-relaxed text-pretty text-muted-foreground">
+          I take on a small number of projects alongside my main role.
+        </p>
+        {services.length > 0 ? (
+          <ul className="mt-5 space-y-4">
+            {services.map((service) => (
+              <li key={service.id}>
+                <p className="font-medium text-foreground">{service.title}</p>
+                <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
+                  {service.description}
+                </p>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <div className="mt-auto pt-7">
+          <ButtonLink
+            href={routes.contact}
+            variant="outline"
+            size="lg"
+            className="min-h-11 bg-transparent px-5"
+          >
+            Start a conversation
+          </ButtonLink>
+        </div>
+      </Reveal>
+    </div>
   );
 }

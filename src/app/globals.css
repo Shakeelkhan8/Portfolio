@@ -4,9 +4,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ─── Dark-only cinematic palette (public site + app shell) ─── */
-:root,
-.dark {
+/*
+ * Two palettes share one set of token names:
+ *
+ * - `:root` is the admin panel's dark palette (unchanged).
+ * - `:root:has(.site-shell)` is the public site: warm paper in light mode,
+ *   warm ink in dark mode, following the visitor's OS setting. Scoping on
+ *   `:root` (not `.site-shell`) means portals rendered into <body>
+ *   (command palette, mobile menu, toasts) pick up the same palette.
+ */
+:root {
   color-scheme: dark;
   --background: #000000;
   --foreground: #f5f5f5;
@@ -19,6 +26,7 @@
   --accent-muted: #161616;
   --success: #3ecf8e;
   --success-muted: #0a1f14;
+  --signal: #e5a54b;
   --ring: #d4d4d4;
 
   --card: #0a0a0a;
@@ -33,6 +41,9 @@
   --accent-foreground: #f5f5f5;
   --destructive: #f07171;
   --input: #1c1c1c;
+
+  --heading-face:
+    var(--font-space-grotesk), var(--font-ibm-plex-sans), system-ui, sans-serif;
 
   --prose-width: 680px;
   --content-width: 1120px;
@@ -52,20 +63,17 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   --header-height: 4rem;
-
-  /* Mobile app chrome */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --mobile-tab-bar-height: 4rem;
 
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.55), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-  --shadow-md: 0 8px 24px -8px rgb(0 0 0 / 0.7),
-    0 2px 8px -2px rgb(0 0 0 / 0.5);
-  --shadow-lg: 0 16px 40px -12px rgb(0 0 0 / 0.75),
-    0 6px 16px -6px rgb(0 0 0 / 0.5);
-  --shadow-xl: 0 28px 56px -16px rgb(0 0 0 / 0.8),
-    0 10px 20px -8px rgb(0 0 0 / 0.55);
+  --shadow-md:
+    0 8px 24px -8px rgb(0 0 0 / 0.7), 0 2px 8px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg:
+    0 16px 40px -12px rgb(0 0 0 / 0.75), 0 6px 16px -6px rgb(0 0 0 / 0.5);
+  --shadow-xl:
+    0 28px 56px -16px rgb(0 0 0 / 0.8), 0 10px 20px -8px rgb(0 0 0 / 0.55);
 
   --chart-1: #f5f5f5;
   --chart-2: #a3a3a3;
@@ -82,15 +90,81 @@
   --sidebar-ring: #d4d4d4;
 }
 
-/* Site-scoped atmospheric tokens (public portfolio only) */
-.site-shell {
-  --site-glow: color-mix(in oklch, var(--foreground) 8%, transparent);
-  --site-glass: color-mix(in oklch, var(--background) 78%, transparent);
-  --site-glass-border: color-mix(in oklch, var(--foreground) 10%, transparent);
-  --header-height: 4.25rem;
-  overflow-x: clip;
-  max-width: 100%;
-  width: 100%;
+/* ─── Public site: paper (light) ─── */
+:root:has(.site-shell) {
+  color-scheme: light;
+  --background: #f6f4ef;
+  --foreground: #1b1a17;
+  --muted: #edeae3;
+  --muted-foreground: #5e5a52;
+  --border: #dedad0;
+  --border-subtle: #e9e6de;
+  --surface: #fbfaf6;
+  --surface-elevated: #ffffff;
+  --accent-muted: #efebe2;
+  --success: #2f7d4f;
+  --success-muted: #e3efe6;
+  --signal: #a8540a;
+  --ring: #a8540a;
+
+  --card: #fbfaf6;
+  --card-foreground: #1b1a17;
+  --popover: #fbfaf6;
+  --popover-foreground: #1b1a17;
+  --primary: #1b1a17;
+  --primary-foreground: #f6f4ef;
+  --secondary: #ece8df;
+  --secondary-foreground: #1b1a17;
+  --accent: #ece8df;
+  --accent-foreground: #1b1a17;
+  --destructive: #b42318;
+  --input: #dedad0;
+
+  --shadow-xs: 0 1px 2px 0 rgb(27 26 23 / 0.06);
+  --shadow-sm: 0 1px 3px 0 rgb(27 26 23 / 0.08);
+  --shadow-md: 0 8px 24px -12px rgb(27 26 23 / 0.18);
+  --shadow-lg: 0 16px 40px -16px rgb(27 26 23 / 0.22);
+
+  --heading-face: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --header-height: 4rem;
+}
+
+/* ─── Public site: ink (dark) ─── */
+@media (prefers-color-scheme: dark) {
+  :root:has(.site-shell) {
+    color-scheme: dark;
+    --background: #131210;
+    --foreground: #ece9e2;
+    --muted: #23211d;
+    --muted-foreground: #a39e94;
+    --border: #2c2a25;
+    --border-subtle: #22201c;
+    --surface: #1a1916;
+    --surface-elevated: #201f1b;
+    --accent-muted: #23211d;
+    --success: #4cc38a;
+    --success-muted: #142a1f;
+    --signal: #e5a54b;
+    --ring: #e5a54b;
+
+    --card: #1a1916;
+    --card-foreground: #ece9e2;
+    --popover: #1a1916;
+    --popover-foreground: #ece9e2;
+    --primary: #ece9e2;
+    --primary-foreground: #131210;
+    --secondary: #23211d;
+    --secondary-foreground: #ece9e2;
+    --accent: #23211d;
+    --accent-foreground: #ece9e2;
+    --destructive: #f07171;
+    --input: #2c2a25;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.45);
+    --shadow-md: 0 8px 24px -12px rgb(0 0 0 / 0.6);
+    --shadow-lg: 0 16px 40px -16px rgb(0 0 0 / 0.65);
+  }
 }
 
 @theme inline {
@@ -105,6 +179,7 @@
   --color-accent-muted: var(--accent-muted);
   --color-success: var(--success);
   --color-success-muted: var(--success-muted);
+  --color-signal: var(--signal);
   --color-ring: var(--ring);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -134,7 +209,8 @@
 
   --font-sans: var(--font-ibm-plex-sans), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --font-heading: var(--font-space-grotesk), var(--font-ibm-plex-sans), system-ui, sans-serif;
+  /* Resolved per palette: Space Grotesk in admin, Newsreader on the site. */
+  --font-heading: var(--heading-face);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -160,10 +236,8 @@
   }
 
   html {
-    @apply font-sans scroll-smooth;
-    /* Offset in-page anchors for sticky header + mobile tab bar */
+    @apply font-sans;
     scroll-padding-top: calc(var(--header-height) + var(--safe-top) + 1rem);
-    scroll-padding-bottom: calc(var(--mobile-tab-bar-height) + var(--safe-bottom) + 0.5rem);
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
@@ -173,9 +247,10 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
     text-wrap: pretty;
-    overscroll-behavior-y: none;
     overflow-x: clip;
     max-width: 100%;
   }
@@ -188,18 +263,15 @@
   }
 }
 
-::selection {
-  background: color-mix(in oklch, var(--primary) 22%, transparent);
-  color: var(--foreground);
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
-/* Refined, low-profile scrollbars */
-@media (pointer: fine) {
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent)
-      transparent;
-  }
+::selection {
+  background: color-mix(in oklch, var(--signal) 24%, transparent);
+  color: var(--foreground);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -223,21 +295,21 @@
   width: 100%;
   max-width: var(--content-width);
   margin-inline: auto;
-  padding-inline: 1.125rem;
+  padding-inline: 1.25rem;
 }
 
 @utility container-prose {
   width: 100%;
   max-width: var(--prose-width);
   margin-inline: auto;
-  padding-inline: 1.125rem;
+  padding-inline: 1.25rem;
 }
 
 @utility container-wide {
   width: 100%;
   max-width: var(--wide-width);
   margin-inline: auto;
-  padding-inline: 1.125rem;
+  padding-inline: 1.25rem;
 }
 
 @media (min-width: 640px) {
@@ -248,353 +320,81 @@
   }
 }
 
-/* Fluid vertical rhythm — tighter on small phones */
 @utility section-spacing {
-  padding-block: clamp(3.25rem, 8vw, 7rem);
+  padding-block: clamp(3.5rem, 8vw, 7rem);
 }
 
 @utility section-spacing-sm {
-  padding-block: clamp(2.5rem, 5.5vw, 5rem);
+  padding-block: clamp(2.75rem, 6vw, 5rem);
 }
 
-@utility section-spacing-lg {
-  padding-block: clamp(4rem, 11vw, 9rem);
-}
-
-/* Subtle dotted grid for hero / feature backdrops */
-@utility bg-grid {
-  background-image: radial-gradient(
-    color-mix(in oklch, var(--foreground) 7%, transparent) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
-  background-position: center;
-}
-
-/* Kept as solid text aliases so existing classNames stay valid without colorful gradients */
-@utility text-gradient {
-  color: var(--foreground);
-  background-image: none;
-  -webkit-background-clip: unset;
-  background-clip: unset;
-}
-
-@utility text-gradient-soft {
-  color: var(--foreground);
-  background-image: none;
-  -webkit-background-clip: unset;
-  background-clip: unset;
-}
-
-/* Glass panel used by nav / feature surfaces */
-@utility glass-panel {
-  background: color-mix(in oklch, var(--background) 78%, transparent);
-  border: 1px solid color-mix(in oklch, var(--foreground) 8%, transparent);
-  backdrop-filter: blur(16px) saturate(1.05);
-  -webkit-backdrop-filter: blur(16px) saturate(1.05);
-}
-
-@utility site-card {
-  background: var(--surface);
-  border: 1px solid color-mix(in oklch, var(--foreground) 5%, transparent);
-  box-shadow: none;
-  transition:
-    transform var(--duration-normal) var(--ease-out),
-    border-color var(--duration-normal) var(--ease-out),
-    background-color var(--duration-normal) var(--ease-out);
-}
-
-.site-card:hover {
-  border-color: color-mix(in oklch, var(--foreground) 12%, transparent);
-  background: var(--surface-elevated);
-  transform: translateY(-3px);
-}
-
-.site-card img {
-  transition: transform 0.7s var(--ease-out);
-}
-
-.site-card:hover img {
-  transform: scale(1.04);
-}
-
-/* Touch press — app-like feedback without hover dependency */
-@media (pointer: coarse) {
-  .site-card:hover {
-    transform: none;
-  }
-
-  .site-card:hover img {
-    transform: none;
-  }
-
-  .site-card:active {
-    transform: scale(0.985);
-    border-color: color-mix(in oklch, var(--foreground) 16%, transparent);
-    background: var(--surface-elevated);
-  }
-
-  .site-shell [data-slot="button"]:hover {
-    transform: none;
-  }
-
-  .hover-lift:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .hover-lift:active {
-    transform: scale(0.985);
-  }
-}
-
-/* ─── Mobile app tab bar ─── */
-.mobile-tab-bar {
-  position: fixed;
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 55;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  pointer-events: none;
-}
-
-.mobile-tab-bar__inner {
-  pointer-events: auto;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  align-items: stretch;
-  height: var(--mobile-tab-bar-height);
-  margin-inline: max(0.5rem, env(safe-area-inset-left, 0px))
-    max(0.5rem, env(safe-area-inset-right, 0px));
-  margin-bottom: 0.4rem;
-  padding: 0.2rem;
-  border-radius: 1.25rem;
-  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
-  background: color-mix(in oklch, var(--background) 78%, transparent);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  box-shadow:
-    0 12px 40px -16px rgb(0 0 0 / 0.75),
-    0 0 0 1px color-mix(in oklch, var(--foreground) 4%, transparent);
-}
-
-.mobile-tab-bar__item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.15rem;
-  min-height: 2.75rem;
-  border-radius: 1rem;
-  color: var(--muted-foreground);
-  text-decoration: none;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.mobile-tab-bar__item:active {
-  transform: scale(0.94);
-  background: color-mix(in oklch, var(--foreground) 6%, transparent);
-}
-
-.mobile-tab-bar__item--active {
-  color: var(--foreground);
-}
-
-.mobile-tab-bar__icon-wrap {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 1.5rem;
-}
-
-.mobile-tab-bar__indicator {
-  position: absolute;
-  inset: -0.15rem -0.35rem;
-  border-radius: 999px;
-  background: color-mix(in oklch, var(--foreground) 10%, transparent);
-}
-
-.mobile-tab-bar__label {
-  font-size: 0.625rem;
+/* Small uppercase mono label used above headings and in data rows. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-inline: 0.15rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .mobile-tab-bar__item:active,
-  .site-card:active {
-    transform: none;
-  }
+/*
+ * Public-site headings use Newsreader. Serif display type reads best at a
+ * regular weight with neutral tracking, so this normalises the weights and
+ * negative tracking the shared <Heading> sizes apply for the admin's grotesk.
+ * Unlayered on purpose: it must win over utility classes.
+ */
+.site-shell .font-heading {
+  font-weight: 450;
+  letter-spacing: -0.012em;
 }
 
-/* Site-only micro-interactions (does not restyle admin) */
-.site-shell [data-slot="button"] {
+/* Text link with an underline that strengthens on hover. */
+@utility link-underline {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in oklch, currentColor 35%, transparent);
   transition:
-    transform var(--duration-normal) var(--ease-out),
-    background-color var(--duration-normal) var(--ease-out),
-    border-color var(--duration-normal) var(--ease-out),
-    box-shadow var(--duration-normal) var(--ease-out),
+    text-decoration-color var(--duration-normal) var(--ease-out),
     color var(--duration-normal) var(--ease-out);
-}
 
-.site-shell [data-slot="button"]:hover {
-  transform: translateY(-1px);
-}
-
-.site-shell [data-slot="button"]:active {
-  transform: translateY(0) scale(0.98);
-}
-
-.site-shell [data-slot="button"].size-8:hover,
-.site-shell [data-slot="button"].size-9:hover {
-  transform: scale(1.06);
-}
-
-.site-shell [data-slot="button"].size-8:active,
-.site-shell [data-slot="button"].size-9:active {
-  transform: scale(0.94);
-}
-
-.site-shell [data-slot="button"] svg {
-  transition: transform var(--duration-normal) var(--ease-out);
-}
-
-.site-shell a {
-  transition:
-    color var(--duration-normal) var(--ease-out),
-    opacity var(--duration-normal) var(--ease-out),
-    transform var(--duration-normal) var(--ease-out);
-}
-
-/* Consistent interactive lift used on cards & tiles */
-@utility hover-lift {
-  transition: transform var(--duration-normal) var(--ease-out),
-    box-shadow var(--duration-normal) var(--ease-out),
-    border-color var(--duration-normal) var(--ease-out);
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hover-lift:hover,
-  .site-card:hover {
-    transform: none;
-  }
-
-  .site-card:hover img {
-    transform: none;
-  }
-
-  .animate-orb-drift,
-  .animate-loader-pulse {
-    animation: none;
-  }
-
-  .site-shell [data-slot="button"]:hover,
-  .site-shell [data-slot="button"]:active {
-    transform: none;
+  &:hover {
+    text-decoration-color: currentColor;
   }
 }
 
-/* Atmospheric layers — soft monochrome depth only */
-.site-mesh {
-  background:
-    radial-gradient(
-      ellipse 70% 45% at 50% -5%,
-      color-mix(in oklch, var(--foreground) 9%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 40% 30% at 100% 40%,
-      color-mix(in oklch, var(--foreground) 4%, transparent),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse 35% 28% at 0% 70%,
-      color-mix(in oklch, var(--foreground) 3.5%, transparent),
-      transparent 55%
-    );
-}
-
-.site-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-  mix-blend-mode: overlay;
-}
-
-@keyframes orb-drift {
-  0%,
-  100% {
-    transform: translate3d(-50%, 0, 0) scale(1);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translate3d(-48%, 2%, 0) scale(1.04);
-    opacity: 0.75;
+/*
+ * Scroll-driven reveal. Content is fully visible by default; browsers that
+ * support view timelines fade it in as it enters the viewport. No JavaScript,
+ * nothing hidden before hydration, nothing hidden for reduced-motion users.
+ */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    translate: 0 1rem;
   }
 }
 
-@keyframes loader-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(0.92);
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 160px;
+    }
   }
-  50% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-orb-drift {
-  animation: orb-drift 18s ease-in-out infinite;
-}
-
-.animate-loader-pulse {
-  animation: loader-pulse 1.4s ease-in-out infinite;
-}
-
-
-/* Masked gradient edge for horizontally scrolling rails */
-@utility fade-edges-x {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 5%,
-    #000 95%,
-    transparent
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 5%,
-    #000 95%,
-    transparent
-  );
 }
 
 @media print {
   header,
   footer,
-  .mobile-tab-bar,
   .no-print {
     display: none !important;
+  }
+
+  .reveal {
+    animation: none !important;
   }
 
   /* Full web resume lives in a collapsed <details>; force it open for print. */

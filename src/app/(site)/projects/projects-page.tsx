@@ -1,30 +1,43 @@
 import { Container } from "@/components/layout/container";
-import { Section } from "@/components/layout/section";
+import { ContentSection } from "@/components/layout/content-section";
 import { PageHeader } from "@/components/shared/page-header";
-import { ProjectList } from "@/components/projects/project-list";
-import {
-  getArchitectureDiagramsBySlugs,
-  getProjects,
-} from "@/lib/content";
+import { SideProjects } from "@/components/home/side-projects";
+import { WorkRow } from "@/components/projects/work-row";
+import { getProjects } from "@/lib/content";
+import { isSideProject } from "@/lib/projects";
 
 export default async function ProjectsPage() {
   const projects = await getProjects();
-  const diagrams = await getArchitectureDiagramsBySlugs(
-    projects.map((project) => project.slug),
-  );
+  const work = projects.filter((project) => !isSideProject(project));
+  const sideProjects = projects.filter(isSideProject);
 
   return (
     <>
       <PageHeader
-        eyebrow="Projects"
-        title="Projects"
-        description="Engineering case studies from production systems. Not demos, but real operational software."
+        eyebrow="Work"
+        title="Projects and case studies"
+        description="Systems I've built for employers and clients, plus the side projects I run on my own. Each write-up covers the problem, the architecture, the decisions and what they cost."
       />
-      <Section spacing="sm" className="pt-0">
-        <Container>
-          <ProjectList projects={projects} diagrams={diagrams} />
+
+      {work.length > 0 ? (
+        <Container className="py-14 sm:py-20">
+          <div className="max-w-4xl">
+            {work.map((project) => (
+              <WorkRow key={project.slug} project={project} as="h2" />
+            ))}
+          </div>
         </Container>
-      </Section>
+      ) : null}
+
+      {sideProjects.length > 0 ? (
+        <ContentSection
+          id="side-projects"
+          title="Side projects"
+          description="Things I build in my own time, mostly to solve problems I have. Open-source ones link to their code."
+        >
+          <SideProjects projects={sideProjects} />
+        </ContentSection>
+      ) : null}
     </>
   );
 }
