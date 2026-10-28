@@ -1,10 +1,27 @@
 import { routes } from "@/config/navigation";
 import type { SiteConfig } from "@/types/cms";
+import type { ProjectLink } from "@/types";
+
+/**
+ * Schema.org nodes reference the site owner by `@id` rather than repeating
+ * the Person object, so crawlers see one entity no matter how many nodes
+ * mention it.
+ */
+function personId(site: SiteConfig): string {
+  return `${site.url}/#person`;
+}
+
+function websiteId(site: SiteConfig): string {
+  return `${site.url}/#website`;
+}
+
+const personRef = (site: SiteConfig) => ({ "@id": personId(site) });
 
 export function getPersonSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": personId(site),
     name: site.name,
     alternateName: site.legalName,
     jobTitle: site.title,
@@ -13,6 +30,7 @@ export function getPersonSchema(site: SiteConfig) {
     url: site.url,
     address: {
       "@type": "PostalAddress",
+      addressLocality: site.city,
       addressCountry: site.location,
     },
     sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
@@ -24,13 +42,40 @@ export function getWebSiteSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: `${site.name} | Portfolio`,
+    "@id": websiteId(site),
+    name: site.name,
     url: site.url,
     description: site.description,
-    author: {
-      "@type": "Person",
-      name: site.name,
-    },
+    inLanguage: "en",
+    publisher: personRef(site),
+  };
+}
+
+export function getProfilePageSchema(site: SiteConfig) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: site.url,
+    isPartOf: { "@id": websiteId(site) },
+    mainEntity: personRef(site),
+  };
+}
+
+/** One JSON-LD document for every page: Person, WebSite and ProfilePage. */
+export function getRootSchemaGraph(site: SiteConfig) {
+  // Nodes inside @graph inherit the document's @context.
+  const strip = <T extends Record<string, unknown>>(node: T) =>
+    Object.fromEntries(
+      Object.entries(node).filter(([key]) => key !== "@context"),
+    );
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      strip(getPersonSchema(site)),
+      strip(getWebSiteSchema(site)),
+      strip(getProfilePageSchema(site)),
+    ],
   };
 }
 
@@ -49,6 +94,10 @@ export function getBreadcrumbSchema(
   };
 }
 
+/**
+ * Projects with a public GitHub link are `SoftwareSourceCode` (with the repo
+ * as `codeRepository`); everything else is a `CreativeWork` case study.
+ */
 export function getProjectSchema(
   site: SiteConfig,
   project: {
@@ -56,31 +105,31 @@ export function getProjectSchema(
     summary: string;
     slug: string;
     stack: string[];
-    role: string;
+    links: ProjectLink[];
   },
 ) {
-  return {
+  const repository = project.links.find((link) =>
+    link.href.startsWith("https://github.com/"),
+  );
+  const base = {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
     name: project.title,
     description: project.summary,
     url: `${site.url}${routes.project(project.slug)}`,
-    author: {
-      "@type": "Person",
-      name: site.name,
-    },
+    author: personRef(site),
     keywords: project.stack.join(", "),
-    about: project.role,
   };
-}
 
-export function getProfilePageSchema(site: SiteConfig) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    mainEntity: getPersonSchema(site),
-    url: site.url,
-  };
+  if (repository) {
+    return {
+      ...base,
+      "@type": "SoftwareSourceCode",
+      codeRepository: repository.href,
+      programmingLanguage: project.stack.slice(0, 3),
+    };
+  }
+
+  return { ...base, "@type": "CreativeWork" };
 }
 
 export function getArticleSchema(
@@ -99,9 +148,6 @@ export function getArticleSchema(
     description: article.excerpt,
     url: `${site.url}${routes.article(article.slug)}`,
     datePublished: article.date,
-    author: {
-      "@type": "Person",
-      name: site.name,
-    },
+    author: personRef(site),
   };
 }

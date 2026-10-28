@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "Experience",
     description:
-      "Professional experience, education, and career highlights as a Senior Backend Engineer.",
+      "Shakeel Khan's work history: senior backend engineer at Elityx on a Saudi logistics SaaS, backend developer at Hum Network, and earlier Laravel roles.",
     path: routes.experience,
   });
 }

@@ -63,10 +63,10 @@ export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
     authors: [{ name: site.name, url: site.url }],
     creator: site.name,
     keywords: [
-      "Backend Engineer",
       "Senior Backend Engineer",
-      "Software Engineer",
-      "Portfolio",
+      "Laravel Developer",
+      "PHP Backend Engineer",
+      "Multi-tenant SaaS",
       ...site.expertise,
     ],
     formatDetection: {
