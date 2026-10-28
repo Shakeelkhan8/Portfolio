@@ -36,9 +36,9 @@ export function Magnetic({
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  if (prefersReducedMotion || !finePointer) {
-    return <div className={className}>{children}</div>;
-  }
+  // Same element in every state (see HoverTilt): swapping element types after
+  // the pointer check remounted the hero and contact buttons on hydration.
+  const magnetEnabled = finePointer && !prefersReducedMotion;
 
   function handleMove(event: MouseEvent<HTMLDivElement>) {
     const node = ref.current;
@@ -59,9 +59,9 @@ export function Magnetic({
     <motion.div
       ref={ref}
       style={{ x: springX, y: springY }}
-      className={cn("will-change-transform", className)}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
+      className={cn(magnetEnabled && "will-change-transform", className)}
+      onMouseMove={magnetEnabled ? handleMove : undefined}
+      onMouseLeave={magnetEnabled ? handleLeave : undefined}
     >
       {children}
     </motion.div>

@@ -20,7 +20,7 @@ type HoverTiltProps = {
 export function HoverTilt({
   children,
   className,
-  maxTilt = 5,
+  maxTilt = 3,
 }: HoverTiltProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -40,9 +40,10 @@ export function HoverTilt({
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  if (prefersReducedMotion || !finePointer) {
-    return <div className={className}>{children}</div>;
-  }
+  // Always render the same element: swapping a plain <div> for <motion.div>
+  // once the pointer check ran made React remount every card after
+  // hydration. When tilt is off, the handlers are simply not attached.
+  const tiltEnabled = finePointer && !prefersReducedMotion;
 
   function onMove(event: MouseEvent<HTMLDivElement>) {
     const node = ref.current;
@@ -66,8 +67,8 @@ export function HoverTilt({
         rotateY,
         transformPerspective: 900,
       }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      onMouseMove={tiltEnabled ? onMove : undefined}
+      onMouseLeave={tiltEnabled ? onLeave : undefined}
     >
       {children}
     </motion.div>
