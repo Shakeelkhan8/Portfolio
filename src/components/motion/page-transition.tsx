@@ -39,9 +39,9 @@ export function PageTransition({ children }: PageTransitionProps) {
   return (
     <motion.div
       key={pathname}
-      initial={softMotion ? { opacity: 0 } : { opacity: 0, y: 22 }}
+      initial={softMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
       animate={softMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      transition={{ duration: softMotion ? 0.38 : 0.55, ease: EASE }}
+      transition={{ duration: softMotion ? 0.32 : 0.42, ease: EASE }}
     >
       {children}
     </motion.div>

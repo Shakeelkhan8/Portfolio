@@ -67,13 +67,17 @@ async function ensureAdminUser(
     throw new Error(`Failed to create admin user: ${error?.message}`);
   }
 
-  const { error: adminInsertError } = await supabase.from("admin_users").insert({
-    user_id: data.user.id,
-    email: adminEmail,
-  });
+  const { error: adminInsertError } = await supabase
+    .from("admin_users")
+    .insert({
+      user_id: data.user.id,
+      email: adminEmail,
+    });
 
   if (adminInsertError) {
-    throw new Error(`Failed to register admin user: ${adminInsertError.message}`);
+    throw new Error(
+      `Failed to register admin user: ${adminInsertError.message}`,
+    );
   }
 
   return data.user.id;
@@ -81,7 +85,10 @@ async function ensureAdminUser(
 
 async function clearSeedData(supabase: ServiceClient) {
   const deleteAll = async (table: string, column = "id") => {
-    const { error } = await supabase.from(table).delete().not(column, "is", null);
+    const { error } = await supabase
+      .from(table)
+      .delete()
+      .not(column, "is", null);
     if (error) {
       throw new Error(`Failed to clear ${table}: ${error.message}`);
     }
@@ -98,7 +105,10 @@ async function clearSeedData(supabase: ServiceClient) {
   await deleteAll("project_technologies");
   await deleteAll("project_tags");
   await deleteAll("project_gallery");
-  await supabase.from("project_category_map").delete().not("project_id", "is", null);
+  await supabase
+    .from("project_category_map")
+    .delete()
+    .not("project_id", "is", null);
   await deleteAll("projects");
   await deleteAll("project_categories");
   await deleteAll("experience_highlights");
@@ -196,10 +206,15 @@ export async function runSeed(
     }
   }
 
+  // Testimonials and certifications seed empty; skip the round trip for them.
   const moduleInserts = await Promise.all([
     supabase.from("services").insert(payload.services),
-    supabase.from("testimonials").insert(payload.testimonials),
-    supabase.from("certifications").insert(payload.certifications),
+    ...(payload.testimonials.length > 0
+      ? [supabase.from("testimonials").insert(payload.testimonials)]
+      : []),
+    ...(payload.certifications.length > 0
+      ? [supabase.from("certifications").insert(payload.certifications)]
+      : []),
   ]);
 
   for (const result of moduleInserts) {
@@ -220,7 +235,9 @@ export async function runSeed(
       .single();
 
     if (categoryError || !category) {
-      throw new Error(`Failed to seed skill category: ${categoryError?.message}`);
+      throw new Error(
+        `Failed to seed skill category: ${categoryError?.message}`,
+      );
     }
 
     const { error: skillsError } = await supabase.from("skills").insert(
@@ -267,7 +284,9 @@ export async function runSeed(
       );
 
     if (highlightError) {
-      throw new Error(`Failed to seed experience highlights: ${highlightError.message}`);
+      throw new Error(
+        `Failed to seed experience highlights: ${highlightError.message}`,
+      );
     }
   }
 
@@ -384,7 +403,9 @@ export async function runSeed(
 
     for (const result of childInserts) {
       if (result.error) {
-        throw new Error(`Failed to seed project relations: ${result.error.message}`);
+        throw new Error(
+          `Failed to seed project relations: ${result.error.message}`,
+        );
       }
     }
   }

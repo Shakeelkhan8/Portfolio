@@ -33,11 +33,11 @@ export function Header({ site, navigation, className }: HeaderProps) {
       role="banner"
       aria-label="Site header"
       data-scrolled={scrolled}
-      initial={prefersReducedMotion ? false : { opacity: 0, y: -24 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         delay: prefersReducedMotion ? 0 : HERO.type.header,
-        duration: 1,
+        duration: 0.6,
         ease: HERO_EASE,
       }}
       className={cn(

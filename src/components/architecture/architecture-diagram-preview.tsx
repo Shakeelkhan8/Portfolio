@@ -43,7 +43,7 @@ export function ArchitectureDiagramPreview({
                     <span
                       key={node.id}
                       className={cn(
-                        "block max-w-[4.25rem] truncate rounded-md border px-1.5 py-1 text-[9px] font-medium leading-tight sm:max-w-[6.5rem] sm:px-2 sm:text-[11px]",
+                        "line-clamp-2 block max-w-[5.5rem] rounded-md border px-1.5 py-1 text-[9px] font-medium leading-tight text-balance sm:max-w-[7.5rem] sm:px-2 sm:text-[11px]",
                         diagramNodeStyles[node.type],
                       )}
                     >

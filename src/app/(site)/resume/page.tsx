@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "Resume",
     description:
-      "Download Shakeel Khan’s resume: Senior Backend Engineer focused on production SaaS and APIs.",
+      "Resume of Shakeel Khan, senior backend engineer: 4+ years of PHP, Laravel and PostgreSQL on production SaaS, payments and integrations. Print or save as PDF.",
     path: routes.resume,
   });
 }

@@ -5,9 +5,9 @@ import { routes } from "@/config/navigation";
 export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getMetadataContext();
   return buildPageMetadata(ctx, {
-    title: "Projects",
+    title: "Projects and case studies",
     description:
-      "Case studies and technical deep-dives into backend systems, APIs, and platform engineering work.",
+      "Backend case studies by Shakeel Khan: a multi-tenant dispatch SaaS, reporting automation, ISP billing, and open-source Laravel side projects.",
     path: routes.projects,
   });
 }

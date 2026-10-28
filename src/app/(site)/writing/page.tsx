@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "Writing",
     description:
-      "Technical articles on backend engineering, system design, and software craftsmanship.",
+      "Notes by Shakeel Khan on backend engineering: multi-tenant data isolation, idempotent payment webhooks and keeping Laravel systems reliable.",
     path: routes.writing,
   });
 }

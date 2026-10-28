@@ -6,9 +6,25 @@ test.describe("Portfolio smoke tests", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
       "Shakeel Khan",
     );
+    // The hero title comes first; the current-role heading further down
+    // repeats the same job title.
     await expect(
-      page.getByText("Senior Backend Engineer", { exact: true }),
+      page.getByText("Senior Backend Engineer", { exact: true }).first(),
     ).toBeVisible();
+  });
+
+  test("project cards are not remounted after hydration", async ({ page }) => {
+    await page.goto("/");
+    const card = await page
+      .locator('a[aria-label^="Read case study"]')
+      .first()
+      .elementHandle();
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(1500);
+
+    // HoverTilt and Magnetic used to swap <div> for <motion.div> once they
+    // detected a mouse, which replaced every card's DOM after hydration.
+    expect(await card?.evaluate((node) => node.isConnected)).toBe(true);
   });
 
   test("navigation to about page works", async ({ page }) => {

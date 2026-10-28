@@ -570,6 +570,29 @@
   animation: loader-pulse 1.4s ease-in-out infinite;
 }
 
+/*
+ * Route loading screen: held invisible for 350ms, so fast navigations
+ * (most of them, since pages are prerendered) never flash a loader.
+ */
+@keyframes loading-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-loading-in {
+  animation: loading-in 240ms ease-out 350ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-loading-in {
+    animation: none;
+  }
+}
+
 
 /* Masked gradient edge for horizontally scrolling rails */
 @utility fade-edges-x {

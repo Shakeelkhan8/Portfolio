@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 
+/** Hero scroll hint: "Scroll" with a mouse pointer, "Swipe up" on touch. */
 export function ScrollCue() {
   const prefersReducedMotion = useReducedMotion();
 
@@ -28,7 +29,8 @@ export function ScrollCue() {
         </div>
       </div>
       <span className="text-[11px] font-medium tracking-[0.18em] text-foreground/55 uppercase">
-        Swipe Up
+        <span className="pointer-fine:hidden">Swipe up</span>
+        <span className="hidden pointer-fine:inline">Scroll</span>
       </span>
     </div>
   );

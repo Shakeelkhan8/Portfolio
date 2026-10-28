@@ -3,51 +3,61 @@ import type { SkillGroup } from "@/types";
 export const skillGroups: SkillGroup[] = [
   {
     category: "Backend",
-    skills: [
-      "Laravel",
-      "PHP",
-      "Node.js",
-      "REST APIs",
-      "WebSockets",
-      "Socket.IO",
-    ],
+    skills: ["PHP 8.4", "Laravel", "Go", "Node.js", "REST APIs", "WebSockets"],
   },
   {
-    category: "Databases",
-    skills: ["PostgreSQL", "MySQL", "Schema Design", "Indexing", "Migrations"],
+    category: "Data",
+    skills: [
+      "PostgreSQL",
+      "MySQL",
+      "Redis",
+      "Schema design",
+      "Indexing",
+      "Migrations",
+    ],
   },
   {
     category: "Architecture",
     skills: [
-      "Multi-Tenancy",
+      "Multi-tenancy",
       "RBAC",
-      "API-First Design",
-      "Adapter Pattern",
-      "Caching Strategies",
+      "Queues and scheduled jobs",
+      "Idempotent webhooks",
+      "Adapter pattern",
     ],
   },
   {
     category: "Integrations",
     skills: [
-      "Webhooks",
-      "Shopify",
       "Salla",
+      "Zid",
+      "Shopify",
       "WooCommerce",
-      "Payment Gateways",
+      "HyperPay",
+      "EdfaPay",
+      "Stripe",
+      "ZATCA e-invoicing",
     ],
   },
   {
     category: "Frontend",
-    skills: ["React", "Next.js", "Vue.js", "Tailwind CSS", "JavaScript"],
+    skills: ["Vue.js", "Livewire", "Blade", "React", "Next.js", "Tailwind CSS"],
   },
   {
-    category: "Infrastructure",
-    skills: ["Docker", "Git", "CI/CD", "Linux", "Postman", "Swagger"],
+    category: "Delivery",
+    skills: [
+      "Docker",
+      "GitHub Actions",
+      "Linux",
+      "Pest and PHPUnit",
+      "Larastan",
+    ],
   },
 ];
 
 export const aboutIntro = [
-  "Senior Backend Engineer with 5+ years of experience building and shipping production-grade SaaS platforms, enterprise automation systems, and API-driven architectures.",
-  "Currently architecting and owning 80%+ of the backend for a live multi-tenant Dispatch Management SaaS serving 5 onboarded companies, 200+ captains, and 500+ daily shipments.",
-  "I focus on systems that remain reliable under real operational load, from database design and API contracts to webhook integrations and deployment pipelines.",
+  "I'm Shakeel, a backend engineer in Islamabad. I've worked full-time in PHP and Laravel since 2022, and most of what I build is the part of a SaaS product nobody sees until it breaks: tenant isolation, ledgers, payment webhooks, scheduled jobs and the integrations between them.",
+  "Today I'm the primary backend engineer at Elityx on a multi-tenant dispatch platform for logistics companies in Saudi Arabia. It runs five companies, more than 200 drivers and over 500 shipments a day, and I own most of the backend: the schema, the APIs, the financial system and deployment.",
+  "Before that I spent two years at Hum Network automating reporting that used to take three days by hand, and as a freelancer I built billing software that three internet providers use every day. In my own time I build tools I want to use myself, like Vantage and Keystone.",
+  "I'm open to remote backend roles on product teams, and to project work where reliability and money are involved.",
 ];

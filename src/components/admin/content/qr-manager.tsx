@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import {
   clearPortfolioQrAction,
@@ -171,9 +172,9 @@ export function QrManager({ qr, mediaFiles }: QrManagerProps) {
         ) : null}
         <p className="text-xs text-muted-foreground">
           Tip: upload custom artwork via{" "}
-          <a href="/admin/media" className="underline underline-offset-2">
+          <Link href="/admin/media" className="underline underline-offset-2">
             Media
-          </a>{" "}
+          </Link>{" "}
           first, then select it here.
         </p>
       </aside>

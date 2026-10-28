@@ -1,9 +1,11 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Project } from "@/types";
 import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { FadeIn } from "@/components/motion/fade-in";
+import { ButtonLink } from "@/components/shared/button-link";
 
 type ProjectHeroProps = {
   project: Project;
@@ -58,6 +60,28 @@ export function ProjectHero({ project }: ProjectHeroProps) {
           </Badge>
         ))}
       </div>
+      {project.links.length > 0 ? (
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+          {project.links.map((link, index) => (
+            <ButtonLink
+              key={link.href}
+              href={link.href}
+              external
+              size="lg"
+              variant={index === 0 ? "default" : "outline"}
+              className={index === 0 ? "group" : "group bg-transparent"}
+            >
+              {link.label}
+              <ArrowUpRight
+                aria-hidden="true"
+                data-icon="inline-end"
+                className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+              <span className="sr-only">(opens in a new tab)</span>
+            </ButtonLink>
+          ))}
+        </div>
+      ) : null}
     </FadeIn>
   );
 }

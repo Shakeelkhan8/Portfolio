@@ -10,12 +10,12 @@ export const experience: ExperienceEntry[] = [
     endDate: null,
     featured: true,
     highlights: [
-      "Sole backend engineer on a live multi-tenant Dispatch Management SaaS, owning 80%+ of the system end-to-end across 5 onboarded companies, 200+ captains, and 500+ daily shipments.",
-      "Architected zone-based batch trip creation with clustering, intelligent auto-dispatch, and a real-time captain control panel with live map tracking.",
-      "Built a three-layer financial system: company billing, inter-company settlements, and captain-side financials with payment gateway integration processing real transactions.",
-      "Built an adapter-based integration layer connecting e-commerce platforms (Shopify, Salla, and others) via webhooks; built and maintain all mobile APIs.",
-      "Delivered portal frontend (Laravel Blade, Vue.js) with operational dashboards and near-real-time shipment lifecycle feeds.",
-      "Own PostgreSQL schema design and migrations; maintain production systems with indexing for sub-second response times and Docker-based deployment.",
+      "Primary backend engineer on a live multi-tenant dispatch platform for logistics companies in Saudi Arabia, owning 80%+ of the backend across 5 companies, 200+ captains and 500+ shipments a day.",
+      "Designed zone-based batch trip creation with clustering, rule-based auto-dispatch, and a captain control panel with live map tracking.",
+      "Built a three-layer financial system on a double-entry ledger: company billing, inter-company settlements and captain payouts, with HyperPay and EdfaPay processing real transactions.",
+      "Work across the platform's integrations: Salla, Zid and Shopify webhooks through an adapter layer, WASL, and ZATCA e-invoicing. Built and maintain all mobile APIs.",
+      "Built the operations portal (Laravel Blade, Vue.js) with dashboards and a near-real-time shipment feed.",
+      "Own the PostgreSQL schema and migrations, indexing for sub-second API responses, and Docker-based deployment.",
     ],
   },
   {
@@ -82,15 +82,15 @@ export const accomplishments: Accomplishment[] = [
     text: "Reduced a 3-day manual reporting process to under 2 minutes, saving 100+ operational hours per month at Hum Network.",
   },
   {
-    text: "Sole backend engineer on a live multi-tenant Dispatch SaaS, onboarding 5 companies from zero to production.",
+    text: "Primary backend engineer on a live multi-tenant dispatch platform, taking 5 companies from zero to production.",
   },
   {
     text: "Reduced frontend development time by 30% at iProfessional with a reusable 20+ block component library.",
   },
   {
-    text: "Built and deployed a full-stack ISP Management System still actively used by 3 internet service providers.",
+    text: "Built and deployed a full-stack ISP management system used daily by 3 internet service providers.",
   },
 ];
 
 export const resumeSummary =
-  "Senior Backend Engineer with 5+ years of experience building production-grade SaaS platforms, enterprise automation systems, and API-driven architectures. Proven ability to reduce operational workload through automation and design systems that scale with business growth.";
+  "Senior backend engineer with 4+ years of full-time experience in PHP, Laravel and PostgreSQL, building multi-tenant SaaS, payment flows and enterprise automation. Currently the primary backend engineer on a live logistics platform for the Saudi market.";

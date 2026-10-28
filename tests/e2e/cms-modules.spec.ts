@@ -4,7 +4,7 @@ test.describe("Phase 9 CMS surfaces", () => {
   test("home page shows featured projects and experience", async ({ page }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: "Selected Projects" }),
+      page.getByRole("heading", { name: "Selected work" }),
     ).toBeVisible();
     await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
     await page
