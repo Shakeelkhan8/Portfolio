@@ -3,14 +3,15 @@ import { test, expect } from "@playwright/test";
 test.describe("Portfolio smoke tests", () => {
   test("homepage renders hero content", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Shakeel Khan",
-    );
-    // The hero title comes first; the current-role heading further down
-    // repeats the same job title.
+    // The hero leads with the work; the name lives in the header. The H1 text
+    // comes from the CMS, so assert it exists rather than pin its wording.
     await expect(
-      page.getByText("Senior Backend Engineer", { exact: true }).first(),
+      page.getByRole("banner").getByRole("link", { name: "Shakeel Khan" }),
     ).toBeVisible();
+    const headline = page.getByRole("heading", { level: 1 });
+    await expect(headline).toBeVisible();
+    await expect(headline).not.toHaveText("Shakeel Khan");
+    await expect(page.getByRole("link", { name: /case studies|work/i }).first()).toBeVisible();
   });
 
   test("project cards are not remounted after hydration", async ({ page }) => {

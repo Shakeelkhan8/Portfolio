@@ -69,10 +69,10 @@ export const homeSectionHeaders = [
 export const ctaSections = [
   {
     section_key: "home_hero",
-    title: "I build the backend for SaaS that moves money and shipments.",
+    title: "Backends for SaaS that moves money and shipments.",
     description:
-      "Right now I'm the primary backend engineer on a multi-tenant logistics platform for the Saudi market: dispatch, ledgers, ZATCA e-invoicing, and integrations with Salla, Zid, Shopify, WASL, HyperPay and EdfaPay.",
-    primary_label: "See the work",
+      "Multi-tenant platforms, payment flows, ledgers, and the integrations that connect them. Currently the primary backend engineer on a dispatch platform used by 5 logistics companies in Saudi Arabia.",
+    primary_label: "See the case studies",
     primary_href: "/projects",
     secondary_label: "Get in touch",
     secondary_href: "/contact",

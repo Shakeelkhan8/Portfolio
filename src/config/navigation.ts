@@ -5,11 +5,13 @@ import type { NavItem } from "@/types";
 export const mainNav: NavItem[] = [
   { title: "Work", href: "/projects" },
   { title: "About", href: "/about" },
-  { title: "Writing", href: "/writing" },
   { title: "Resume", href: "/resume" },
   { title: "Contact", href: "/contact" },
 ];
 
+// Writing is left out of the navigation until there are enough posts to make
+// it worth a link (see MIN_ARTICLES_FOR_HOME on the home page). The /writing
+// pages, sitemap entries and RSS feed stay live.
 export const utilityNav: NavItem[] = [
   { title: "Experience", href: "/experience" },
   { title: "Open source", href: "/open-source" },
