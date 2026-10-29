@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Text } from "@/components/typography/text";
 import { Reveal } from "@/components/motion/reveal";
@@ -9,52 +10,107 @@ import {
   getMailtoHref,
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
-import type { SiteConfig } from "@/types/cms";
+import type { ServiceRecord, SiteConfig } from "@/types/cms";
 
 type ContactCTAProps = {
   site: SiteConfig;
+  /** Project-work offerings (CMS `services`), listed on the project path. */
+  services?: ServiceRecord[];
 };
 
-export function ContactCTA({ site }: ContactCTAProps) {
+/**
+ * Closing call to action with two paths: someone hiring for a role, and
+ * someone with a project. Replaces the separate "Working together" service
+ * cards, which said the same thing in a generic way one section earlier.
+ */
+export function ContactCTA({ site, services = [] }: ContactCTAProps) {
   const email = site.email?.trim() ?? "";
+  const availability = site.availability.message?.trim();
 
   return (
     <Reveal>
-      <div className="relative isolate overflow-hidden px-2 py-8 text-center sm:px-6 sm:py-12">
+      <div className="relative isolate overflow-hidden px-2 py-8 sm:px-6 sm:py-12">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgb(245_245_245/0.04),transparent_70%)]"
         />
-        <p className="mb-4 font-mono text-[11px] tracking-[0.32em] text-muted-foreground uppercase">
-          Contact
-        </p>
-        <TextReveal
-          as="h2"
-          text="Let's work together"
-          when="inView"
-          className="font-heading mb-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl"
-        />
-        <Text muted className="mx-auto mb-9 max-w-lg text-balance">
-          {site.availability.message}
-        </Text>
-        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <ButtonLink
-            href={routes.contact}
-            size="lg"
-            className="transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-          >
-            Contact me
-          </ButtonLink>
-          {email ? (
-            <ButtonLink
-              href={getMailtoHref(email)}
-              variant="outline"
-              size="lg"
-              className="border-border bg-transparent text-foreground transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-            >
-              {getPublicEmailLabel(email)}
-            </ButtonLink>
+        <div className="text-center">
+          <p className="mb-4 font-mono text-[11px] tracking-[0.32em] text-muted-foreground uppercase">
+            Contact
+          </p>
+          <TextReveal
+            as="h2"
+            text="Have a backend problem, or a role to fill?"
+            when="inView"
+            className="font-heading mx-auto mb-3 max-w-2xl text-3xl font-semibold tracking-tight text-balance text-foreground sm:text-4xl"
+          />
+          {availability ? (
+            <Text muted className="mx-auto max-w-lg text-balance">
+              {availability}
+            </Text>
           ) : null}
+        </div>
+
+        <div className="mx-auto mt-10 grid max-w-4xl gap-5 text-left md:grid-cols-2">
+          <div className="site-card flex flex-col rounded-2xl p-5 sm:p-6">
+            <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
+              Hiring for a backend role
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+              I&apos;m looking for remote senior backend roles on product teams.
+              The resume has the detail; email is the quickest way to reach me.
+            </p>
+            <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
+              <ButtonLink href={routes.resume} className="group/btn">
+                Read the resume
+                <ArrowRight
+                  className="size-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+                  data-icon="inline-end"
+                />
+              </ButtonLink>
+              {email ? (
+                <ButtonLink
+                  href={getMailtoHref(email)}
+                  variant="outline"
+                  className="bg-transparent"
+                >
+                  {getPublicEmailLabel(email)}
+                </ButtonLink>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="site-card flex flex-col rounded-2xl p-5 sm:p-6">
+            <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
+              Need a backend built or fixed
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
+              I take on a small number of projects alongside my main role.
+            </p>
+            {services.length > 0 ? (
+              <ul className="mt-4 space-y-2.5">
+                {services.map((service) => (
+                  <li key={service.id} className="text-sm leading-relaxed">
+                    <span className="font-medium text-foreground">
+                      {service.title}.
+                    </span>{" "}
+                    <span className="text-muted-foreground">
+                      {service.description}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <div className="mt-auto pt-6">
+              <ButtonLink
+                href={routes.contact}
+                variant="outline"
+                className="bg-transparent"
+              >
+                Start a conversation
+              </ButtonLink>
+            </div>
+          </div>
         </div>
       </div>
     </Reveal>
