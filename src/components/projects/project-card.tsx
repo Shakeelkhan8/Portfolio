@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import { Badge } from "@/components/ui/badge";
 import { ProjectCardVisual } from "@/components/projects/project-card-visual";
+import { ArchitectureStrip } from "@/components/architecture/architecture-strip";
 import { HoverTilt } from "@/components/motion/hover-tilt";
 import { Reveal } from "@/components/motion/reveal";
 import { routes } from "@/config/navigation";
@@ -30,17 +31,28 @@ export function ProjectCard({ project, diagram, delay = 0 }: ProjectCardProps) {
             <span className="sr-only">Read case study</span>
           </AppLink>
 
-          <div className="relative min-w-0 overflow-hidden">
-            <ProjectCardVisual project={project} diagram={diagram} />
+          {project.thumbnailUrl ? (
+            <div className="relative min-w-0 overflow-hidden">
+              <ProjectCardVisual project={project} />
+            </div>
+          ) : null}
+
+          {/* The result leads; the architecture is a one-line hint under it. */}
+          <div className="relative min-w-0 border-b border-foreground/[0.06] px-4 pt-5 pb-5 sm:px-6 sm:pt-6">
+            <p className="truncate font-mono text-[10px] tracking-[0.16em] text-muted-foreground uppercase">
+              {project.context}
+            </p>
             {highlightMetric ? (
-              <div className="pointer-events-none absolute bottom-3 left-3 z-[1] max-w-[calc(100%-1.5rem)] rounded-full bg-background/80 px-2.5 py-1 font-mono text-[10px] tracking-wide text-foreground backdrop-blur-sm sm:bottom-4 sm:left-4 sm:text-[11px]">
-                <span className="font-semibold">{highlightMetric.value}</span>
-                <span className="text-muted-foreground">
-                  {" "}
-                  · {highlightMetric.label}
-                </span>
+              <div className="mt-4">
+                <p className="font-heading text-[1.75rem] leading-none font-semibold tracking-tight text-foreground sm:text-[2.125rem]">
+                  {highlightMetric.value}
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {highlightMetric.label}
+                </p>
               </div>
             ) : null}
+            {diagram ? <ArchitectureStrip diagram={diagram} className="mt-5" /> : null}
           </div>
 
           <div className="relative z-0 flex min-w-0 flex-1 flex-col gap-3 p-4 sm:gap-4 sm:p-6">

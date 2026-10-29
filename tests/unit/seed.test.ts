@@ -19,7 +19,7 @@ describe("seed content payload", () => {
     const payload = getSeedPayload();
 
     expect(payload.siteSettings.site_name).toBe("Shakeel Khan");
-    expect(payload.projects).toHaveLength(7);
+    expect(payload.projects).toHaveLength(8);
     expect(payload.articles).toHaveLength(2);
     expect(payload.experience).toHaveLength(5);
     expect(payload.skillGroups).toHaveLength(6);
@@ -48,6 +48,7 @@ describe("seed content payload", () => {
       "keystone",
       "hearback",
       "ai-mentor-health",
+      "portfolio",
     ]);
     expect(featured.map((project) => project.slug)).toEqual([
       "dispatch-management-saas",

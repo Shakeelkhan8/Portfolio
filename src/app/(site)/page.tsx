@@ -2,8 +2,6 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { SectionHeader } from "@/components/layout/section-header";
-import { Reveal } from "@/components/motion/reveal";
-import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { AppLink } from "@/components/shared/app-link";
 import { HomeHero } from "@/components/home/home-hero";
 import { PrinciplesGrid } from "@/components/home/principles-grid";
@@ -15,6 +13,7 @@ import { ContactCTA } from "@/components/home/contact-cta";
 import { ServicesSection } from "@/components/home/services-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import {
+  getArticles,
   getCtaSection,
   getExperience,
   getFeaturedTestimonials,
@@ -48,6 +47,8 @@ function ViewAllLink({
   );
 }
 
+const MIN_ARTICLES_FOR_HOME = 4;
+
 export default async function Home() {
   const site = await getSiteConfig();
   const [
@@ -63,6 +64,7 @@ export default async function Home() {
     testimonials,
     projects,
     experience,
+    articles,
   ] = await Promise.all([
     getCtaSection("home_hero"),
     getSectionHeader("home", "philosophy"),
@@ -76,8 +78,18 @@ export default async function Home() {
     getFeaturedTestimonials(),
     getProjects(),
     getExperience(),
+    getArticles(),
   ]);
   const sideProjects = projects.filter(isSideProject);
+  // One headline result per case study, for the hero's proof line.
+  const proof = projects
+    .filter((project) => project.featured && !isSideProject(project))
+    .map((project) => project.metrics[0])
+    .filter((metric) => metric !== undefined)
+    .slice(0, 3);
+  // A writing section with one or two short posts reads as unfinished, so it
+  // stays off the home page (and out of the default nav) until there are more.
+  const showWriting = articles.length >= MIN_ARTICLES_FOR_HOME;
 
   return (
     <>
@@ -85,45 +97,7 @@ export default async function Home() {
         spacing="none"
         className="relative isolate max-w-full overflow-x-clip pb-12 sm:pb-16 md:pb-20"
       >
-        <HomeHero site={site} cta={heroCta} />
-
-        <Container className="relative">
-          <Reveal
-            delay={0.15}
-            className="mx-auto mt-2 max-w-3xl sm:mt-4 md:mt-8"
-          >
-            <Stagger
-              className="flex flex-wrap items-center justify-center gap-2 pt-8 sm:gap-2.5 sm:pt-10"
-              stagger={0.06}
-            >
-              <StaggerItem>
-                <span className="inline-flex min-h-9 items-center rounded-full bg-foreground/[0.05] px-3 py-1.5 font-mono text-[0.7rem] text-muted-foreground transition-colors duration-300 active:bg-foreground/[0.08] sm:px-3.5 sm:text-xs hover:bg-foreground/[0.08] hover:text-foreground">
-                  {site.yearsOfExperience}+ years
-                </span>
-              </StaggerItem>
-              {site.expertise.slice(0, 3).map((item) => (
-                <StaggerItem key={item}>
-                  <span className="inline-flex min-h-9 max-w-full items-center rounded-full bg-foreground/[0.04] px-3 py-1.5 text-[0.7rem] text-foreground/80 transition-colors duration-300 active:bg-foreground/[0.08] sm:px-3.5 sm:text-xs hover:bg-foreground/[0.08] hover:text-foreground">
-                    {item}
-                  </span>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </Reveal>
-        </Container>
-      </Section>
-
-      <Section spacing="sm" className="relative">
-        <Container>
-          <SectionHeader
-            title={principlesHeader?.title ?? "How I work"}
-            description={
-              principlesHeader?.description ??
-              "Rules I hold myself to on every system I build."
-            }
-          />
-          <PrinciplesGrid principles={site.philosophy} />
-        </Container>
+        <HomeHero site={site} cta={heroCta} proof={proof} />
       </Section>
 
       <Section spacing="sm" className="relative">
@@ -166,12 +140,27 @@ export default async function Home() {
       <Section spacing="sm" className="relative">
         <Container>
           <SectionHeader
-            title={writingHeader?.title ?? "Latest Writing"}
-            action={<ViewAllLink href={routes.writing} />}
+            title={principlesHeader?.title ?? "How I work"}
+            description={
+              principlesHeader?.description ??
+              "Rules I hold myself to on every system I build."
+            }
           />
-          <WritingPreviewList />
+          <PrinciplesGrid principles={site.philosophy} />
         </Container>
       </Section>
+
+      {showWriting ? (
+        <Section spacing="sm" className="relative">
+          <Container>
+            <SectionHeader
+              title={writingHeader?.title ?? "Latest Writing"}
+              action={<ViewAllLink href={routes.writing} />}
+            />
+            <WritingPreviewList />
+          </Container>
+        </Section>
+      ) : null}
 
       <Section spacing="sm" className="relative">
         <Container>

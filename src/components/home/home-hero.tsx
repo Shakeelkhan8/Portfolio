@@ -18,17 +18,19 @@ import {
   HERO_EASE,
   HERO_EASE_SOFT,
 } from "@/components/motion/hero-timeline";
-import { Magnetic } from "@/components/motion/magnetic";
 import { ScrollCue } from "@/components/motion/scroll-cue";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
 import type { CtaSection, SiteConfig } from "@/types/cms";
+import type { ProjectMetric } from "@/types";
 
 type HomeHeroProps = {
   site: SiteConfig;
-  /** CMS-managed hero CTAs (`cta_sections.home_hero`) */
+  /** CMS-managed headline, intro and CTAs (`cta_sections.home_hero`). */
   cta?: CtaSection | null;
+  /** Headline results from the case studies, shown under the actions. */
+  proof?: ProjectMetric[];
 };
 
 function HeroFade({
@@ -63,11 +65,18 @@ function HeroFade({
   );
 }
 
+/** "Companies onboarded" -> "companies onboarded"; leaves "ISPs ..." alone. */
+function lowercaseFirstWord(label: string): string {
+  const [first = "", ...rest] = label.split(" ");
+  const isAcronym = first.length > 1 && first[1] === first[1]?.toUpperCase();
+  return isAcronym ? label : [first.toLowerCase(), ...rest].join(" ");
+}
+
 /**
  * Immersive hero: cosmic visual chapter, then CMS identity over the living star.
  * Orb is section-width (not 100vw) so it never causes horizontal scroll.
  */
-export function HomeHero({ site, cta }: HomeHeroProps) {
+export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [mobile, setMobile] = useState(false);
@@ -84,9 +93,15 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
   const primaryHref = cta?.primaryHref?.trim() || routes.projects;
   const secondaryLabel = cta?.secondaryLabel?.trim() || null;
   const secondaryHref = cta?.secondaryHref?.trim() || routes.contact;
+  // The hero leads with the work, not the person: the H1 is the CMS headline
+  // and the name lives in the header. Older CMS rows set the headline to the
+  // site name, so fall back to the job title rather than repeat it.
+  const ctaTitle = cta?.title?.trim();
+  const headline = ctaTitle && ctaTitle !== site.name ? ctaTitle : site.title;
   // The CMS hero intro is specific (current role and integrations); the site
   // description stays generic for meta tags and is only the fallback here.
   const intro = cta?.description?.trim() || site.description;
+  const focus = ["Backend engineering", ...site.expertise.slice(0, 2)];
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -155,20 +170,24 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
             <AvailabilityBadge site={site} />
           </HeroFade>
 
-          {site.location ? (
-            <HeroFade
-              delay={d(HERO.type.location)}
-              className="mb-4 sm:mb-5"
-              soft={mobile}
-            >
-              <p className="font-mono text-[10px] tracking-[0.28em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.4em]">
-                {[site.city, site.location].filter(Boolean).join(", ")}
-              </p>
-            </HeroFade>
-          ) : null}
+          <HeroFade
+            delay={d(HERO.type.location)}
+            className="mb-4 sm:mb-5"
+            soft={mobile}
+          >
+            <p className="font-mono text-[10px] tracking-[0.24em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.32em]">
+              {focus.map((part, index) => (
+                // Phones get the first two parts so the line doesn't wrap.
+                <span key={part} className={index > 1 ? "hidden sm:inline" : undefined}>
+                  {index > 0 ? " · " : null}
+                  {part}
+                </span>
+              ))}
+            </p>
+          </HeroFade>
 
           <motion.div
-            className="relative mb-5 w-full max-w-full sm:mb-6"
+            className="relative mb-6 w-full max-w-4xl sm:mb-7"
             initial={prefersReducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{
@@ -179,28 +198,12 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
           >
             <TextReveal
               as="h1"
-              text={site.name}
+              text={headline}
               intensity="default"
               delay={d(HERO.type.name)}
-              className="font-heading relative z-10 max-w-full text-[clamp(1.75rem,8vw,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-6xl md:text-7xl lg:text-[5rem]"
+              className="font-heading relative z-10 max-w-full text-[clamp(2rem,8.5vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-5xl md:text-6xl lg:text-[4.25rem]"
             />
           </motion.div>
-
-          {site.title ? (
-            <HeroFade
-              delay={d(HERO.type.title)}
-              className="mb-4 w-full max-w-xl sm:mb-5 sm:max-w-2xl"
-              y={18}
-              soft={mobile}
-            >
-              <Text
-                size="xl"
-                className="relative z-10 text-lg font-medium tracking-tight text-foreground/92 sm:text-xl"
-              >
-                {site.title}
-              </Text>
-            </HeroFade>
-          ) : null}
 
           {intro ? (
             <HeroFade
@@ -228,33 +231,61 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
             >
               <div className="relative z-10 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
                 {primaryLabel ? (
-                  <Magnetic strength={0.35}>
-                    <ButtonLink
-                      href={primaryHref}
-                      size="lg"
-                      className="group min-h-12 w-full transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:min-w-[10.5rem] sm:w-auto"
-                    >
-                      {primaryLabel}
-                      <ArrowRight
-                        className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                        data-icon="inline-end"
-                      />
-                    </ButtonLink>
-                  </Magnetic>
+                  <ButtonLink
+                    href={primaryHref}
+                    size="lg"
+                    className="group min-h-12 w-full transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:min-w-[10.5rem] sm:w-auto"
+                  >
+                    {primaryLabel}
+                    <ArrowRight
+                      className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                      data-icon="inline-end"
+                    />
+                  </ButtonLink>
                 ) : null}
                 {secondaryLabel ? (
-                  <Magnetic strength={0.22}>
-                    <ButtonLink
-                      href={secondaryHref}
-                      variant="outline"
-                      size="lg"
-                      className="min-h-12 w-full border-border/80 bg-background/20 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:min-w-[10.5rem] sm:w-auto"
-                    >
-                      {secondaryLabel}
-                    </ButtonLink>
-                  </Magnetic>
+                  <ButtonLink
+                    href={secondaryHref}
+                    variant="outline"
+                    size="lg"
+                    className="min-h-12 w-full border-border/80 bg-background/20 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:min-w-[10.5rem] sm:w-auto"
+                  >
+                    {secondaryLabel}
+                  </ButtonLink>
                 ) : null}
               </div>
+            </HeroFade>
+          ) : null}
+
+          {proof.length > 0 ? (
+            <HeroFade
+              delay={d(HERO.type.actions + 0.15)}
+              className="mt-9 w-full sm:mt-11"
+              soft={mobile}
+            >
+              <ul
+                aria-label="Results from the case studies"
+                className="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-x-5 gap-y-1.5 font-mono sm:flex-row sm:flex-wrap text-[11px] tracking-wide text-muted-foreground sm:text-xs"
+              >
+                {proof.map((metric, index) => (
+                  <li key={`${metric.value}-${metric.label}`} className="flex items-center gap-5">
+                    {index > 0 ? (
+                      <span
+                        aria-hidden="true"
+                        className="hidden text-foreground/20 sm:inline"
+                      >
+                        ·
+                      </span>
+                    ) : null}
+                    <span>
+                      <span className="font-medium text-foreground/90">
+                        {metric.value}
+                      </span>{" "}
+                      {lowercaseFirstWord(metric.label)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </HeroFade>
           ) : null}
         </motion.div>

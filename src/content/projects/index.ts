@@ -429,4 +429,63 @@ export const projects: Project[] = [
     ],
     lessons: [],
   },
+  {
+    slug: "portfolio",
+    title: "This portfolio and its CMS",
+    summary:
+      "The site you're on: a Next.js front end with its own admin panel, so every page, project and setting can be edited without a deploy.",
+    problem:
+      "I wanted a portfolio I could keep current without touching code, that stays up even when its database doesn't, and that doesn't turn its contact form into a spam endpoint.",
+    role: "Solo project: design, build and deploy",
+    context: "Side project · 2026 · Private repo",
+    stack: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS v4",
+      "Supabase",
+      "Vercel",
+      "Playwright",
+    ],
+    tags: ["Side project", "Frontend", "CMS"],
+    featured: false,
+    links: [],
+    metrics: [{ label: "Content areas editable in the admin", value: "21" }],
+    overview:
+      "Public pages are server-rendered Next.js App Router routes that read from Supabase (Postgres, Auth and Storage). A separate admin panel manages 21 content areas, from projects and experience to navigation, SEO defaults and the contact inbox. Each edit revalidates only the cache tags it touches, so changes go live without a rebuild.",
+    challenges: [
+      "Keeping the public site up when the database is unreachable.",
+      "A contact form that's hard to abuse, without adding a CAPTCHA.",
+      "Letting the admin save rich HTML without opening an XSS hole.",
+    ],
+    architecture:
+      "Next.js App Router on Vercel. Public pages read through cached queries tagged by content type; admin server actions write to Supabase and revalidate those tags. Row Level Security is on for every public table: visitors can only read published content, and admin writes go through an is_admin() policy. The contact form posts to an API route that validates with Zod, checks the origin, rate-limits by hashed IP and stores submissions with the service role. Resend delivers the email.",
+    decisions: [
+      {
+        decision: "Typed fallback content behind every query",
+        rationale:
+          "If Supabase is unreachable or not configured, pages render from the same typed content that seeds the database, instead of erroring.",
+        tradeoff:
+          "The seed and the live database can drift apart, so the seed has to be kept accurate.",
+      },
+      {
+        decision: "Rate-limit the contact form and fail closed",
+        rationale:
+          "Five submissions per hashed IP per hour, plus a honeypot field and an origin check. A missing key or a failed count is treated as limited, not allowed.",
+        tradeoff:
+          "A database hiccup can block a genuine message, which beats an open spam endpoint.",
+      },
+      {
+        decision: "Sanitize stored HTML on save and again on render",
+        rationale:
+          "Articles and pages accept rich HTML from the admin; sanitize-html runs on both sides, so one bad save can't reach visitors.",
+        tradeoff: "Some HTML is stripped even where it would have been harmless.",
+      },
+    ],
+    results: [
+      "Accessibility (axe) and SEO crawl checks run in Playwright on every pull request.",
+      "Row Level Security on every public table, and no public insert path into contact submissions.",
+    ],
+    lessons: [],
+  },
 ];

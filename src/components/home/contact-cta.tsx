@@ -2,7 +2,6 @@
 
 import { ButtonLink } from "@/components/shared/button-link";
 import { Text } from "@/components/typography/text";
-import { Magnetic } from "@/components/motion/magnetic";
 import { Reveal } from "@/components/motion/reveal";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { routes } from "@/config/navigation";
@@ -39,26 +38,22 @@ export function ContactCTA({ site }: ContactCTAProps) {
           {site.availability.message}
         </Text>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Magnetic>
-            <ButtonLink
-              href={routes.contact}
-              size="lg"
-              className="transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-            >
-              Contact me
-            </ButtonLink>
-          </Magnetic>
+          <ButtonLink
+            href={routes.contact}
+            size="lg"
+            className="transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+          >
+            Contact me
+          </ButtonLink>
           {email ? (
-            <Magnetic strength={0.2}>
-              <ButtonLink
-                href={getMailtoHref(email)}
-                variant="outline"
-                size="lg"
-                className="border-border bg-transparent text-foreground transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-              >
-                {getPublicEmailLabel(email)}
-              </ButtonLink>
-            </Magnetic>
+            <ButtonLink
+              href={getMailtoHref(email)}
+              variant="outline"
+              size="lg"
+              className="border-border bg-transparent text-foreground transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+            >
+              {getPublicEmailLabel(email)}
+            </ButtonLink>
           ) : null}
         </div>
       </div>

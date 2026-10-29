@@ -20,7 +20,7 @@ type HoverTiltProps = {
 export function HoverTilt({
   children,
   className,
-  maxTilt = 3,
+  maxTilt = 2,
 }: HoverTiltProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();

@@ -1,6 +1,34 @@
 import type { ArchitectureDiagramData } from "@/types";
 
 export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
+  portfolio: {
+    title: "Portfolio and CMS: architecture",
+    nodes: [
+      { id: "visitors", label: "Public site", type: "frontend", layer: 0 },
+      { id: "admin", label: "Admin panel", type: "frontend", layer: 0 },
+      { id: "next", label: "Next.js on Vercel", type: "api", layer: 1 },
+      { id: "queries", label: "Cached queries", type: "service", layer: 2 },
+      { id: "actions", label: "Server actions", type: "service", layer: 2 },
+      { id: "contact", label: "Contact API", type: "service", layer: 2 },
+      { id: "postgres", label: "Supabase Postgres", type: "database", layer: 3 },
+      { id: "auth", label: "Supabase Auth", type: "service", layer: 3 },
+      { id: "storage", label: "Supabase Storage", type: "cache", layer: 3 },
+      { id: "resend", label: "Resend", type: "external", layer: 4 },
+    ],
+    edges: [
+      { from: "visitors", to: "next" },
+      { from: "admin", to: "next" },
+      { from: "next", to: "queries" },
+      { from: "next", to: "actions" },
+      { from: "next", to: "contact" },
+      { from: "queries", to: "postgres" },
+      { from: "actions", to: "postgres" },
+      { from: "actions", to: "auth" },
+      { from: "actions", to: "storage" },
+      { from: "contact", to: "postgres" },
+      { from: "contact", to: "resend" },
+    ],
+  },
   "dispatch-management-saas": {
     title: "Dispatch Management SaaS: system architecture",
     nodes: [
