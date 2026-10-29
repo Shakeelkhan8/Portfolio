@@ -70,6 +70,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # The admin login page needs Supabase. Export the read-only public keys
+      # only when both secrets exist: an unset secret evaluates to "", which
+      # the env schema rejects (z.url() accepts a missing value, not "").
+      # The service-role key is never given to CI.
+      - name: Configure Supabase (read-only)
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL" >> "$GITHUB_ENV"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY" >> "$GITHUB_ENV"
+            echo "Supabase configured for build and e2e."
+          else
+            echo "::warning::Supabase secrets not set; the admin login e2e test will fail."
+          fi
+
       - name: Get Playwright version
         id: playwright
         run: echo "version=$(node -p "require('./package.json').devDependencies['@playwright/test'].replace('^', '')")" >> "$GITHUB_OUTPUT"
