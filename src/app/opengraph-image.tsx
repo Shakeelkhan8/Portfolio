@@ -1,10 +1,11 @@
 import { ImageResponse } from "next/og";
-import { getSiteConfig } from "@/lib/content";
+import { getCtaSection, getSiteConfig } from "@/lib/content";
+import { OG_SIZE, OgCard } from "@/lib/og/og-card";
 
 // Use the Node.js runtime: the Edge runtime has a 1 MB bundle limit on Vercel,
 // and next/og's ImageResponse (WASM renderer + font handling) exceeds it.
 export const runtime = "nodejs";
-export const size = { width: 1200, height: 630 };
+export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export async function generateImageMetadata() {
@@ -17,57 +18,27 @@ export async function generateImageMetadata() {
   ];
 }
 
+/**
+ * Default link preview. Mirrors the home hero: it leads with the work (the
+ * CMS hero headline) and puts the name in the footer.
+ */
 export default async function OpenGraphImage() {
-  const site = await getSiteConfig();
+  const [site, hero] = await Promise.all([
+    getSiteConfig(),
+    getCtaSection("home_hero"),
+  ]);
+  const heroTitle = hero?.title?.trim();
+  const title = heroTitle && heroTitle !== site.name ? heroTitle : site.title;
 
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "80px",
-          background: "linear-gradient(135deg, #0a0a0a 0%, #1e293b 100%)",
-          color: "#fafafa",
-          fontFamily: "system-ui, sans-serif",
-        }}
-      >
-        <div
-          style={{
-            fontSize: 28,
-            fontWeight: 500,
-            color: "#60a5fa",
-            marginBottom: 16,
-          }}
-        >
-          {site.title}
-        </div>
-        <div
-          style={{
-            fontSize: 72,
-            fontWeight: 700,
-            letterSpacing: "-0.03em",
-            lineHeight: 1.1,
-            marginBottom: 24,
-          }}
-        >
-          {site.name}
-        </div>
-        <div
-          style={{
-            fontSize: 28,
-            color: "#a3a3a3",
-            maxWidth: 800,
-            lineHeight: 1.4,
-          }}
-        >
-          {site.description}
-        </div>
-      </div>
+      <OgCard
+        eyebrow={["Backend engineering", ...site.expertise.slice(0, 2)].join(" · ")}
+        title={title}
+        description={hero?.description?.trim() || site.description}
+        footer={`${site.name} · ${site.title}`}
+      />
     ),
-    { ...size },
+    { ...OG_SIZE },
   );
 }

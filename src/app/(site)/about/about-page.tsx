@@ -25,7 +25,7 @@ export default async function AboutPage() {
       <PageHeader
         eyebrow="About"
         title="About"
-        description="Senior backend engineer focused on scalable SaaS systems, APIs, and production ownership."
+        description="I build the parts of SaaS products that handle money and operations: tenancy, payments, ledgers and the integrations around them."
       >
         <AvailabilityBadge site={site} />
       </PageHeader>

@@ -9,6 +9,7 @@ import { MetricGrid } from "@/components/projects/metric-grid";
 import { FadeIn } from "@/components/motion/fade-in";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ArchitectureDiagram } from "@/components/architecture/architecture-diagram";
+import { BuildSummary } from "@/components/projects/build-summary";
 import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import {
@@ -47,7 +48,8 @@ export async function generateMetadata({
     title: project.metaTitle ?? project.title,
     description: project.metaDescription ?? project.summary,
     path: routes.project(slug),
-    ogImage: project.ogImageUrl,
+    // A CMS-uploaded image wins; otherwise the generated case-study card.
+    ogImage: project.ogImageUrl ?? `/og/projects/${slug}`,
     canonicalUrl: project.canonicalUrl,
     robots: project.robots,
   });
@@ -105,6 +107,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
       <Section spacing="sm">
         <Container className="max-w-3xl space-y-12">
+          {diagram ? <BuildSummary diagram={diagram} /> : null}
+
           <FadeIn>
             <ProjectSection id="overview" title="Overview">
               <p>{project.overview}</p>
