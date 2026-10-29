@@ -18,7 +18,7 @@ export default async function ProjectsPage() {
       <PageHeader
         eyebrow="Projects"
         title="Projects"
-        description="Engineering case studies from production systems. Not demos, but real operational software."
+        description="Systems I've built and run for employers and clients, plus side projects. Each write-up covers the problem, the decisions and what they cost."
       />
       <Section spacing="sm" className="pt-0">
         <Container>

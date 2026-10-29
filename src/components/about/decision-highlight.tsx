@@ -52,8 +52,7 @@ export async function DecisionHighlight() {
             How I decide
           </Heading>
           <Text muted leading="relaxed" className="mb-6">
-            Senior judgment shows up in tradeoffs, not slogans. One concrete call
-            from a live system:
+            One call from a live system, with the reasoning and what it cost:
           </Text>
 
           <AppLink

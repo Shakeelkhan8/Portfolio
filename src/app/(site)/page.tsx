@@ -100,10 +100,10 @@ export default async function Home() {
       <Section spacing="sm" className="relative">
         <Container>
           <SectionHeader
-            title={projectsHeader?.title ?? "Selected Projects"}
+            title={projectsHeader?.title ?? "Case studies"}
             description={
               projectsHeader?.description ??
-              "Engineering case studies from production systems."
+              "Live systems I've built and run: what the problem was, what I decided, and what it cost."
             }
             action={<ViewAllLink href={routes.projects} />}
           />
