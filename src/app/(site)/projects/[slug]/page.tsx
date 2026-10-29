@@ -48,7 +48,8 @@ export async function generateMetadata({
     title: project.metaTitle ?? project.title,
     description: project.metaDescription ?? project.summary,
     path: routes.project(slug),
-    ogImage: project.ogImageUrl,
+    // A CMS-uploaded image wins; otherwise the generated case-study card.
+    ogImage: project.ogImageUrl ?? `/og/projects/${slug}`,
     canonicalUrl: project.canonicalUrl,
     robots: project.robots,
   });

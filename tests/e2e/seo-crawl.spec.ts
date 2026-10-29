@@ -53,4 +53,23 @@ test.describe("SEO and crawl assets", () => {
     await page.goto("/projects");
     await expect(page).toHaveTitle(/Projects/i);
   });
+
+  test("case studies share their own preview image", async ({ page, request }) => {
+    await page.goto("/projects/dispatch-management-saas");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+
+    // Before per-project cards every page shared the site-wide image. A
+    // CMS-uploaded image may replace the generated card, but the generic
+    // one never should.
+    expect(ogImage).toBeTruthy();
+    expect(ogImage).not.toContain("/opengraph-image");
+    if (!ogImage?.includes("/og/projects/")) return;
+
+    expect(ogImage).toContain("/og/projects/dispatch-management-saas");
+    const image = await request.get(new URL(ogImage).pathname);
+    expect(image.ok()).toBeTruthy();
+    expect(image.headers()["content-type"]).toContain("image/png");
+  });
 });
