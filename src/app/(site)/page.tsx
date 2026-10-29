@@ -10,7 +10,6 @@ import { SideProjectCard } from "@/components/home/side-project-card";
 import { WritingPreviewList } from "@/components/home/writing-preview-list";
 import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
 import { ContactCTA } from "@/components/home/contact-cta";
-import { ServicesSection } from "@/components/home/services-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import {
   getArticles,
@@ -58,7 +57,6 @@ export default async function Home() {
     sideProjectsHeader,
     writingHeader,
     experienceHeader,
-    servicesHeader,
     testimonialsHeader,
     services,
     testimonials,
@@ -72,7 +70,6 @@ export default async function Home() {
     getSectionHeader("home", "side_projects"),
     getSectionHeader("home", "writing"),
     getSectionHeader("home", "experience"),
-    getSectionHeader("home", "services"),
     getSectionHeader("home", "testimonials"),
     getServices(),
     getFeaturedTestimonials(),
@@ -103,10 +100,10 @@ export default async function Home() {
       <Section spacing="sm" className="relative">
         <Container>
           <SectionHeader
-            title={projectsHeader?.title ?? "Selected Projects"}
+            title={projectsHeader?.title ?? "Case studies"}
             description={
               projectsHeader?.description ??
-              "Engineering case studies from production systems."
+              "Live systems I've built and run: what the problem was, what I decided, and what it cost."
             }
             action={<ViewAllLink href={routes.projects} />}
           />
@@ -169,21 +166,6 @@ export default async function Home() {
         </Container>
       </Section>
 
-      {services.length > 0 ? (
-        <Section spacing="sm" className="relative">
-          <Container>
-            <SectionHeader
-              title={servicesHeader?.title ?? "Working together"}
-              description={
-                servicesHeader?.description ??
-                "Project work I take on alongside my main role."
-              }
-            />
-            <ServicesSection services={services} />
-          </Container>
-        </Section>
-      ) : null}
-
       {testimonials.length > 0 ? (
         <Section spacing="sm" className="relative">
           <Container>
@@ -201,7 +183,7 @@ export default async function Home() {
 
       <Section spacing="sm" className="relative">
         <Container>
-          <ContactCTA site={site} />
+          <ContactCTA site={site} services={services} />
         </Container>
       </Section>
     </>

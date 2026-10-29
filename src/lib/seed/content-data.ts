@@ -23,9 +23,9 @@ export const homeSectionHeaders = [
   {
     page_key: "home",
     section_key: "projects",
-    title: "Selected work",
+    title: "Case studies",
     description:
-      "Production systems I've designed and run. Each write-up covers the problem, the decisions and their trade-offs.",
+      "Live systems I've built and run: what the problem was, what I decided, and what it cost.",
     display_order: 1,
   },
   {

@@ -8,31 +8,36 @@
 :root,
 .dark {
   color-scheme: dark;
-  --background: #000000;
-  --foreground: #f5f5f5;
-  --muted: #121212;
-  --muted-foreground: #8a8a8a;
-  --border: #1c1c1c;
-  --border-subtle: #141414;
-  --surface: #0a0a0a;
-  --surface-elevated: #111111;
-  --accent-muted: #161616;
+  /*
+   * Near-black rather than #000: pure black behind bright white text makes
+   * glyphs bloom on many screens, and leaves no room for card surfaces to
+   * read as layers. Text is eased off pure white for the same reason.
+   */
+  --background: #0a0a0b;
+  --foreground: #ededed;
+  --muted: #141416;
+  --muted-foreground: #8f8f94;
+  --border: #1f1f22;
+  --border-subtle: #161618;
+  --surface: #111113;
+  --surface-elevated: #18181b;
+  --accent-muted: #18181b;
   --success: #3ecf8e;
   --success-muted: #0a1f14;
   --ring: #d4d4d4;
 
-  --card: #0a0a0a;
-  --card-foreground: #f5f5f5;
-  --popover: #0a0a0a;
-  --popover-foreground: #f5f5f5;
-  --primary: #f5f5f5;
-  --primary-foreground: #0a0a0a;
-  --secondary: #161616;
-  --secondary-foreground: #f5f5f5;
-  --accent: #161616;
-  --accent-foreground: #f5f5f5;
+  --card: #111113;
+  --card-foreground: #ededed;
+  --popover: #111113;
+  --popover-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #0a0a0b;
+  --secondary: #18181b;
+  --secondary-foreground: #ededed;
+  --accent: #18181b;
+  --accent-foreground: #ededed;
   --destructive: #f07171;
-  --input: #1c1c1c;
+  --input: #1f1f22;
 
   --prose-width: 680px;
   --content-width: 1120px;
