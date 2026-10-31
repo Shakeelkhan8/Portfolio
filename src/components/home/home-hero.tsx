@@ -148,10 +148,14 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
       </div>
 
       <Container className="relative z-10 flex flex-1 flex-col">
-        {/* Dark scrim under the copy so text stays legible over the orb's core. */}
+        {/*
+          Dark scrim under the copy so text stays legible over the orb's
+          particles. It spans from the eyebrow to the proof line: the small
+          mono text at both ends was the hardest to read.
+        */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-[14%] bottom-[18%] -z-10 mx-auto max-w-4xl bg-[radial-gradient(ellipse_closest-side,rgb(0_0_0/0.78),rgb(0_0_0/0.45)_55%,transparent)]"
+          className="pointer-events-none absolute inset-x-0 top-[6%] bottom-[8%] -z-10 mx-auto max-w-5xl bg-[radial-gradient(ellipse_closest-side,rgb(0_0_0/0.85),rgb(0_0_0/0.6)_60%,transparent)]"
         />
         <motion.div
           className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-0 pb-24 pt-4 text-center sm:pb-28 sm:pt-6"
@@ -175,7 +179,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
             className="mb-4 sm:mb-5"
             soft={mobile}
           >
-            <p className="font-mono text-[10px] tracking-[0.24em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.32em]">
+            <p className="relative z-10 font-mono text-[11px] tracking-[0.2em] text-foreground/75 uppercase [text-shadow:0_1px_12px_rgb(0_0_0/0.95)] sm:text-xs sm:tracking-[0.24em]">
               {focus.map((part, index) => (
                 // Phones get the first two parts so the line doesn't wrap.
                 <span key={part} className={index > 1 ? "hidden sm:inline" : undefined}>
@@ -215,7 +219,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
               <Text
                 size="lg"
                 leading="relaxed"
-                className="relative z-10 text-[0.9375rem] leading-relaxed text-pretty text-foreground/72 [text-shadow:0_1px_18px_rgb(0_0_0/0.9)] sm:text-lg"
+                className="relative z-10 text-[0.9375rem] leading-relaxed text-pretty text-foreground/80 [text-shadow:0_1px_18px_rgb(0_0_0/0.9)] sm:text-lg"
               >
                 {intro}
               </Text>
@@ -265,7 +269,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
             >
               <ul
                 aria-label="Results from the case studies"
-                className="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-x-5 gap-y-1.5 font-mono sm:flex-row sm:flex-wrap text-[11px] tracking-wide text-muted-foreground sm:text-xs"
+                className="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-x-5 gap-y-1.5 font-mono text-xs tracking-wide text-foreground/70 [text-shadow:0_1px_12px_rgb(0_0_0/0.95)] sm:flex-row sm:flex-wrap sm:text-[13px]"
               >
                 {proof.map((metric, index) => (
                   <li key={`${metric.value}-${metric.label}`} className="flex items-center gap-5">
@@ -278,7 +282,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
                       </span>
                     ) : null}
                     <span>
-                      <span className="font-medium text-foreground/90">
+                      <span className="font-medium text-foreground">
                         {metric.value}
                       </span>{" "}
                       {lowercaseFirstWord(metric.label)}
