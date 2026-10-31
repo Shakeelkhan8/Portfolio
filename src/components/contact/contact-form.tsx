@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Text } from "@/components/typography/text";
 import { useSiteData } from "@/components/providers/site-data-provider";
+import { readContactErrorMessage } from "@/lib/contact/read-error-message";
 import {
   getMailtoHref,
   getPublicEmailLabel,
@@ -25,7 +26,11 @@ export function ContactForm() {
     setState("loading");
     setErrorMessage("");
 
-    const formData = new FormData(event.currentTarget);
+    // Keep the element: React clears event.currentTarget once the handler
+    // yields, so reading it after the await below returned null and
+    // form.reset() threw even when the message had been sent.
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const payload = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
@@ -41,12 +46,11 @@ export function ContactForm() {
       });
 
       if (!response.ok) {
-        const data = (await response.json()) as { error?: string };
-        throw new Error(data.error ?? "Failed to send message.");
+        throw new Error(await readContactErrorMessage(response));
       }
 
       setState("success");
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       setState("error");
       setErrorMessage(

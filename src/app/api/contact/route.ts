@@ -1,4 +1,7 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
+import { siteConfig } from "@/config/site";
+import { getSiteConfig } from "@/lib/db/queries/site";
 import { persistContactSubmission } from "@/lib/contact/persist-submission";
 import { resolveContactRecipientEmail } from "@/lib/contact/recipient";
 import { getRequestIp, hashContactIp } from "@/lib/contact/request-meta";
@@ -42,7 +45,43 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   }
 
-  const { name, email, message } = parsed.data;
+  try {
+    return await deliver(request, parsed.data);
+  } catch (error) {
+    // Anything that throws past validation (a missing or invalid env var such
+    // as CONTACT_IP_SALT, a client library error) used to escape the handler,
+    // so the browser got an empty 500 it could not parse. Report it and give
+    // the visitor a readable answer with a way to reach me instead.
+    Sentry.captureException(error, { tags: { route: "api/contact" } });
+    console.error("[api/contact] unhandled error", error);
+
+    const fallbackEmail = await fallbackRecipientEmail();
+    return NextResponse.json(
+      {
+        error: `Something went wrong sending your message. Please email ${fallbackEmail} directly.`,
+        fallbackEmail,
+      },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * The address to show when delivery fails. Deliberately avoids
+ * getContactEnv(), which is one of the things that can throw.
+ */
+async function fallbackRecipientEmail(): Promise<string> {
+  try {
+    return (await getSiteConfig()).email || siteConfig.email;
+  } catch {
+    return siteConfig.email;
+  }
+}
+
+async function deliver(
+  request: Request,
+  { name, email, message }: { name: string; email: string; message: string },
+) {
   const { ipSalt } = getContactEnv();
   const ipHash = hashContactIp(getRequestIp(request), ipSalt);
   const userAgent = request.headers.get("user-agent");
