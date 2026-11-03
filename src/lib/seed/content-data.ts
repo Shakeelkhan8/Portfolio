@@ -69,12 +69,12 @@ export const homeSectionHeaders = [
 export const ctaSections = [
   {
     section_key: "home_hero",
-    title: "Backends for SaaS that moves money and shipments.",
+    title: "Laravel backends that handle money, data and AI.",
     description:
-      "Multi-tenant platforms, payment flows, ledgers, and the integrations that connect them. Currently the primary backend engineer on a dispatch platform used by 5 logistics companies in Saudi Arabia.",
+      "Payment webhooks that are safe to receive twice, ledgers, tenant isolation, APIs and AI features. I designed the financial engine of a live logistics SaaS in Saudi Arabia, and I take on Laravel projects alongside it.",
     primary_label: "See the case studies",
     primary_href: "/projects",
-    secondary_label: "Get in touch",
+    secondary_label: "Work with me",
     secondary_href: "/contact",
   },
   {
