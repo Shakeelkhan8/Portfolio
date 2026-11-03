@@ -1,6 +1,6 @@
 # Portfolio
 
-Personal portfolio site for [Shakeel Khan](https://github.com/Shakeelkhan8) — Senior Backend Engineer. Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Supabase CMS.
+Personal portfolio site for [Shakeel Khan](https://github.com/Shakeelkhan8) — Laravel backend developer. Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Supabase CMS.
 
 **New to this project?** Start with the [Complete Setup & Deployment Guide](./docs/GUIDE.md) — step-by-step instructions for installation, configuration, customization, and deployment.
 

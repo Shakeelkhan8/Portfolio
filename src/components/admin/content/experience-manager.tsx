@@ -30,7 +30,7 @@ export function ExperienceManager({ entries }: ExperienceManagerProps) {
             <Label htmlFor="role">Role</Label>
             <Input id="role" name="role" required />
             <p className="text-xs text-muted-foreground">
-              Featured roles appear on the homepage. Match the site Tagline (e.g. Senior Backend Engineer) so titles stay consistent.
+              Featured roles appear on the homepage. Use the official job title from the employer, even when the site Tagline differs.
             </p>
           </div>
           <div className="space-y-2">

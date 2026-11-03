@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "About",
     description:
-      "About Shakeel Khan, a senior backend engineer in Islamabad working in PHP, Laravel and PostgreSQL on multi-tenant SaaS, payments and integrations.",
+      "About Shakeel Khan, a Laravel backend developer in Islamabad working on payments, integrations, tenant isolation and AI features.",
     path: routes.about,
   });
 }

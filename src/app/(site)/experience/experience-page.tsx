@@ -15,7 +15,7 @@ export default async function ExperiencePage() {
       <PageHeader
         eyebrow="Experience"
         title="Experience"
-        description={`${site.yearsOfExperience}+ years building production systems across SaaS, enterprise, and freelance projects.`}
+        description="Building for the web since 2021, and full-time with PHP and Laravel since 2022, across SaaS, enterprise and independent projects."
       />
       <Section spacing="sm" className="pt-0">
         <Container>
