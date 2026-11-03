@@ -13,61 +13,61 @@ export const projects: Project[] = [
     slug: "dispatch-management-saas",
     title: "Dispatch Management SaaS",
     summary:
-      "A multi-tenant dispatch and settlement platform for logistics companies in Saudi Arabia, running 5 companies, 200+ captains and 500+ shipments a day.",
+      "A multi-tenant dispatch and settlement platform for logistics companies in Saudi Arabia. I designed its financial engine, its tenant isolation and the framework client integrations plug into.",
     problem:
-      "Logistics companies needed one platform for dispatch, captain fleets, financial settlements and e-commerce orders, without paying for custom infrastructure per client.",
-    role: "Primary backend engineer. I own 80%+ of the backend.",
+      "Logistics companies needed one platform for dispatch, captain fleets, financial settlements and incoming orders, without paying for custom infrastructure per client.",
+    role: "Primary engineer for the first seven months. I designed the financial engine, tenant isolation and the inbound integration framework.",
     context: "Elityx · In production · Nov 2025 – present",
-    stack: ["Laravel", "PostgreSQL", "Redis", "Vue.js", "Docker", "Webhooks"],
+    stack: ["Laravel", "PostgreSQL", "Redis", "Docker", "Webhooks", "EdfaPay"],
     tags: ["Multi-tenant SaaS", "Payments", "Integrations"],
     featured: true,
     links: [],
     metrics: [
-      { label: "Companies onboarded", value: "5" },
-      { label: "Shipments a day", value: "500+" },
-      { label: "Captains managed", value: "200+" },
-      { label: "API response target", value: "<1s" },
+      {
+        label: "of the platform's commits in its first seven months",
+        value: "58%",
+      },
+      { label: "of the financial engine's code", value: "~63%" },
+      { label: "Payments test gate", value: "Every deploy" },
     ],
     overview:
-      "The platform covers the whole operational loop: trip creation, auto-dispatch, the captain app, billing and settlements, and the order feeds from the stores that ship through it. I design and maintain the backend end to end: the PostgreSQL schema, the mobile APIs, the integrations and the production deployment.",
+      "The platform covers the whole operational loop: trip creation, auto-dispatch, the captain app, billing and settlements, and the orders that client systems send in. I was its primary engineer for the first seven months. As the team grew I kept ownership of the paths where mistakes cost money: the financial engine, tenant isolation and inbound integrations.",
     challenges: [
       "Isolating each company's data while sharing one application and one database.",
-      "Auto-dispatch that weighs location, captain availability and priority rules, configured per company.",
       "A three-layer financial system (company billing, inter-company settlements, captain payouts) on a double-entry ledger, handling real money.",
-      "Keeping API responses under a second as volume grew past 500 shipments a day.",
+      "Payment providers and client systems retry, so every money posting has to be safe to receive twice.",
+      "A release must never break a payment path, even as more engineers commit to the codebase.",
     ],
     architecture:
-      "An operations portal (Laravel Blade and Vue.js) and the captain mobile apps talk to a Laravel API backed by PostgreSQL and Redis. Auto-dispatch runs as scheduled jobs. An adapter layer connects Salla, Zid and Shopify through webhooks, alongside HyperPay and EdfaPay for payments, WASL, and ZATCA e-invoicing. Everything ships as Docker containers.",
+      "An operations portal and the captain mobile apps talk to a Laravel API backed by PostgreSQL and Redis. Auto-dispatch runs as scheduled jobs. The financial engine posts every money movement to a double-entry ledger and takes card payments through EdfaPay. Client systems send orders through an inbound adapter framework, and the platform also connects to e-commerce stores and the WASL government API. Everything ships as Docker containers.",
     decisions: [
       {
         decision:
           "One PostgreSQL database with tenant-scoped queries, not a database per company",
         rationale:
-          "Far less operational overhead, with isolation enforced through tenant IDs and role-based access.",
+          "Far less operational overhead. A model trait and a global query scope apply the company filter to every query, so isolation doesn't depend on each developer remembering it.",
         tradeoff:
-          "Query scoping has to be disciplined: one missed tenant filter has a bigger blast radius than physical separation would.",
+          "One missed scope has a bigger blast radius than physical separation would, so the scope has to be the default, not an option.",
       },
       {
-        decision: "An adapter per e-commerce platform",
+        decision: "One inbound adapter contract for client integrations",
         rationale:
-          "Salla, Zid and Shopify each have different webhook payloads and auth flows. Behind one interface, the core never knows which store an order came from.",
+          "Each client sends orders in its own format. Adapters behind one interface and a factory map them into the platform's model, so the core never knows which client an order came from. Later integrations were built on the same base class.",
         tradeoff:
-          "More abstraction up front, but adding a platform doesn't touch the core.",
+          "More abstraction up front, but adding a client doesn't touch the core.",
       },
       {
-        decision:
-          "Scheduled auto-dispatch instead of real-time event streaming",
+        decision: "Run the payment tests before every production deploy",
         rationale:
-          "Dispatch rules evaluate availability, zones and priorities in batches, which suits scheduled processing.",
+          "A failing payments suite blocks the release, so a broken money path can't reach production however many people are committing.",
         tradeoff:
-          "Assignment is slightly slower than an event-driven design, but much simpler to configure and debug.",
+          "Deploys wait for the suite, and a flaky payment test blocks a release until someone fixes it.",
       },
     ],
     results: [
-      "5 companies taken from zero to production.",
-      "500+ shipments a day through the platform.",
-      "Billing, settlements and captain payouts running on real transactions.",
-      "Sub-second API responses through indexing and query work.",
+      "The ledger, invoicing, reconciliation and card payments run on real transactions.",
+      "Tenant isolation is enforced in the query layer for every company on the platform.",
+      "Payment tests gate every production deploy.",
     ],
     lessons: [
       "Tenant scoping has to be enforced in the query layer, not left to each developer to remember.",
@@ -132,21 +132,18 @@ export const projects: Project[] = [
     slug: "isp-management-system",
     title: "ISP Management System",
     summary:
-      "Billing, subscriptions and a customer portal for small internet service providers, used daily by three ISPs.",
+      "Billing, subscriptions and a customer portal for small internet service providers, built in 2023 for three local ISPs.",
     problem:
-      "Small and mid-sized ISPs in Pakistan had no affordable software for customer billing, subscription plans, bandwidth tracking and self-service.",
-    role: "Freelance, solo full-stack developer",
-    context: "Freelance · 2023 · In daily use",
+      "Small ISPs in Pakistan had no affordable software for customer billing, subscription plans, bandwidth tracking and self-service.",
+    role: "Independent developer: design, build and deploy",
+    context: "Independent · 2023",
     stack: ["Laravel", "PHP", "MySQL", "Blade"],
     tags: ["Billing", "Full-stack", "SaaS"],
     featured: true,
     links: [],
-    metrics: [
-      { label: "ISPs using it daily", value: "3" },
-      { label: "Status", value: "In production" },
-    ],
+    metrics: [{ label: "ISPs set up on it in 2023", value: "3" }],
     overview:
-      "A full-stack platform I built on my own for ISPs: billing and invoicing, subscription plans, bandwidth usage tracking, and a self-service portal for customers. Three providers run their day-to-day operations on it.",
+      "A full-stack platform for small ISPs: billing and invoicing, subscription plans, bandwidth usage tracking, and a self-service portal for customers. I built it in 2023 and set it up for three local providers.",
     challenges: [
       "Permissions that keep ISP staff, agents and customers in separate scopes.",
       "Billing cycles that stay correct when a customer changes plan mid-cycle.",
@@ -158,9 +155,9 @@ export const projects: Project[] = [
       {
         decision: "A monolith instead of separate services",
         rationale:
-          "One developer, three ISPs. Operational simplicity was worth more than anything a distributed design would add.",
+          "A small system for three small ISPs. Operational simplicity was worth more than anything a distributed design would add.",
         tradeoff:
-          "Growing far beyond today's load would need a scaling plan later.",
+          "Growing far beyond that load would need a scaling plan later.",
       },
       {
         decision: "Role-based access with scoped permissions",
@@ -170,11 +167,11 @@ export const projects: Project[] = [
       },
     ],
     results: [
-      "Three ISPs run daily operations on it.",
+      "Set up for three ISPs in 2023.",
       "Billing, subscriptions and customer self-service in one system.",
     ],
     lessons: [
-      "On a solo production system, build admin tooling early. Support requests come from the edge cases you didn't plan for.",
+      "On a small production system, build admin tooling early. Support requests come from the edge cases you didn't plan for.",
     ],
   },
   {
