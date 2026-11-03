@@ -35,3 +35,21 @@ describe("public content claims", () => {
     expect(publicText.match(pattern)?.[0] ?? null).toBeNull();
   });
 });
+
+/**
+ * Offers that can't be delivered or aren't cleared yet (company-profile.md,
+ * section 2). Salla, Zid and EdfaPay may still appear as experience; they
+ * must not be sold until the employment contract has been checked.
+ */
+const heldOffers: Array<[string, RegExp]> = [
+  ["Saudi merchant work", /salla|zid|edfapay|zatca/i],
+  ["a dedicated developer (from the first hire)", /dedicated developer/i],
+];
+
+describe("services on offer", () => {
+  const offers = JSON.stringify(getSeedPayload().services);
+
+  it.each(heldOffers)("do not sell %s", (_offer, pattern) => {
+    expect(offers.match(pattern)?.[0] ?? null).toBeNull();
+  });
+});
