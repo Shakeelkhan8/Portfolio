@@ -8,12 +8,12 @@ import { SkipLink } from "@/components/layout/skip-link";
 import { AmbientBackground } from "@/components/motion/ambient-background";
 import { MobileTabBar } from "@/components/navigation/mobile-tab-bar";
 import { SoundProvider } from "@/components/providers/sound-provider";
-import type { NavigationData, SiteConfig } from "@/types/cms";
+import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import type { SearchResult } from "@/types";
 
 type SiteShellProps = {
   children: React.ReactNode;
-  site: SiteConfig;
+  site: PublicSiteConfig;
   navigation: NavigationData;
   searchIndex: SearchResult[];
 };

@@ -49,4 +49,19 @@ test.describe("Security hardening", () => {
     await page.goto("/admin/dashboard");
     await expect(page).toHaveURL(/\/admin\/login/);
   });
+
+  // Client component props are serialised into the HTML, so a full
+  // SiteConfig there publishes the phone number and location even though
+  // nothing renders them (src/lib/public-site.ts).
+  for (const path of ["/", "/about", "/contact", "/projects"]) {
+    test(`${path} does not serialise private site settings`, async ({
+      request,
+    }) => {
+      const html = await (await request.get(path)).text();
+
+      expect(
+        html.match(/\\?"(phone|timezone|legalName)\\?":/)?.[0] ?? null,
+      ).toBeNull();
+    });
+  }
 });

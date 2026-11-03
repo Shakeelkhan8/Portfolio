@@ -10,10 +10,10 @@ import {
   getMailtoHref,
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
-import type { ServiceRecord, SiteConfig } from "@/types/cms";
+import type { ServiceRecord, PublicSiteConfig } from "@/types/cms";
 
 type ContactCTAProps = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   /** Project-work offerings (CMS `services`), listed on the project path. */
   services?: ServiceRecord[];
 };

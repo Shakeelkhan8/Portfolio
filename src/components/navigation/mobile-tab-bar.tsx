@@ -16,12 +16,12 @@ import { useMemo, useState } from "react";
 import { AppLink } from "@/components/shared/app-link";
 import { MobileNavSheet } from "@/components/navigation/mobile-nav-sheet";
 import { routes } from "@/config/navigation";
-import type { NavigationData, SiteConfig } from "@/types/cms";
+import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 import type { NavItem } from "@/types";
 
 type MobileTabBarProps = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   navigation: NavigationData;
 };
 

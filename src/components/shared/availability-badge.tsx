@@ -3,7 +3,7 @@ import type { SiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
 type AvailabilityBadgeProps = {
-  site: SiteConfig;
+  site: Pick<SiteConfig, "availability">;
   className?: string;
 };
 
@@ -12,8 +12,7 @@ export function AvailabilityBadge({ site, className }: AvailabilityBadgeProps) {
   const message = site.availability.message?.trim() ?? "";
   const shortFallback = isAvailable ? "Available for work" : "Not available";
   // Prefer CMS copy when it fits a badge; longer messages stay on contact CTA.
-  const label =
-    message && message.length <= 42 ? message : shortFallback;
+  const label = message && message.length <= 42 ? message : shortFallback;
 
   return (
     <Badge

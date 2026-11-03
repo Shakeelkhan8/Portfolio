@@ -22,11 +22,11 @@ import { ScrollCue } from "@/components/motion/scroll-cue";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
-import type { CtaSection, SiteConfig } from "@/types/cms";
+import type { CtaSection, PublicSiteConfig } from "@/types/cms";
 import type { ProjectMetric } from "@/types";
 
 type HomeHeroProps = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   /** CMS-managed headline, intro and CTAs (`cta_sections.home_hero`). */
   cta?: CtaSection | null;
   /** Headline results from the case studies, shown under the actions. */

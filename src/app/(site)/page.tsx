@@ -22,6 +22,7 @@ import {
   getSiteConfig,
 } from "@/lib/content";
 import { isSideProject } from "@/lib/projects";
+import { toPublicSiteConfig } from "@/lib/public-site";
 import { routes } from "@/config/navigation";
 
 function ViewAllLink({
@@ -49,7 +50,8 @@ function ViewAllLink({
 const MIN_ARTICLES_FOR_HOME = 4;
 
 export default async function Home() {
-  const site = await getSiteConfig();
+  // HomeHero and ContactCTA are client components: their props reach the HTML.
+  const site = toPublicSiteConfig(await getSiteConfig());
   const [
     heroCta,
     principlesHeader,
