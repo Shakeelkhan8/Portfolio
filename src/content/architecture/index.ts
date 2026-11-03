@@ -32,14 +32,14 @@ export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
   "dispatch-management-saas": {
     title: "Dispatch Management SaaS: system architecture",
     nodes: [
-      { id: "portal", label: "Admin Portal", type: "frontend", layer: 0 },
+      { id: "portal", label: "Operations Portal", type: "frontend", layer: 0 },
       { id: "mobile", label: "Mobile Apps", type: "frontend", layer: 0 },
       { id: "api", label: "Laravel API", type: "api", layer: 1 },
       { id: "dispatch", label: "Auto-Dispatch", type: "service", layer: 2 },
       { id: "financial", label: "Financial System", type: "service", layer: 2 },
       {
         id: "integrations",
-        label: "Integration Layer",
+        label: "Inbound Adapters",
         type: "service",
         layer: 2,
       },
@@ -48,14 +48,14 @@ export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
       { id: "cron", label: "Scheduled Jobs", type: "queue", layer: 3 },
       {
         id: "stores",
-        label: "Salla · Zid · Shopify",
+        label: "Client systems · Stores",
         type: "external",
         layer: 4,
       },
-      { id: "gov", label: "WASL · ZATCA", type: "external", layer: 4 },
+      { id: "gov", label: "WASL", type: "external", layer: 4 },
       {
         id: "payments",
-        label: "HyperPay · EdfaPay",
+        label: "EdfaPay",
         type: "external",
         layer: 4,
       },

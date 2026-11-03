@@ -43,6 +43,17 @@ export function revalidateAfterProjectChange(options?: {
   }
 }
 
+/**
+ * Every public cache tag plus every public route. CMS queries cache with no
+ * expiry, so content written outside the admin panel (scripts/sync-content.ts)
+ * stays invisible until this runs.
+ */
+export function revalidateAllPublicContent() {
+  revalidateContent(...Object.values(CACHE_TAGS));
+  revalidatePublicPages();
+  revalidatePath("/opengraph-image");
+}
+
 export function revalidateAfterMediaChange() {
   revalidateTag(CACHE_TAGS.media, "max");
 }

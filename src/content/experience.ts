@@ -3,19 +3,32 @@ import type { ExperienceEntry, Education, Accomplishment } from "@/types";
 export const experience: ExperienceEntry[] = [
   {
     id: "elityx",
-    role: "Senior Backend Engineer",
+    role: "Full Stack Developer (backend focus)",
     company: "Elityx",
     location: "Islamabad, Pakistan",
     startDate: "2025-11",
     endDate: null,
     featured: true,
     highlights: [
-      "Primary backend engineer on a live multi-tenant dispatch platform for logistics companies in Saudi Arabia, owning 80%+ of the backend across 5 companies, 200+ captains and 500+ shipments a day.",
-      "Designed zone-based batch trip creation with clustering, rule-based auto-dispatch, and a captain control panel with live map tracking.",
-      "Built a three-layer financial system on a double-entry ledger: company billing, inter-company settlements and captain payouts, with HyperPay and EdfaPay processing real transactions.",
-      "Work across the platform's integrations: Salla, Zid and Shopify webhooks through an adapter layer, WASL, and ZATCA e-invoicing. Built and maintain all mobile APIs.",
-      "Built the operations portal (Laravel Blade, Vue.js) with dashboards and a near-real-time shipment feed.",
-      "Own the PostgreSQL schema and migrations, indexing for sub-second API responses, and Docker-based deployment.",
+      "Primary engineer for the first seven months on a live multi-tenant dispatch and settlement platform for logistics companies in Saudi Arabia.",
+      "Designed and built the financial engine: a double-entry ledger, invoicing, reconciliation and card payments through EdfaPay.",
+      "Added the payments test gate that runs before every production deploy, so a broken money path can't ship.",
+      "Built the tenant-isolation layer that keeps each client company's data separate.",
+      "Designed the inbound integration framework that client integrations plug into, and work on the WASL government integration.",
+      "Built the first versions of the dispatch engine and two of the platform's service lines.",
+    ],
+  },
+  {
+    id: "independent",
+    role: "Independent Developer",
+    company: "Self-employed",
+    location: "Remote",
+    startDate: "2023-01",
+    endDate: null,
+    highlights: [
+      "Laravel project work alongside full-time roles: payment integrations, AI features, upgrades, store sync and bug fixes.",
+      "Built a billing and subscriber system for three local internet service providers in 2023: billing, subscription plans, usage tracking and a customer portal.",
+      "Built websites for small businesses, including a multi-branch martial arts academy with class timetables, fees per branch and an enrolment form.",
     ],
   },
   {
@@ -82,15 +95,15 @@ export const accomplishments: Accomplishment[] = [
     text: "Reduced a 3-day manual reporting process to under 2 minutes, saving 100+ operational hours per month at Hum Network.",
   },
   {
-    text: "Primary backend engineer on a live multi-tenant dispatch platform, taking 5 companies from zero to production.",
+    text: "Designed the financial engine of a live multi-tenant logistics SaaS: double-entry ledger, invoicing, reconciliation and card payments.",
   },
   {
     text: "Reduced frontend development time by 30% at iProfessional with a reusable 20+ block component library.",
   },
   {
-    text: "Built and deployed a full-stack ISP management system used daily by 3 internet service providers.",
+    text: "Added a payments test gate that blocks any production deploy when the payment tests fail.",
   },
 ];
 
 export const resumeSummary =
-  "Senior backend engineer with 4+ years of full-time experience in PHP, Laravel and PostgreSQL, building multi-tenant SaaS, payment flows and enterprise automation. Currently the primary backend engineer on a live logistics platform for the Saudi market.";
+  "Laravel backend developer, building for the web since 2021 and full-time with PHP and Laravel since 2022. I build the parts that handle money and data: payment gateways and webhooks, ledgers, tenant isolation, APIs, integrations and AI features. Currently a full stack developer (backend focus) at Elityx on a logistics SaaS for the Saudi market.";

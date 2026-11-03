@@ -68,7 +68,8 @@ export function ExperienceSnapshot({
               muted
               className="mb-3 font-mono text-[11px] tracking-[0.28em] uppercase"
             >
-              Before that
+              {/* Independent work runs alongside the main role, so not "Before that". */}
+              Other roles
             </Text>
             <ol className="divide-y divide-foreground/[0.06] border-y border-foreground/[0.06]">
               {previous.map((entry) => (

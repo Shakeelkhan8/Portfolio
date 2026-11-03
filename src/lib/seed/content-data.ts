@@ -12,6 +12,7 @@ import { projects } from "@/content/projects";
 import { articles } from "@/content/writing";
 import { parseMonthDate, slugify } from "@/lib/seed/helpers";
 import { defaultServices } from "@/content/services";
+import { testimonials } from "@/content/testimonials";
 import {
   DEFAULT_SEO_DESCRIPTION,
   DEFAULT_SEO_TITLE,
@@ -69,12 +70,12 @@ export const homeSectionHeaders = [
 export const ctaSections = [
   {
     section_key: "home_hero",
-    title: "Backends for SaaS that moves money and shipments.",
+    title: "Laravel backends that handle money, data and AI.",
     description:
-      "Multi-tenant platforms, payment flows, ledgers, and the integrations that connect them. Currently the primary backend engineer on a dispatch platform used by 5 logistics companies in Saudi Arabia.",
+      "Payment webhooks that are safe to receive twice, ledgers, tenant isolation, APIs and AI features. I designed the financial engine of a live logistics SaaS in Saudi Arabia, and I work with agencies as a white-label Laravel partner.",
     primary_label: "See the case studies",
     primary_href: "/projects",
-    secondary_label: "Get in touch",
+    secondary_label: "Work with me",
     secondary_href: "/contact",
   },
   {
@@ -108,7 +109,7 @@ export function getSeedPayload() {
       resume_summary: resumeSummary,
       maintenance_enabled: false,
       maintenance_message: null,
-      response_time_text: "Usually within 24–48 hours.",
+      response_time_text: siteConfig.responseTime,
     },
     themeSettings: {
       primary_color: "#2563eb",
@@ -202,11 +203,18 @@ export function getSeedPayload() {
         display_order: 1,
       },
       {
+        platform: "upwork",
+        label: "Upwork",
+        url: siteConfig.links.upwork,
+        icon: "briefcase",
+        display_order: 2,
+      },
+      {
         platform: "email",
         label: "Email",
         url: `mailto:${siteConfig.email}`,
         icon: "mail",
-        display_order: 2,
+        display_order: 3,
       },
     ],
     skillGroups,
@@ -289,9 +297,14 @@ export function getSeedPayload() {
       display_order: index,
       visible: true,
     })),
-    // Testimonials and certifications are entered through the admin panel.
-    // The seed ships none, so nothing unverified can reach the public site.
-    testimonials: [],
+    // Only verified testimonials are seeded (see src/content/testimonials.ts);
+    // certifications are entered through the admin panel.
+    testimonials: testimonials.map((item, index) => ({
+      ...item,
+      featured: true,
+      display_order: index,
+      visible: true,
+    })),
     certifications: [],
     sectionHeaders: homeSectionHeaders,
     ctaSections,

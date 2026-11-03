@@ -1,6 +1,9 @@
 "use server";
 
-import { revalidateAfterSettingsChange } from "@/lib/db/revalidate";
+import {
+  revalidateAfterSettingsChange,
+  revalidateAllPublicContent,
+} from "@/lib/db/revalidate";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { sanitizeCustomCss } from "@/lib/security/sanitize";
 import type { AdminActionState } from "@/lib/validators/content";
@@ -351,4 +354,14 @@ export async function deleteCustomScriptAction(formData: FormData) {
   await logAdminAction(supabase, user.id, "delete", "custom_script", id);
   revalidateAfterSettingsChange();
   return { success: "Custom script deleted." };
+}
+
+/** Clears every public cache, e.g. after `pnpm content:sync` wrote to the database. */
+export async function refreshPublicCacheAction(): Promise<AdminActionState> {
+  const { supabase, user } = await requireAdmin();
+  revalidateAllPublicContent();
+  await logAdminAction(supabase, user.id, "refresh_cache", "system");
+  return {
+    success: "Public pages will load the latest content on the next visit.",
+  };
 }

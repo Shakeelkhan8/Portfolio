@@ -36,7 +36,17 @@ export const skillGroups: SkillGroup[] = [
       "HyperPay",
       "EdfaPay",
       "Stripe",
-      "ZATCA e-invoicing",
+      "Webhooks",
+    ],
+  },
+  {
+    category: "AI integration",
+    skills: [
+      "OpenAI API",
+      "Claude API",
+      "Structured output",
+      "Batch processing",
+      "Spend limits",
     ],
   },
   {
@@ -56,8 +66,8 @@ export const skillGroups: SkillGroup[] = [
 ];
 
 export const aboutIntro = [
-  "I'm Shakeel, a backend engineer in Islamabad. I've worked full-time in PHP and Laravel since 2022, and most of what I build is the part of a SaaS product nobody sees until it breaks: tenant isolation, ledgers, payment webhooks, scheduled jobs and the integrations between them.",
-  "Today I'm the primary backend engineer at Elityx on a multi-tenant dispatch platform for logistics companies in Saudi Arabia. It runs five companies, more than 200 drivers and over 500 shipments a day, and I own most of the backend: the schema, the APIs, the financial system and deployment.",
-  "Before that I spent two years at Hum Network automating reporting that used to take three days by hand, and as a freelancer I built billing software that three internet providers use every day. In my own time I build tools I want to use myself, like Vantage and Keystone.",
-  "I'm open to remote backend roles on product teams, and to project work where reliability and money are involved.",
+  "I'm Shakeel, a Laravel backend developer in Islamabad. I've been building for the web since 2021 and working full-time with PHP and Laravel since 2022. Most of what I build is the part of a product nobody sees until it breaks: payment webhooks, ledgers, tenant isolation, scheduled jobs and the integrations between them.",
+  "At Elityx I work on a multi-tenant dispatch platform for logistics companies in Saudi Arabia. I was its primary engineer for the first seven months, and I designed its financial engine, the layer that keeps each company's data separate, and the framework that client integrations plug into.",
+  "Before that I spent two years at Hum Network automating reporting that used to take three days by hand. Alongside my job I take Laravel project work: payment integrations, AI features with OpenAI or Claude, upgrades, store sync and bug fixes.",
+  "I'm open to remote backend roles, and to project work where money and data move between systems.",
 ];

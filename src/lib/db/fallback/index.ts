@@ -46,7 +46,7 @@ export function getFallbackSiteConfig(): SiteConfig {
     expertise: [...defaultSiteConfig.expertise],
     philosophy: defaultSiteConfig.philosophy.map((item) => ({ ...item })),
     resumeSummary,
-    responseTimeText: "Usually within 24–48 hours.",
+    responseTimeText: defaultSiteConfig.responseTime,
     copyrightText: `© ${new Date().getFullYear()} ${defaultSiteConfig.name}. All rights reserved.`,
     maintenanceEnabled: false,
     maintenanceMessage: null,

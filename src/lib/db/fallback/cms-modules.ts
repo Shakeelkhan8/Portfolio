@@ -1,4 +1,5 @@
 import { defaultServices } from "@/content/services";
+import { testimonials } from "@/content/testimonials";
 import type {
   CertificationRecord,
   ServiceRecord,
@@ -10,7 +11,19 @@ export function getFallbackCertifications(): CertificationRecord[] {
 }
 
 export function getFallbackTestimonials(): TestimonialRecord[] {
-  return [];
+  return testimonials.map((item, index) => ({
+    id: `fallback-testimonial-${index + 1}`,
+    authorName: item.author_name,
+    authorRole: item.author_role,
+    authorCompany: item.author_company,
+    content: item.content,
+    rating: null,
+    avatarMediaId: null,
+    avatarUrl: null,
+    featured: true,
+    displayOrder: index,
+    visible: true,
+  }));
 }
 
 export function getFallbackServices(): ServiceRecord[] {

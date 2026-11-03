@@ -46,6 +46,27 @@ export default async function ContactPage() {
                   </a>
                 </Text>
               </div>
+              {site.links.upwork ? (
+                <div>
+                  <Text
+                    size="sm"
+                    className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
+                    muted
+                  >
+                    Upwork
+                  </Text>
+                  <Text size="sm">
+                    <a
+                      href={site.links.upwork}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-primary transition-colors hover:text-primary/80"
+                    >
+                      Fixed-price packages and reviews
+                    </a>
+                  </Text>
+                </div>
+              ) : null}
               <div>
                 <Text
                   size="sm"
@@ -79,8 +100,8 @@ export default async function ContactPage() {
         <Section spacing="sm">
           <Container>
             <SectionHeader
-              title="Project work"
-              description="What I take on alongside my main role."
+              title="Work with me"
+              description="White-label for agencies, fixed-price for product teams. Most work starts with a code health check."
             />
             <ServicesSection services={services} />
           </Container>

@@ -2,20 +2,17 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { Timeline } from "@/components/experience/timeline";
-import { getExperience, getSiteConfig } from "@/lib/content";
+import { getExperience } from "@/lib/content";
 
 export default async function ExperiencePage() {
-  const [site, experience] = await Promise.all([
-    getSiteConfig(),
-    getExperience(),
-  ]);
+  const experience = await getExperience();
 
   return (
     <>
       <PageHeader
         eyebrow="Experience"
         title="Experience"
-        description={`${site.yearsOfExperience}+ years building production systems across SaaS, enterprise, and freelance projects.`}
+        description="Building for the web since 2021, and full-time with PHP and Laravel since 2022, across SaaS, enterprise and independent projects."
       />
       <Section spacing="sm" className="pt-0">
         <Container>

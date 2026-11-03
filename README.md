@@ -1,6 +1,6 @@
 # Portfolio
 
-Personal portfolio site for [Shakeel Khan](https://github.com/Shakeelkhan8) — Senior Backend Engineer. Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Supabase CMS.
+Personal portfolio site for [Shakeel Khan](https://github.com/Shakeelkhan8) — Laravel backend developer. Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, and Supabase CMS.
 
 **New to this project?** Start with the [Complete Setup & Deployment Guide](./docs/GUIDE.md) — step-by-step instructions for installation, configuration, customization, and deployment.
 
@@ -66,6 +66,7 @@ Copy `.env.example` to `.env.local` and configure:
 | `pnpm test:e2e` | Run Playwright E2E tests |
 | `pnpm db:seed` | Seed CMS from static content + create admin |
 | `pnpm db:seed:force` | Re-seed (destructive to CMS content) |
+| `pnpm content:sync` | Dry run: what differs between the seed and the live profile content. `--apply --confirm=<ref>` writes it (after a JSON backup); `--restore=<backup> --confirm=<ref>` undoes it. Then press **Refresh public pages** in Admin → Settings |
 | `pnpm analyze` | Bundle size analysis |
 
 ## Project Structure

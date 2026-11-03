@@ -34,6 +34,11 @@ export const socialNav: NavItem[] = [
     external: true,
   },
   {
+    title: "Upwork",
+    href: siteConfig.links.upwork,
+    external: true,
+  },
+  {
     title: "Email",
     href: getMailtoHref(siteConfig.email),
     external: true,

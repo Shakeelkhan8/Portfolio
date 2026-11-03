@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "Shakeel Khan",
   legalName: "Muhammad Shakeel",
-  title: "Senior Backend Engineer",
+  title: "Laravel Backend Developer",
   description:
-    "Senior backend engineer working in PHP, Laravel and PostgreSQL. I build multi-tenant SaaS where mistakes cost real money: tenant isolation, payment flows, ledgers and the integrations around them.",
+    "Laravel backend developer. I build the parts of a product where money and data move between systems: payment gateways and webhooks, ledgers, tenant isolation, APIs and AI features.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Pakistan",
   city: "Islamabad",
@@ -15,6 +15,7 @@ export const siteConfig = {
   links: {
     github: "https://github.com/Shakeelkhan8",
     linkedin: "https://www.linkedin.com/in/shakeelkhan8",
+    upwork: "https://www.upwork.com/freelancers/~01414f35cd2f50292d",
   },
   githubUsername: "Shakeelkhan8",
   languages: [
@@ -22,16 +23,18 @@ export const siteConfig = {
     { name: "Pashto", level: "Native" },
     { name: "English", level: "Professional working proficiency" },
   ],
+  /** Must match the promise in the home contact card (components/home/contact-cta.tsx). */
+  responseTime: "Within one working day (Pakistan time).",
   availability: {
     status: "available" as const,
-    message: "Open to remote backend roles and project work",
+    message: "Open to remote backend roles and Laravel project work",
   },
   expertise: [
     "PHP and Laravel",
+    "Payments and webhooks",
+    "AI integration",
+    "APIs and integrations",
     "PostgreSQL",
-    "Multi-tenant SaaS",
-    "Payment and webhook integrations",
-    "API design",
     "Docker and CI",
   ],
   philosophy: [
