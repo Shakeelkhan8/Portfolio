@@ -19,20 +19,28 @@ describe("seed content payload", () => {
     const payload = getSeedPayload();
 
     expect(payload.siteSettings.site_name).toBe("Shakeel Khan");
-    expect(payload.projects).toHaveLength(8);
+    expect(payload.projects).toHaveLength(6);
     expect(payload.articles).toHaveLength(2);
-    expect(payload.experience).toHaveLength(5);
-    expect(payload.skillGroups).toHaveLength(6);
+    expect(payload.experience).toHaveLength(6);
+    expect(payload.skillGroups).toHaveLength(7);
     expect(payload.navigation.length).toBeGreaterThan(0);
     expect(payload.privacyPage.slug).toBe("privacy");
   });
 
-  it("ships no testimonials or certifications", () => {
+  it("ships only verified testimonials and no certifications", () => {
     // The seed used to ship a sample testimonial and certification. Anything
-    // seeded can reach the public site, so nothing unverified belongs here.
+    // seeded can reach the public site, so only testimonials that can be
+    // checked (each names where) belong here.
     const payload = getSeedPayload();
 
-    expect(payload.testimonials).toEqual([]);
+    expect(payload.testimonials.map((item) => item.author_name)).toEqual([
+      "Hamza I.",
+    ]);
+    expect(
+      payload.testimonials.every((item) =>
+        item.author_company.includes("verified on"),
+      ),
+    ).toBe(true);
     expect(payload.certifications).toEqual([]);
   });
 
@@ -44,9 +52,7 @@ describe("seed content payload", () => {
     const featured = payload.projects.filter((project) => project.featured);
 
     expect(side.map((project) => project.slug)).toEqual([
-      "vantage",
       "keystone",
-      "hearback",
       "ai-mentor-health",
       "portfolio",
     ]);

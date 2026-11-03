@@ -175,75 +175,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "vantage",
-    title: "Vantage",
-    summary:
-      "A job-hunting engine that pulls postings from many sources, throws out the noise with plain SQL, and asks Claude to score only what survives.",
-    problem:
-      "Job boards optimise for volume. Fifty mediocre listings a day is a chore, not a pipeline. I wanted a short list each morning of the few roles worth applying to, and why.",
-    role: "Solo project: design, build and deploy",
-    context: "Side project · 2026 · Open source (MIT)",
-    stack: [
-      "Laravel 13",
-      "PHP 8.4",
-      "PostgreSQL 18",
-      "Redis 8",
-      "Horizon",
-      "Livewire 4",
-      "FrankenPHP",
-      "Docker",
-    ],
-    tags: ["Side project", "AI", "Data pipeline"],
-    featured: false,
-    links: [
-      {
-        label: "Code on GitHub",
-        href: "https://github.com/Shakeelkhan8/vantage",
-      },
-    ],
-    metrics: [
-      { label: "Postings rejected before any model call", value: "~90%" },
-      { label: "Monthly running cost", value: "Single-digit $" },
-    ],
-    overview:
-      "Vantage ingests postings from company ATS boards (Greenhouse, Lever, Ashby, Workable), aggregator APIs, parsed job-alert emails and manual paste. Every source sits behind one JobSource contract. Postings are deduplicated and filtered deterministically, and only the survivors are scored against a candidate profile.",
-    challenges: [
-      "Keeping model spend predictable when the volume of postings isn't.",
-      "Recognising the same role syndicated across several boards.",
-      "Adding new sources without touching the pipeline.",
-    ],
-    architecture:
-      "Sources → ingestion → dedupe → rule-based filter → AI scoring → inbox and daily digest. Each stage runs on Laravel queues under Horizon, with PostgreSQL for postings and scores and Redis behind the queues. Production is a single VPS behind Caddy, with a memory ceiling on every service so one runaway worker can't take the box down.",
-    decisions: [
-      {
-        decision: "Filter with plain SQL and PHP before any AI call",
-        rationale:
-          "Work authorisation, seniority, stack, salary floor, posting age and a blocklist are all deterministic. Roughly nine in ten postings never reach a model.",
-        tradeoff:
-          "The rules are maintained by hand, and a rule that's too strict silently drops a good role.",
-      },
-      {
-        decision:
-          "Score through the Batch API, cached on the job fingerprint and profile version",
-        rationale:
-          "Batch scoring is half price, a role posted on five boards is scored once, and re-running costs nothing.",
-        tradeoff:
-          "Scores arrive minutes later rather than instantly, which is fine for a morning digest.",
-      },
-      {
-        decision: "Check a hard monthly spend ceiling before dispatching work",
-        rationale:
-          "The budget is enforced before the bill exists, not discovered after it arrives.",
-        tradeoff: "A ceiling set too low stops scoring until it's raised.",
-      },
-    ],
-    results: [
-      "Running cost stays in single-digit dollars a month.",
-      "Test suite runs in GitHub Actions.",
-    ],
-    lessons: [],
-  },
-  {
     slug: "keystone",
     title: "Keystone",
     summary:
@@ -251,7 +182,7 @@ export const projects: Project[] = [
     problem:
       "A small ISP running PPPoE on MikroTik has two daily problems: people who stopped paying but are still connected, and people who paid at 11pm and stay cut off until someone opens WinBox in the morning.",
     role: "Solo project: design and build",
-    context: "Side project · 2026 · In development · Private repo",
+    context: "Side project · 2026 · Paused · Private repo",
     stack: [
       "Go",
       "PostgreSQL 16",
@@ -301,69 +232,6 @@ export const projects: Project[] = [
       "A lab run on MikroTik CHR to confirm how suspension behaves over CoA on a real RouterOS version.",
       "Choosing a WhatsApp or SMS provider. Until then, messages are recorded with what they would have cost.",
     ],
-  },
-  {
-    slug: "hearback",
-    title: "Hearback",
-    summary:
-      "An experiment in job hunting: watch companies' own careers pages, alert within minutes of a matching role, and record which companies actually reply.",
-    problem:
-      "Applying in the first day or two after a role is posted gets far more interviews, and employer silence is the complaint job seekers raise most. Hearback is built around those two facts, not around finding more listings.",
-    role: "Solo project",
-    context: "Side project · 2026 · Early stage · Private repo",
-    stack: [
-      "Laravel",
-      "PHP 8.4",
-      "PostgreSQL",
-      "Redis",
-      "Horizon",
-      "Claude Batch API",
-    ],
-    tags: ["Side project", "AI", "Data pipeline"],
-    featured: false,
-    links: [],
-    metrics: [
-      {
-        label:
-          "Projected monthly AI cost at 10,000 users, vs $13.5k for per-user scoring",
-        value: "$2.7k",
-      },
-    ],
-    overview:
-      "Hearback watches public ATS boards, matches new openings against a profile and alerts quickly. It then records what happened to each application, so it can eventually report which companies reply and which go quiet.",
-    challenges: [
-      "Keeping AI cost flat as the number of users grows.",
-      "Recording outcomes in a way that can be audited later.",
-      "Publishing company statistics without misleading anyone.",
-    ],
-    architecture:
-      "Ingest → dedupe → one extraction pass per opening → deterministic matching per user → alert. Laravel on Horizon with PostgreSQL and Redis. Application history is an append-only event log that records the source and confidence of every event.",
-    decisions: [
-      {
-        decision: "Extract each opening once and share it across all users",
-        rationale:
-          "One Haiku pass per new opening through the Batch API, then matching each user against the extracted attributes is deterministic and free.",
-        tradeoff:
-          "Matching quality rests on one shared extraction rather than a judgement per user.",
-      },
-      {
-        decision: "Freeze a posting's age at the moment someone applies",
-        rationale:
-          "Board coverage changes and closed postings lose context. If the age isn't captured at submission, the effect of applying early can never be measured.",
-        tradeoff:
-          "One more value that has to be captured correctly at write time.",
-      },
-      {
-        decision:
-          "No mass auto-apply, no LinkedIn scraping, no AI-written applications",
-        rationale:
-          "Bulk submissions get filtered as spam and lower reply rates, scraping LinkedIn carries real legal risk, and recruiters discard applications that read as generated.",
-        tradeoff:
-          "Each application takes more of the user's effort, by design.",
-      },
-    ],
-    results: [],
-    lessons: [],
   },
   {
     slug: "ai-mentor-health",

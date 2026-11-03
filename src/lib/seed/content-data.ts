@@ -12,6 +12,7 @@ import { projects } from "@/content/projects";
 import { articles } from "@/content/writing";
 import { parseMonthDate, slugify } from "@/lib/seed/helpers";
 import { defaultServices } from "@/content/services";
+import { testimonials } from "@/content/testimonials";
 import {
   DEFAULT_SEO_DESCRIPTION,
   DEFAULT_SEO_TITLE,
@@ -296,9 +297,14 @@ export function getSeedPayload() {
       display_order: index,
       visible: true,
     })),
-    // Testimonials and certifications are entered through the admin panel.
-    // The seed ships none, so nothing unverified can reach the public site.
-    testimonials: [],
+    // Only verified testimonials are seeded (see src/content/testimonials.ts);
+    // certifications are entered through the admin panel.
+    testimonials: testimonials.map((item, index) => ({
+      ...item,
+      featured: true,
+      display_order: index,
+      visible: true,
+    })),
     certifications: [],
     sectionHeaders: homeSectionHeaders,
     ctaSections,
