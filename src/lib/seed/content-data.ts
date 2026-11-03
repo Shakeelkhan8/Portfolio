@@ -73,7 +73,7 @@ export const ctaSections = [
     title:
       "Senior Backend Engineer for payments, integrations and multi-tenant SaaS.",
     description:
-      "Payment webhooks that are safe to receive twice, ledgers, tenant isolation, APIs and AI features. I designed the financial engine of a live logistics SaaS in Saudi Arabia, and I work with agencies as a white-label Laravel partner.",
+      "I build payment integrations that never charge twice, multi-tenant systems where one customer can never see another's data, and AI features that stay within budget. Agencies can hire me white-label: the work ships under your name.",
     primary_label: "See the case studies",
     primary_href: "/projects",
     secondary_label: "Work with me",

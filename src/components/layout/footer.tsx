@@ -32,8 +32,6 @@ export function Footer({ site, navigation, className }: FooterProps) {
             </p>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {site.title}
-              <span className="mx-2 text-border">·</span>
-              {site.location}
             </p>
           </div>
 
