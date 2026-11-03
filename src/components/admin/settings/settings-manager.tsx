@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import {
   deleteCustomScriptAction,
+  refreshPublicCacheAction,
   upsertAnalyticsSettingsAction,
   upsertCustomScriptAction,
   upsertGitHubSettingsAction,
@@ -35,6 +36,7 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
   );
   const [githubState, saveGitHub] = useActionState(upsertGitHubSettingsAction, {});
   const [scriptState, saveScript] = useActionState(upsertCustomScriptAction, {});
+  const [cacheState, refreshCache] = useActionState(refreshPublicCacheAction, {});
 
   return (
     <div className="space-y-10">
@@ -315,6 +317,19 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
             ))}
           </ul>
         ) : null}
+      </section>
+
+      <section className="rounded-xl border border-border p-6">
+        <h2 className="mb-1 text-lg font-semibold">Public cache</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Edits made here refresh the pages they affect. Use this after content
+          was changed outside the admin panel, for example by the content sync
+          script.
+        </p>
+        <form action={refreshCache} className="space-y-4">
+          <FormMessage error={cacheState.error} success={cacheState.success} />
+          <SubmitButton label="Refresh public pages" />
+        </form>
       </section>
     </div>
   );
