@@ -66,3 +66,6 @@ next-env.d.ts
 
 # Project planning (local only)
 Portfolio_plan.txt
+
+# Backups written by pnpm content:sync before it changes live content
+.content-sync-backups/

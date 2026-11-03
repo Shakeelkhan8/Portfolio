@@ -66,6 +66,7 @@ Copy `.env.example` to `.env.local` and configure:
 | `pnpm test:e2e` | Run Playwright E2E tests |
 | `pnpm db:seed` | Seed CMS from static content + create admin |
 | `pnpm db:seed:force` | Re-seed (destructive to CMS content) |
+| `pnpm content:sync` | Dry run: what differs between the seed and the live profile content. `--apply --confirm=<ref>` writes it (after a JSON backup); `--restore=<backup> --confirm=<ref>` undoes it. Then press **Refresh public pages** in Admin → Settings |
 | `pnpm analyze` | Bundle size analysis |
 
 ## Project Structure
