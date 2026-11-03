@@ -70,7 +70,8 @@ export const homeSectionHeaders = [
 export const ctaSections = [
   {
     section_key: "home_hero",
-    title: "Laravel backends that handle money, data and AI.",
+    title:
+      "Senior Backend Engineer for payments, integrations and multi-tenant SaaS.",
     description:
       "Payment webhooks that are safe to receive twice, ledgers, tenant isolation, APIs and AI features. I designed the financial engine of a live logistics SaaS in Saudi Arabia, and I work with agencies as a white-label Laravel partner.",
     primary_label: "See the case studies",

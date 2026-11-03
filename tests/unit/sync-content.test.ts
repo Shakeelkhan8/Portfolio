@@ -81,7 +81,7 @@ describe("content sync", () => {
     const plans = planFromSeed(liveSnapshot());
 
     const site = planFor(plans, "site_settings");
-    expect(site.updates[0]?.row.tagline).toBe("Laravel Backend Developer");
+    expect(site.updates[0]?.row.tagline).toBe("Senior Backend Engineer");
     expect(site.updates[0]?.row.response_time_text).toBe(
       "Within one working day (Pakistan time).",
     );

@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "Resume",
     description:
-      "Resume of Shakeel Khan, Laravel backend developer: full-time with PHP and Laravel since 2022, on production SaaS, payments and integrations. Print or save as PDF.",
+      "Resume of Shakeel Khan, senior backend engineer: full-time with PHP and Laravel since 2022, on production SaaS, payments and integrations. Print or save as PDF.",
     path: routes.resume,
   });
 }
