@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Briefcase, Mail } from "lucide-react";
 import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
@@ -21,4 +21,9 @@ export function LinkedInIcon(props: IconProps) {
 
 export function MailIcon(props: IconProps) {
   return <Mail {...props} />;
+}
+
+/** Generic briefcase rather than Upwork's logo: the link label names the site. */
+export function UpworkIcon(props: IconProps) {
+  return <Briefcase {...props} />;
 }

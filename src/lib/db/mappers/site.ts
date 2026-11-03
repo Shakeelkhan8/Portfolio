@@ -44,6 +44,8 @@ export function mapSiteConfig(input: {
     input.socialLinks.find((link) => link.platform === "github")?.url ?? "";
   const linkedin =
     input.socialLinks.find((link) => link.platform === "linkedin")?.url ?? "";
+  const upwork =
+    input.socialLinks.find((link) => link.platform === "upwork")?.url ?? "";
 
   return {
     name: input.site.site_name,
@@ -57,7 +59,7 @@ export function mapSiteConfig(input: {
     phone: input.site.phone ?? "",
     email: input.site.email,
     yearsOfExperience: input.site.years_of_experience,
-    links: { github, linkedin },
+    links: { github, linkedin, upwork },
     githubUsername: input.site.github_username ?? "",
     languages: input.languages.map((language) => ({
       name: language.name,

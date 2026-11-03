@@ -85,7 +85,8 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
               Need a backend built or fixed
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              I take on a small number of projects alongside my main role.
+              I take on Laravel projects alongside my main role. Fixed-price
+              packages and reviews are on Upwork.
             </p>
             {services.length > 0 ? (
               <ul className="mt-4 space-y-2.5">
@@ -101,7 +102,12 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
                 ))}
               </ul>
             ) : null}
-            <div className="mt-auto pt-6">
+            <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
+              {site.links.upwork ? (
+                <ButtonLink href={site.links.upwork} showExternalIcon>
+                  Hire me on Upwork
+                </ButtonLink>
+              ) : null}
               <ButtonLink
                 href={routes.contact}
                 variant="outline"
