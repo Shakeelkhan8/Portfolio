@@ -106,8 +106,8 @@ describe("content sync", () => {
       (row) => row.project_id === "project-dispatch",
     );
     expect(metrics.map((row) => row.value)).toEqual([
-      "58%",
       "~63%",
+      "58%",
       "Every deploy",
     ]);
   });

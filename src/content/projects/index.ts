@@ -23,11 +23,11 @@ export const projects: Project[] = [
     featured: true,
     links: [],
     metrics: [
+      { label: "of the financial engine's code", value: "~63%" },
       {
         label: "of the platform's commits in its first seven months",
         value: "58%",
       },
-      { label: "of the financial engine's code", value: "~63%" },
       { label: "Payments test gate", value: "Every deploy" },
     ],
     overview:
