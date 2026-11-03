@@ -23,6 +23,8 @@ export const siteConfig = {
     { name: "Pashto", level: "Native" },
     { name: "English", level: "Professional working proficiency" },
   ],
+  /** Must match the promise in the home contact card (components/home/contact-cta.tsx). */
+  responseTime: "Within one working day (Pakistan time).",
   availability: {
     status: "available" as const,
     message: "Open to remote backend roles and Laravel project work",

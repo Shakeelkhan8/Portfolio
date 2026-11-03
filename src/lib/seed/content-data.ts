@@ -109,7 +109,7 @@ export function getSeedPayload() {
       resume_summary: resumeSummary,
       maintenance_enabled: false,
       maintenance_message: null,
-      response_time_text: "Usually within 24–48 hours.",
+      response_time_text: siteConfig.responseTime,
     },
     themeSettings: {
       primary_color: "#2563eb",

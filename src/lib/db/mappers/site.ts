@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config/site";
 import { getPublicEnv } from "@/lib/env";
 import type {
   CtaSection,
@@ -76,8 +77,7 @@ export function mapSiteConfig(input: {
       description: item.description,
     })),
     resumeSummary: input.site.resume_summary ?? "",
-    responseTimeText:
-      input.site.response_time_text ?? "Usually within 24–48 hours.",
+    responseTimeText: input.site.response_time_text ?? siteConfig.responseTime,
     copyrightText:
       input.site.copyright_text ??
       `© ${new Date().getFullYear()} ${input.site.site_name}. All rights reserved.`,

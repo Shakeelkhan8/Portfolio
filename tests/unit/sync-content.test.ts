@@ -20,6 +20,7 @@ function liveSnapshot(): Snapshot {
         availability_message: "Open to full-time roles",
         resume_summary: "Backend Engineer with 5+ years of experience.",
         years_of_experience: 5,
+        response_time_text: "Usually within 24–48 hours.",
       },
     ],
     seo_defaults: [
@@ -81,6 +82,9 @@ describe("content sync", () => {
 
     const site = planFor(plans, "site_settings");
     expect(site.updates[0]?.row.tagline).toBe("Laravel Backend Developer");
+    expect(site.updates[0]?.row.response_time_text).toBe(
+      "Within one working day (Pakistan time).",
+    );
     // Columns the sync doesn't own are kept.
     expect(site.target[0]?.site_name).toBe("Shakeel Khan");
 

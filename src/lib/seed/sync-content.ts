@@ -73,6 +73,7 @@ export const SCOPES: Scope[] = [
       "availability_message",
       "resume_summary",
       "years_of_experience",
+      "response_time_text",
     ],
   },
   {
@@ -361,6 +362,7 @@ export function planFromSeed(current: Snapshot): TablePlan[] {
       availability_message: site.availability_message,
       resume_summary: site.resume_summary,
       years_of_experience: site.years_of_experience,
+      response_time_text: site.response_time_text,
     },
   ]);
   plan("seo_defaults", [
