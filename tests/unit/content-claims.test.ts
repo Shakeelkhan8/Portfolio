@@ -12,7 +12,6 @@ import { getSeedPayload } from "@/lib/seed/content-data";
  * of these may appear in it. Update this list only with evidence.
  */
 const unsupportedClaims: Array<[string, RegExp]> = [
-  ["a Senior title (official title is Full Stack Developer)", /\bsenior\b/i],
   ["ZATCA work (0 of 48 commits)", /zatca/i],
   ["owning 80%+ of the backend", /80%\+/],
   ["sole or solo ownership of the platform", /\bsole\b|\balone\b/i],
@@ -33,6 +32,21 @@ const publicText = JSON.stringify({
 describe("public content claims", () => {
   it.each(unsupportedClaims)("does not claim %s", (_claim, pattern) => {
     expect(publicText.match(pattern)?.[0] ?? null).toBeNull();
+  });
+
+  // "Senior Backend Engineer" is the chosen professional title (user's
+  // decision, 2026-11-03, risk accepted). The timeline is a factual record,
+  // so every role there stays the employer's official title.
+  it("keeps official job titles in the experience timeline", () => {
+    const roles = getSeedPayload().experience.map((entry) => entry.role);
+    const elityx = getSeedPayload().experience.find(
+      (entry) => entry.legacy_id === "elityx",
+    );
+
+    expect(elityx?.role).toBe("Full Stack Developer (backend focus)");
+    expect(roles.filter((role) => /senior|architect|lead/i.test(role))).toEqual(
+      [],
+    );
   });
 });
 

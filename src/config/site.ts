@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "Shakeel Khan",
   legalName: "Muhammad Shakeel",
-  title: "Laravel Backend Developer",
+  title: "Senior Backend Engineer",
   description:
-    "Laravel backend developer. I build the parts of a product where money and data move between systems: payment gateways and webhooks, ledgers, tenant isolation, APIs and AI features.",
+    "Senior backend engineer specialising in payments, integrations and multi-tenant SaaS on Laravel and PostgreSQL: payment gateways and webhooks, ledgers, tenant isolation, APIs and AI features.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Pakistan",
   city: "Islamabad",

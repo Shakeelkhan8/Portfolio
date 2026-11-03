@@ -125,7 +125,7 @@ export function SettingsManager({ settings, mediaFiles }: SettingsManagerProps) 
               <Label htmlFor="resumeSummary">Resume summary</Label>
               <Textarea id="resumeSummary" name="resumeSummary" rows={4} defaultValue={settings.site.resumeSummary} />
               <p className="text-xs text-muted-foreground">
-                Start with the public title from the Tagline (e.g. Laravel Backend Developer).
+                Start with the public title from the Tagline (e.g. Senior Backend Engineer).
               </p>
             </div>
             <div className="space-y-2 md:col-span-2 border-t border-border pt-4">
