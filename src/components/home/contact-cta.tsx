@@ -82,11 +82,12 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
 
           <div className="site-card flex flex-col rounded-2xl p-5 sm:p-6">
             <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
-              Need a backend built or fixed
+              For agencies and product teams
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              I take on Laravel projects alongside my main role. Fixed-price
-              packages and reviews are on Upwork.
+              For agencies the work is white-label: your brand, an NDA, and no
+              contact with your clients. Everyone gets a reply within one
+              working day (Pakistan time).
             </p>
             {services.length > 0 ? (
               <ul className="mt-4 space-y-2.5">
@@ -103,18 +104,19 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
               </ul>
             ) : null}
             <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
+              <ButtonLink href={routes.contact}>
+                Book a code health check
+              </ButtonLink>
               {site.links.upwork ? (
-                <ButtonLink href={site.links.upwork} showExternalIcon>
-                  Hire me on Upwork
+                <ButtonLink
+                  href={site.links.upwork}
+                  variant="outline"
+                  className="bg-transparent"
+                  showExternalIcon
+                >
+                  See packages on Upwork
                 </ButtonLink>
               ) : null}
-              <ButtonLink
-                href={routes.contact}
-                variant="outline"
-                className="bg-transparent"
-              >
-                Start a conversation
-              </ButtonLink>
             </div>
           </div>
         </div>

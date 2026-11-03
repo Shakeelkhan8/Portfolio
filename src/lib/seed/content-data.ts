@@ -72,7 +72,7 @@ export const ctaSections = [
     section_key: "home_hero",
     title: "Laravel backends that handle money, data and AI.",
     description:
-      "Payment webhooks that are safe to receive twice, ledgers, tenant isolation, APIs and AI features. I designed the financial engine of a live logistics SaaS in Saudi Arabia, and I take on Laravel projects alongside it.",
+      "Payment webhooks that are safe to receive twice, ledgers, tenant isolation, APIs and AI features. I designed the financial engine of a live logistics SaaS in Saudi Arabia, and I work with agencies as a white-label Laravel partner.",
     primary_label: "See the case studies",
     primary_href: "/projects",
     secondary_label: "Work with me",

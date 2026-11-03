@@ -100,8 +100,8 @@ export default async function ContactPage() {
         <Section spacing="sm">
           <Container>
             <SectionHeader
-              title="Project work"
-              description="What I take on alongside my main role."
+              title="Work with me"
+              description="White-label for agencies, fixed-price for product teams. Most work starts with a code health check."
             />
             <ServicesSection services={services} />
           </Container>
