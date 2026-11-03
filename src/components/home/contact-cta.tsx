@@ -57,8 +57,8 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
               Hiring for a backend role
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              I&apos;m open to remote backend roles on product teams.
-              The resume has the detail; email is the quickest way to reach me.
+              I&apos;m open to remote backend roles on product teams. The resume
+              has the detail; email is the quickest way to reach me.
             </p>
             <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
               <ButtonLink href={routes.resume} className="group/btn">

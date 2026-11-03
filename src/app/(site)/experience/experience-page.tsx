@@ -2,13 +2,10 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { PageHeader } from "@/components/shared/page-header";
 import { Timeline } from "@/components/experience/timeline";
-import { getExperience, getSiteConfig } from "@/lib/content";
+import { getExperience } from "@/lib/content";
 
 export default async function ExperiencePage() {
-  const [site, experience] = await Promise.all([
-    getSiteConfig(),
-    getExperience(),
-  ]);
+  const experience = await getExperience();
 
   return (
     <>

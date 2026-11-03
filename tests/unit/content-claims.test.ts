@@ -17,7 +17,10 @@ const unsupportedClaims: Array<[string, RegExp]> = [
   ["owning 80%+ of the backend", /80%\+/],
   ["sole or solo ownership of the platform", /\bsole\b|\balone\b/i],
   ["a year count instead of 'since 2021 / since 2022'", /\d\+\s*years/i],
-  ["the ISP system in current daily use", /used daily|daily use|use (it )?every day/i],
+  [
+    "the ISP system in current daily use",
+    /used daily|daily use|use (it )?every day/i,
+  ],
   ["unverified platform volume", /\d+\+ (shipments|captains)|\b5 companies\b/i],
 ];
 
