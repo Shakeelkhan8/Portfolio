@@ -51,6 +51,30 @@ describe("public content claims", () => {
 });
 
 /**
+ * Client-facing copy says what clients get, not where I am (user's request,
+ * 2026-11-03). The experience timeline and the resume keep their locations:
+ * those are a factual record, not sales copy.
+ */
+describe("client-facing copy", () => {
+  const seed = getSeedPayload();
+  const copy = JSON.stringify({
+    hero: seed.ctaSections,
+    about: seed.aboutParagraphs,
+    services: seed.services,
+    description: seed.siteSettings.description,
+    availability: seed.siteSettings.availability_message,
+    responseTime: seed.siteSettings.response_time_text,
+    seo: [DEFAULT_SEO_TITLE, DEFAULT_SEO_DESCRIPTION],
+  });
+
+  it("names no location, time zone or working-hours overlap", () => {
+    const pattern =
+      /pakistan|islamabad|karachi|rawalpindi|time ?zone|\bPKT\b|\bGMT\b|\bUTC\b|overlap/i;
+    expect(copy.match(pattern)?.[0] ?? null).toBeNull();
+  });
+});
+
+/**
  * Offers that can't be delivered or aren't cleared yet (company-profile.md,
  * section 2). Salla, Zid and EdfaPay may still appear as experience; they
  * must not be sold until the employment contract has been checked.

@@ -14,7 +14,7 @@ export const defaultServices = [
   {
     title: "Code health check",
     description:
-      "A 3-day review of one Laravel app: version upgrades, security, payments and queues, with a prioritised fix list. $300 fixed.",
+      "One Laravel or PHP app reviewed in 3 days: upgrades, security, payments and queues, with a ranked fix list. $300 fixed.",
     icon: "ClipboardCheck",
   },
   {
@@ -26,13 +26,13 @@ export const defaultServices = [
   {
     title: "Payments and integrations",
     description:
-      "Payment-correctness audits, gateway integrations, webhooks that are safe to receive twice, and ledgers. Audit $490; projects from $700.",
+      "Audits for double charges, lost webhooks and refund or payout mismatches, each proven with a test, plus gateway integrations with signed, retry-safe webhooks. Audit $490; projects from $700.",
     icon: "CreditCard",
   },
   {
     title: "Fixed-price projects",
     description:
-      "Builds, Laravel and PHP upgrades, AI features, store sync and bug fixes. From $60, with packages and reviews on Upwork.",
+      "AI features with OpenAI or Claude, Laravel and PHP upgrades, store sync, bug fixes, slow queries, and tests for code that has none. From $60, with packages and reviews on Upwork.",
     icon: "Rocket",
   },
 ] as const;

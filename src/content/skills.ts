@@ -66,8 +66,8 @@ export const skillGroups: SkillGroup[] = [
 ];
 
 export const aboutIntro = [
-  "I'm Shakeel, a Laravel backend developer in Islamabad. I've been building for the web since 2021 and working full-time with PHP and Laravel since 2022. Most of what I build is the part of a product nobody sees until it breaks: payment webhooks, ledgers, tenant isolation, scheduled jobs and the integrations between them.",
-  "At Elityx I work on a multi-tenant dispatch platform for logistics companies in Saudi Arabia. I was its primary engineer for the first seven months, and I designed its financial engine, the layer that keeps each company's data separate, and the framework that client integrations plug into.",
-  "Before that I spent two years at Hum Network automating reporting that used to take three days by hand. Alongside my job I take Laravel project work: payment integrations, AI features with OpenAI or Claude, upgrades, store sync and bug fixes.",
-  "I'm open to remote backend roles, and to project work where money and data move between systems.",
+  "I'm Shakeel, a senior backend engineer working in Laravel, PHP and PostgreSQL. Most of what I build is the part of a product nobody sees until it breaks: payment webhooks, ledgers, tenant isolation, scheduled jobs and the integrations between them.",
+  "On a live logistics SaaS, I designed the financial engine (double-entry ledger, invoicing, reconciliation and card payments), the tenant-isolation layer, and a deploy gate that blocks any release if the payment tests fail.",
+  "How I work: scope and price are confirmed in writing before I start, you get a short progress update every working day, every fix ships with a test that proves it, and the handover notes are written for whoever maintains the code next. For agencies the work is white-label, with an NDA on request, and I never contact your client.",
+  "Tell me what you need, and I'll tell you honestly whether I'm the right fit.",
 ];

@@ -83,7 +83,7 @@ describe("content sync", () => {
     const site = planFor(plans, "site_settings");
     expect(site.updates[0]?.row.tagline).toBe("Senior Backend Engineer");
     expect(site.updates[0]?.row.response_time_text).toBe(
-      "Within one working day (Pakistan time).",
+      "Within one working day.",
     );
     // Columns the sync doesn't own are kept.
     expect(site.target[0]?.site_name).toBe("Shakeel Khan");

@@ -73,18 +73,6 @@ export default async function ContactPage() {
                   className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
                   muted
                 >
-                  Location
-                </Text>
-                <Text size="sm" muted>
-                  {site.location} ({site.timezone})
-                </Text>
-              </div>
-              <div>
-                <Text
-                  size="sm"
-                  className="mb-2 font-mono text-[10px] tracking-[0.22em] uppercase"
-                  muted
-                >
                   Response time
                 </Text>
                 <Text size="sm" muted>

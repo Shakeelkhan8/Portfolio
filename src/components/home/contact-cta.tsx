@@ -85,9 +85,9 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
               For agencies and product teams
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              For agencies the work is white-label: your brand, an NDA, and no
-              contact with your clients. Everyone gets a reply within one
-              working day (Pakistan time).
+              Scope and price in writing before I start, a short update every
+              working day, and a test with every fix. For agencies the work is
+              white-label: NDA on request, and I never contact your client.
             </p>
             {services.length > 0 ? (
               <ul className="mt-4 space-y-2.5">
