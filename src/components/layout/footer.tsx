@@ -1,11 +1,11 @@
 import { AppLink } from "@/components/shared/app-link";
 import { SocialLinks } from "@/components/shared/social-links";
 import { Container } from "@/components/layout/container";
-import type { NavigationData, SiteConfig } from "@/types/cms";
+import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
 type FooterProps = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   navigation: NavigationData;
   className?: string;
 };

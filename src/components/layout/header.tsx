@@ -8,11 +8,11 @@ import { NavBar } from "@/components/navigation/nav-bar";
 import { Container } from "@/components/layout/container";
 import { HERO, HERO_EASE } from "@/components/motion/hero-timeline";
 import { routes } from "@/config/navigation";
-import type { NavigationData, SiteConfig } from "@/types/cms";
+import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
 type HeaderProps = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   navigation: NavigationData;
   className?: string;
 };

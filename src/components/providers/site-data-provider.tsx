@@ -1,11 +1,11 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { NavigationData, SiteConfig } from "@/types/cms";
+import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import type { SearchResult } from "@/types";
 
 type SiteDataContextValue = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   navigation: NavigationData;
   searchIndex: SearchResult[];
 };

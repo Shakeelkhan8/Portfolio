@@ -37,6 +37,20 @@ export type SiteConfig = {
   maintenanceMessage: string | null;
 };
 
+/** Site settings that must never reach the browser (see `toPublicSiteConfig`). */
+export type PrivateSiteField =
+  "phone" | "legalName" | "location" | "city" | "timezone";
+
+/**
+ * The site settings safe to hand to a client component. Props of a client
+ * component are serialised into every page's HTML, so passing the full
+ * `SiteConfig` would publish the private fields even if nothing renders them.
+ * The `never` keys make passing a full `SiteConfig` a type error.
+ */
+export type PublicSiteConfig = Omit<SiteConfig, PrivateSiteField> & {
+  [K in PrivateSiteField]?: never;
+};
+
 export type SeoDefaultsRecord = {
   id: string;
   defaultTitle: string;

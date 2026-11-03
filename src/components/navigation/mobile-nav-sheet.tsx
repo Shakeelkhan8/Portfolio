@@ -9,12 +9,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import type { NavigationData, SiteConfig } from "@/types/cms";
+import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 type MobileNavSheetProps = {
-  site: SiteConfig;
+  site: PublicSiteConfig;
   navigation: NavigationData;
   open: boolean;
   onOpenChange: (open: boolean) => void;
