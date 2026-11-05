@@ -181,7 +181,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
               text={headline}
               intensity="default"
               delay={HERO.type.name}
-              className="font-heading relative z-10 max-w-full text-[clamp(2rem,8.5vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-5xl md:text-6xl lg:text-[4.25rem]"
+              className="font-heading font-display-wide relative z-10 max-w-full text-[clamp(2rem,8.5vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-5xl md:text-6xl lg:text-[4.25rem]"
             />
           </div>
 

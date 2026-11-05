@@ -142,7 +142,7 @@
 
   --font-sans: var(--font-ibm-plex-sans), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --font-heading: var(--font-space-grotesk), var(--font-ibm-plex-sans), system-ui, sans-serif;
+  --font-heading: var(--font-mona-sans), var(--font-ibm-plex-sans), system-ui, sans-serif;
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -372,6 +372,16 @@
 
 @utility section-spacing-lg {
   padding-block: clamp(4rem, 11vw, 9rem);
+}
+
+/*
+ * Mona Sans width axis. Semi-expanded (112.5%) for display headlines and
+ * headline numbers: wider letterforms read as confident at large sizes and
+ * make the type recognisably this site's. Small text stays at normal width.
+ * Fallback fonts without a width axis ignore it.
+ */
+@utility font-display-wide {
+  font-stretch: 112.5%;
 }
 
 /* Subtle dotted grid for hero / feature backdrops */

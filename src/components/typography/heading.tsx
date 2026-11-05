@@ -8,9 +8,9 @@ const headingVariants = cva("font-heading tracking-tight text-foreground", {
       sm: "text-lg font-medium leading-snug",
       md: "text-xl font-semibold leading-snug sm:text-2xl",
       lg: "text-2xl font-semibold leading-tight sm:text-3xl",
-      xl: "text-3xl font-semibold leading-tight -tracking-[0.01em] sm:text-4xl",
-      "2xl": "text-[2rem] font-semibold leading-[1.1] -tracking-[0.015em] sm:text-[2.75rem]",
-      hero: "text-[2.5rem] font-semibold leading-[1.05] -tracking-[0.025em] sm:text-6xl lg:text-[4.25rem]",
+      xl: "font-display-wide text-3xl font-semibold leading-tight -tracking-[0.01em] sm:text-4xl",
+      "2xl": "font-display-wide text-[2rem] font-semibold leading-[1.1] -tracking-[0.015em] sm:text-[2.75rem]",
+      hero: "font-display-wide text-[2.5rem] font-semibold leading-[1.05] -tracking-[0.025em] sm:text-6xl lg:text-[4.25rem]",
     },
     balance: {
       true: "text-balance",
