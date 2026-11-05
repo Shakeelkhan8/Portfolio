@@ -27,7 +27,7 @@ export const experience: ExperienceEntry[] = [
     endDate: null,
     highlights: [
       "Laravel project work alongside full-time roles: payment integrations, AI features, upgrades, store sync and bug fixes.",
-      "Built a billing and subscriber system for three local internet service providers in 2023: billing, subscription plans, usage tracking and a customer portal.",
+      "Built a billing and subscriber system for small internet service providers in 2023 that ran in production: billing, subscription plans, usage tracking and a customer portal.",
       "Built websites for small businesses, including a multi-branch martial arts academy with class timetables, fees per branch and an enrolment form.",
     ],
   },
@@ -39,7 +39,7 @@ export const experience: ExperienceEntry[] = [
     startDate: "2023-09",
     endDate: "2025-10",
     highlights: [
-      "Automated a manual Excel reporting process, cutting processing time from 3 days to under 2 minutes and saving 100+ operational hours monthly.",
+      "Automated a manual Excel reporting process with on-demand Excel and PDF reports, saving 100+ operational hours a month.",
       "Developed enterprise backend APIs and database architecture for seamless JSON integration with Ross XPression to automate live TV data workflows.",
       "Integrated WebSockets and Socket.IO for real-time data synchronisation across internal applications.",
       "Implemented RBAC access control and secure authentication flows for sensitive organisational data.",
@@ -92,7 +92,7 @@ export const education: Education = {
 
 export const accomplishments: Accomplishment[] = [
   {
-    text: "Reduced a 3-day manual reporting process to under 2 minutes, saving 100+ operational hours per month at Hum Network.",
+    text: "Automated Hum Network's manual Excel reporting, saving 100+ operational hours a month.",
   },
   {
     text: "Designed the financial engine of a live multi-tenant logistics SaaS: double-entry ledger, invoicing, reconciliation and card payments.",
