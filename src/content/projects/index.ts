@@ -82,9 +82,9 @@ export const projects: Project[] = [
     slug: "enterprise-reporting-automation",
     title: "Enterprise Reporting Automation",
     summary:
-      "A backend that generates Hum Network's operational reports automatically, replacing a manual Excel process that took three days.",
+      "A backend that generates Hum Network's operational reports automatically, replacing a manual Excel process.",
     problem:
-      "Hum Network's operations team spent three days each cycle compiling Excel reports by hand from several data sources. It delayed decisions and cost more than 100 hours a month.",
+      "Hum Network's operations team compiled Excel reports by hand from several data sources, which cost more than 100 hours a month.",
     role: "Backend developer",
     context: "Hum Network Limited · Sep 2023 – Oct 2025",
     stack: [
@@ -97,10 +97,7 @@ export const projects: Project[] = [
     tags: ["Automation", "Enterprise", "Integrations"],
     featured: true,
     links: [],
-    metrics: [
-      { label: "Report turnaround", value: "3 days → under 2 min" },
-      { label: "Hours saved", value: "100+ a month" },
-    ],
+    metrics: [{ label: "Hours saved", value: "100+ a month" }],
     overview:
       "The system pulls data from internal databases and external JSON APIs and produces structured Excel and PDF reports on demand. It also feeds Ross XPression for live TV graphics workflows, and keeps related internal apps in sync over WebSockets.",
     challenges: [
@@ -120,7 +117,6 @@ export const projects: Project[] = [
       },
     ],
     results: [
-      "Report turnaround cut from three days to under two minutes.",
       "More than 100 operational hours saved each month.",
       "Real-time data sync across internal applications over WebSockets.",
     ],
@@ -132,18 +128,18 @@ export const projects: Project[] = [
     slug: "isp-management-system",
     title: "ISP Management System",
     summary:
-      "Billing, subscriptions and a customer portal for small internet service providers, built in 2023 for three local ISPs.",
+      "Billing, subscriptions and a customer portal for small internet service providers: a freelance build from 2023 that ran in production.",
     problem:
       "Small ISPs in Pakistan had no affordable software for customer billing, subscription plans, bandwidth tracking and self-service.",
-    role: "Independent developer: design, build and deploy",
-    context: "Independent · 2023",
+    role: "Freelance developer: design, build and deploy",
+    context: "Freelance · 2023",
     stack: ["Laravel", "PHP", "MySQL", "Blade"],
     tags: ["Billing", "Full-stack", "SaaS"],
     featured: true,
     links: [],
-    metrics: [{ label: "ISPs set up on it in 2023", value: "3" }],
+    metrics: [],
     overview:
-      "A full-stack platform for small ISPs: billing and invoicing, subscription plans, bandwidth usage tracking, and a self-service portal for customers. I built it in 2023 and set it up for three local providers.",
+      "A full-stack platform for small ISPs: billing and invoicing, subscription plans, bandwidth usage tracking, and a self-service portal for customers. I built it on my own as a freelance project in 2023, and it ran in production.",
     challenges: [
       "Permissions that keep ISP staff, agents and customers in separate scopes.",
       "Billing cycles that stay correct when a customer changes plan mid-cycle.",
@@ -155,7 +151,7 @@ export const projects: Project[] = [
       {
         decision: "A monolith instead of separate services",
         rationale:
-          "A small system for three small ISPs. Operational simplicity was worth more than anything a distributed design would add.",
+          "A small system for small ISPs. Operational simplicity was worth more than anything a distributed design would add.",
         tradeoff:
           "Growing far beyond that load would need a scaling plan later.",
       },
@@ -167,8 +163,8 @@ export const projects: Project[] = [
       },
     ],
     results: [
-      "Set up for three ISPs in 2023.",
-      "Billing, subscriptions and customer self-service in one system.",
+      "Ran in production.",
+      "Billing that stays correct when a customer changes plan mid-cycle, with subscriptions and customer self-service in the same system.",
     ],
     lessons: [
       "On a small production system, build admin tooling early. Support requests come from the edge cases you didn't plan for.",

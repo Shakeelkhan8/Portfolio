@@ -20,8 +20,29 @@ const unsupportedClaims: Array<[string, RegExp]> = [
     "the ISP system in current daily use",
     /used daily|daily use|use (it )?every day/i,
   ],
-  ["unverified platform volume", /\d+\+ (shipments|captains)|\b5 companies\b/i],
+  [
+    "unverified platform volume",
+    /\d+\+? (shipments|captains)|\b5 companies\b/i,
+  ],
+  ["API response times (never measured)", /sub-second|under a second/i],
+  // The CV (2026-11-05) publishes no ISP count; the user confirmed none.
+  [
+    "a count of ISPs on the ISP system",
+    /\b(\d+|two|three|four|five)\s+(local\s+|small\s+)?(isps|providers|internet service providers)\b/i,
+  ],
+  // Can't be backed, so the CV dropped it (CV review, 2026-11-04). Only
+  // "100+ hours a month" is confirmed.
+  [
+    "the Hum Network report turnaround (3 days to 2 minutes)",
+    /under (2|two) min|report turnaround|took (3|three) days|(3|three) days each cycle|(3|three)-day manual/i,
+  ],
 ];
+
+/**
+ * GitHub repos a visitor can actually open. Checked with `gh repo view` on
+ * 2026-11-05; vantage went private on 2026-11-03, so its link 404s.
+ */
+const publicRepos = ["ai-mentor-health"];
 
 const publicText = JSON.stringify({
   seed: getSeedPayload(),
@@ -32,6 +53,36 @@ const publicText = JSON.stringify({
 describe("public content claims", () => {
   it.each(unsupportedClaims)("does not claim %s", (_claim, pattern) => {
     expect(publicText.match(pattern)?.[0] ?? null).toBeNull();
+  });
+
+  it("links only to public GitHub repos", () => {
+    const repos = [
+      ...publicText.matchAll(/github\.com\/Shakeelkhan8\/([\w.-]+)/gi),
+    ].map((match) => match[1]);
+
+    expect(repos.filter((repo) => !publicRepos.includes(repo))).toEqual([]);
+  });
+
+  // Confirmed by the user on 2026-11-05: it ran in production in 2023 and is
+  // no longer in use. Past tense only, and no ISP count in any metric.
+  describe("the ISP Management System case study", () => {
+    const isp = getSeedPayload().projects.find(
+      (project) => project.slug === "isp-management-system",
+    );
+
+    it("publishes no ISP count as a metric", () => {
+      expect(isp).toBeDefined();
+      expect(
+        isp?.metrics.filter((metric) => /isp|provider/i.test(metric.label)),
+      ).toEqual([]);
+    });
+
+    it("does not claim the system is still in use", () => {
+      const text = JSON.stringify(isp);
+      const pattern =
+        /(?<!ran )in production|in use|\bstill\b|currently|\bdaily\b|\bruns? (their|its)\b/i;
+      expect(text.match(pattern)?.[0] ?? null).toBeNull();
+    });
   });
 
   // "Senior Backend Engineer" is the chosen professional title (user's
