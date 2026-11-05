@@ -504,6 +504,55 @@
   opacity: 1;
 }
 
+/*
+ * Architecture diagram edges (ArchitectureDiagram). Idle: quiet hairlines.
+ * Traced: brighter, with a dash pattern flowing in the request direction.
+ * Off-path edges dim. Reduced motion keeps the highlight, drops the flow.
+ */
+.diagram-edge path {
+  fill: none;
+  stroke: color-mix(in oklch, var(--foreground) 18%, transparent);
+  stroke-width: 1.25;
+  transition:
+    stroke var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.diagram-edge circle {
+  fill: color-mix(in oklch, var(--foreground) 30%, transparent);
+  transition:
+    fill var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.diagram-edge[data-state="off"] path,
+.diagram-edge[data-state="off"] circle {
+  opacity: 0.2;
+}
+
+.diagram-edge[data-state="on"] path {
+  stroke: color-mix(in oklch, var(--foreground) 72%, transparent);
+  stroke-dasharray: 5 5;
+  animation: diagram-flow 0.8s linear infinite;
+}
+
+.diagram-edge[data-state="on"] circle {
+  fill: var(--foreground);
+}
+
+@keyframes diagram-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diagram-edge[data-state="on"] path {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}
+
 /* Touch press — app-like feedback without hover dependency */
 @media (pointer: coarse) {
   .site-card:hover {
