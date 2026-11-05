@@ -42,7 +42,7 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
             as="h2"
             text="Have a backend problem, or a role to fill?"
             when="inView"
-            className="font-heading font-display-wide mx-auto mb-3 max-w-2xl text-3xl font-semibold tracking-tight text-balance text-foreground sm:text-4xl"
+            className="font-heading font-stretch-semi-expanded mx-auto mb-3 max-w-2xl text-3xl font-semibold tracking-tight text-balance text-foreground sm:text-4xl"
           />
           {availability ? (
             <Text muted className="mx-auto max-w-lg text-balance">

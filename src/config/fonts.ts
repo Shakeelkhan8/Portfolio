@@ -2,7 +2,7 @@ import { IBM_Plex_Sans, JetBrains_Mono, Mona_Sans } from "next/font/google";
 
 /**
  * Display: Mona Sans (GitHub, SIL OFL), a variable grotesque with weight and
- * width axes. Headlines use its semi-expanded width (`font-display-wide`),
+ * width axes. Headlines use its semi-expanded width (`font-stretch-semi-expanded`),
  * which gives the type a voice of its own; Space Grotesk, the previous
  * display face, is one of the most common "developer portfolio" fonts.
  * Preloaded because the hero headline is above the fold on every visit.

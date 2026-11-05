@@ -374,16 +374,6 @@
   padding-block: clamp(4rem, 11vw, 9rem);
 }
 
-/*
- * Mona Sans width axis. Semi-expanded (112.5%) for display headlines and
- * headline numbers: wider letterforms read as confident at large sizes and
- * make the type recognisably this site's. Small text stays at normal width.
- * Fallback fonts without a width axis ignore it.
- */
-@utility font-display-wide {
-  font-stretch: 112.5%;
-}
-
 /* Subtle dotted grid for hero / feature backdrops */
 @utility bg-grid {
   background-image: radial-gradient(
