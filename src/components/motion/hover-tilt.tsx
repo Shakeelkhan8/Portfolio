@@ -49,8 +49,13 @@ export function HoverTilt({
     const node = ref.current;
     if (!node) return;
     const rect = node.getBoundingClientRect();
-    rawX.set((event.clientX - rect.left) / rect.width - 0.5);
-    rawY.set((event.clientY - rect.top) / rect.height - 0.5);
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    rawX.set(x / rect.width - 0.5);
+    rawY.set(y / rect.height - 0.5);
+    // Border spotlight position (see `[data-spotlight]` in globals.css).
+    node.style.setProperty("--spot-x", `${x}px`);
+    node.style.setProperty("--spot-y", `${y}px`);
   }
 
   function onLeave() {
@@ -67,6 +72,7 @@ export function HoverTilt({
         rotateY,
         transformPerspective: 900,
       }}
+      data-spotlight={tiltEnabled ? "" : undefined}
       onMouseMove={tiltEnabled ? onMove : undefined}
       onMouseLeave={tiltEnabled ? onLeave : undefined}
     >

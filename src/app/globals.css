@@ -441,6 +441,69 @@
   transform: scale(1.04);
 }
 
+/*
+ * Keyboard focus for cards whose whole surface is a link overlay. The overlay
+ * (an absolutely positioned <a>) sits inside `overflow: hidden`, which clipped
+ * its own focus outline, so focused cards showed no indicator at all. The
+ * ring is drawn on the card itself instead.
+ */
+.site-card:has(> a:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-color: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
+.site-card > a:focus-visible {
+  outline: none;
+}
+
+/*
+ * Pointer spotlight on project-card borders. HoverTilt (fine pointers only,
+ * no reduced motion) writes --spot-x / --spot-y on its wrapper from the same
+ * pointer handler that drives the tilt, so this costs no extra listener. A
+ * mask keeps the light on the 1px border; a fainter wash lights the surface.
+ */
+[data-spotlight] .site-card::before,
+[data-spotlight] .site-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+[data-spotlight] .site-card::before {
+  background: radial-gradient(
+    520px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    color-mix(in oklch, var(--foreground) 5%, transparent),
+    transparent 55%
+  );
+}
+
+[data-spotlight] .site-card::after {
+  padding: 1px;
+  background: radial-gradient(
+    360px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    color-mix(in oklch, var(--foreground) 42%, transparent),
+    transparent 65%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+[data-spotlight] .site-card:hover::before,
+[data-spotlight] .site-card:hover::after {
+  opacity: 1;
+}
+
 /* Touch press — app-like feedback without hover dependency */
 @media (pointer: coarse) {
   .site-card:hover {
