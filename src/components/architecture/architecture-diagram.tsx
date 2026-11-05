@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import type { ArchitectureDiagramData } from "@/types";
 import { cn } from "@/lib/utils";
 import { Text } from "@/components/typography/text";
@@ -52,7 +52,7 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
                     const isFocused = activeNode === node.id;
 
                     return (
-                      <motion.button
+                      <m.button
                         key={node.id}
                         type="button"
                         onMouseEnter={() => setActiveNode(node.id)}
@@ -75,7 +75,7 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
                         )}
                       >
                         {node.label}
-                      </motion.button>
+                      </m.button>
                     );
                   })}
                 </div>

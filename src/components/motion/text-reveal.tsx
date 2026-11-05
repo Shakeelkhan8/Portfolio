@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
+import type { CSSProperties } from "react";
 import {
   HERO_EASE,
   HERO_EASE_DRAMATIC,
@@ -14,7 +15,7 @@ type TextRevealProps = {
   delay?: number;
   /** Split by word (default) or single line */
   mode?: "word" | "line";
-  /** `mount` for hero; `inView` for scroll sections */
+  /** `mount` for headlines above the fold; `inView` for scroll sections */
   when?: "mount" | "inView";
   /**
    * `cinematic` — longer mask reveal (no CSS filter — filters blur mobile type)
@@ -23,6 +24,25 @@ type TextRevealProps = {
   intensity?: "default" | "cinematic";
 };
 
+const WORD_STAGGER = { default: 0.045, cinematic: 0.07 } as const;
+const WORD_DURATION = { default: 0.7, cinematic: 1.05 } as const;
+
+/** The overflow mask each word rises out of. */
+const MASK_CLASS =
+  "inline-block max-w-full overflow-hidden align-bottom pb-[0.08em]";
+
+/**
+ * Masked word-by-word headline reveal.
+ *
+ * `mount` renders CSS-animated spans (`.enter-word`): the headline is usually
+ * the LCP element, and a CSS animation starts on first paint, whereas a
+ * Motion `initial={{ opacity: 0 }}` kept it invisible until hydration.
+ * `inView` uses Motion's viewport detection, which needs JavaScript anyway.
+ *
+ * The animated words are the only copy of the text: a separate sr-only
+ * duplicate made crawlers and `textContent` read the heading twice. Words are
+ * joined by non-breaking spaces, so screen readers hear a normal phrase.
+ */
 export function TextReveal({
   text,
   as: Tag = "p",
@@ -32,72 +52,109 @@ export function TextReveal({
   when = "mount",
   intensity = "default",
 }: TextRevealProps) {
-  const prefersReducedMotion = useReducedMotion();
   const parts = mode === "line" ? [text] : text.split(" ");
-  const cinematic = intensity === "cinematic";
+  const stagger = mode === "word" ? WORD_STAGGER[intensity] : 0;
+  const duration = WORD_DURATION[intensity];
 
-  if (prefersReducedMotion) {
-    return <Tag className={className}>{text}</Tag>;
+  const label = (part: string, index: number) =>
+    `${part}${mode === "word" && index < parts.length - 1 ? " " : ""}`;
+
+  if (when === "mount") {
+    return (
+      <Tag className={cn("max-w-full", className)}>
+        {parts.map((part, index) => (
+          <span key={`${part}-${index}`} className={MASK_CLASS}>
+            <span
+              className="enter-word max-w-full"
+              style={
+                {
+                  "--enter-delay": `${delay + index * stagger}s`,
+                  "--enter-duration": `${duration}s`,
+                } as CSSProperties
+              }
+            >
+              {label(part, index)}
+            </span>
+          </span>
+        ))}
+      </Tag>
+    );
   }
 
-  const containerVariants = {
-    hidden: {},
+  return (
+    <InViewReveal
+      Tag={Tag}
+      className={className}
+      parts={parts.map(label)}
+      delay={delay}
+      stagger={stagger}
+      duration={duration}
+      cinematic={intensity === "cinematic"}
+    />
+  );
+}
+
+function InViewReveal({
+  Tag,
+  className,
+  parts,
+  delay,
+  stagger,
+  duration,
+  cinematic,
+}: {
+  Tag: NonNullable<TextRevealProps["as"]>;
+  className?: string;
+  parts: string[];
+  delay: number;
+  stagger: number;
+  duration: number;
+  cinematic: boolean;
+}) {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <Tag className={className}>{parts.join("")}</Tag>;
+  }
+
+  // Mask reveal via translate only — never CSS filter/scale (softens glyphs).
+  const wordVariants = {
+    hidden: { y: cinematic ? "115%" : "110%", opacity: 0 },
     show: {
+      y: "0%",
+      opacity: 1,
       transition: {
-        staggerChildren: mode === "word" ? (cinematic ? 0.07 : 0.045) : 0,
-        delayChildren: delay,
+        duration,
+        ease: cinematic ? HERO_EASE_DRAMATIC : HERO_EASE,
       },
     },
   };
 
-  // Mask reveal via translate only — never CSS filter/scale (softens glyphs).
-  const wordVariants = cinematic
-    ? {
-        hidden: { y: "115%", opacity: 0 },
-        show: {
-          y: "0%",
-          opacity: 1,
-          transition: { duration: 1.05, ease: HERO_EASE_DRAMATIC },
-        },
-      }
-    : {
-        hidden: { y: "110%", opacity: 0 },
-        show: {
-          y: "0%",
-          opacity: 1,
-          transition: { duration: 0.7, ease: HERO_EASE },
-        },
-      };
-
-  // The animated words are the only copy of the text: a separate sr-only
-  // duplicate made crawlers and `textContent` read the heading twice
-  // ("Shakeel KhanShakeel Khan"). Words are joined by non-breaking spaces, so
-  // screen readers still hear a normal phrase.
   return (
     <Tag className={cn("max-w-full", className)}>
-      <motion.span
+      <m.span
         className="inline"
         initial="hidden"
-        {...(when === "inView"
-          ? {
-              whileInView: "show",
-              viewport: { once: true, amount: 0.4 },
-            }
-          : { animate: "show" })}
-        variants={containerVariants}
+        whileInView="show"
+        viewport={{ once: true, amount: 0.4 }}
+        variants={{
+          hidden: {},
+          show: {
+            transition: { staggerChildren: stagger, delayChildren: delay },
+          },
+        }}
       >
         {parts.map((part, index) => (
-          <span
-            key={`${part}-${index}`}
-            className="inline-block max-w-full overflow-hidden align-bottom pb-[0.08em]"
-          >
-            <motion.span className="inline-block max-w-full" variants={wordVariants}>
+          <span key={`${part}-${index}`} className={MASK_CLASS}>
+            <m.span
+              className="inline-block max-w-full"
+              variants={wordVariants}
+            >
               {part}
-              {mode === "word" && index < parts.length - 1 ? "\u00A0" : null}
-            </motion.span>
+            </m.span>
           </span>
         ))}
-      </motion.span>
+      </m.span>
     </Tag>
   );
 }

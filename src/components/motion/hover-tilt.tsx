@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  motion,
+  m,
   useMotionValue,
   useReducedMotion,
   useSpring,
@@ -40,7 +40,7 @@ export function HoverTilt({
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // Always render the same element: swapping a plain <div> for <motion.div>
+  // Always render the same element: swapping a plain <div> for <m.div>
   // once the pointer check ran made React remount every card after
   // hydration. When tilt is off, the handlers are simply not attached.
   const tiltEnabled = finePointer && !prefersReducedMotion;
@@ -59,7 +59,7 @@ export function HoverTilt({
   }
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       className={cn("h-full [transform-style:preserve-3d]", className)}
       style={{
@@ -71,6 +71,6 @@ export function HoverTilt({
       onMouseLeave={tiltEnabled ? onLeave : undefined}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

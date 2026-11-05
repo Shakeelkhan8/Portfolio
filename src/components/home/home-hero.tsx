@@ -2,26 +2,29 @@
 
 import { ArrowRight } from "lucide-react";
 import {
-  motion,
+  m,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Container } from "@/components/layout/container";
 import { HeroOrb } from "@/components/motion/hero-orb";
-import {
-  HERO,
-  HERO_EASE,
-  HERO_EASE_SOFT,
-} from "@/components/motion/hero-timeline";
+import { HERO } from "@/components/motion/hero-timeline";
 import { ScrollCue } from "@/components/motion/scroll-cue";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
+import { cn } from "@/lib/utils";
 import type { CtaSection, PublicSiteConfig } from "@/types/cms";
 import type { ProjectMetric } from "@/types";
 
@@ -33,35 +36,28 @@ type HomeHeroProps = {
   proof?: ProjectMetric[];
 };
 
+/**
+ * Opacity-only entrance for the hero's supporting lines. CSS (`.enter-fade`),
+ * so it runs from first paint: the intro paragraph is the page's LCP element
+ * and must not wait for hydration. Phones get the shorter duration and
+ * reduced motion gets no animation, both in globals.css.
+ */
 function HeroFade({
   children,
   delay,
   className,
-  soft,
 }: {
   children: ReactNode;
   delay: number;
   className?: string;
-  /** Accepted for call-site compatibility; hero fades are opacity-only. */
-  y?: number;
-  soft?: boolean;
 }) {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
-  // Opacity only — transforms on text ancestors rasterize soft on mobile GPUs.
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay, duration: soft ? 0.7 : 1, ease: HERO_EASE_SOFT }}
+    <div
+      className={cn("enter-fade", className)}
+      style={{ "--enter-delay": `${delay}s` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -120,8 +116,6 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
   const contentOpacity = useTransform(smooth, [0, 0.5], [1, 0]);
   const cueOpacity = useTransform(smooth, [0, 0.18], [1, 0]);
 
-  const d = (seconds: number) => (prefersReducedMotion ? 0 : seconds);
-
   return (
     <div
       ref={sectionRef}
@@ -129,7 +123,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
     >
       {/* Full-bleed within section — clipped, never uses 100vw */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <motion.div
+        <m.div
           aria-hidden="true"
           className="absolute inset-0 origin-center will-change-transform"
           style={
@@ -144,7 +138,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
             aria-hidden="true"
             className="absolute inset-0 opacity-[0.04] mix-blend-overlay site-noise"
           />
-        </motion.div>
+        </m.div>
       </div>
 
       <Container className="relative z-10 flex flex-1 flex-col">
@@ -153,7 +147,7 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-[14%] bottom-[18%] -z-10 mx-auto max-w-4xl bg-[radial-gradient(ellipse_closest-side,rgb(0_0_0/0.78),rgb(0_0_0/0.45)_55%,transparent)]"
         />
-        <motion.div
+        <m.div
           className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-0 pb-24 pt-4 text-center sm:pb-28 sm:pt-6"
           style={
             prefersReducedMotion
@@ -162,23 +156,18 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
                 { opacity: contentOpacity }
           }
         >
-          <HeroFade
-            delay={d(HERO.type.badge)}
-            className="mb-5 sm:mb-7"
-            soft={mobile}
-          >
+          <HeroFade delay={HERO.type.badge} className="mb-5 sm:mb-7">
             <AvailabilityBadge site={site} />
           </HeroFade>
 
-          <HeroFade
-            delay={d(HERO.type.location)}
-            className="mb-4 sm:mb-5"
-            soft={mobile}
-          >
+          <HeroFade delay={HERO.type.location} className="mb-4 sm:mb-5">
             <p className="font-mono text-[10px] tracking-[0.24em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.32em]">
               {focus.map((part, index) => (
                 // Phones get the first two parts so the line doesn't wrap.
-                <span key={part} className={index > 1 ? "hidden sm:inline" : undefined}>
+                <span
+                  key={part}
+                  className={index > 1 ? "hidden sm:inline" : undefined}
+                >
                   {index > 0 ? " · " : null}
                   {part}
                 </span>
@@ -186,31 +175,20 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
             </p>
           </HeroFade>
 
-          <motion.div
-            className="relative mb-6 w-full max-w-4xl sm:mb-7"
-            initial={prefersReducedMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              delay: d(HERO.type.name),
-              duration: mobile ? 0.85 : 1.2,
-              ease: HERO_EASE,
-            }}
-          >
+          <div className="relative mb-6 w-full max-w-4xl sm:mb-7">
             <TextReveal
               as="h1"
               text={headline}
               intensity="default"
-              delay={d(HERO.type.name)}
+              delay={HERO.type.name}
               className="font-heading relative z-10 max-w-full text-[clamp(2rem,8.5vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-5xl md:text-6xl lg:text-[4.25rem]"
             />
-          </motion.div>
+          </div>
 
           {intro ? (
             <HeroFade
-              delay={d(HERO.type.description)}
+              delay={HERO.type.description}
               className="mb-8 w-full max-w-md sm:mb-10 sm:max-w-2xl"
-              y={16}
-              soft={mobile}
             >
               <Text
                 size="lg"
@@ -224,10 +202,8 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
 
           {primaryLabel || secondaryLabel ? (
             <HeroFade
-              delay={d(HERO.type.actions)}
+              delay={HERO.type.actions}
               className="w-full max-w-xs sm:max-w-none"
-              y={14}
-              soft={mobile}
             >
               <div className="relative z-10 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
                 {primaryLabel ? (
@@ -259,16 +235,18 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
 
           {proof.length > 0 ? (
             <HeroFade
-              delay={d(HERO.type.actions + 0.15)}
+              delay={HERO.type.actions + 0.15}
               className="mt-9 w-full sm:mt-11"
-              soft={mobile}
             >
               <ul
                 aria-label="Results from the case studies"
                 className="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-x-5 gap-y-1.5 font-mono sm:flex-row sm:flex-wrap text-[11px] tracking-wide text-muted-foreground sm:text-xs"
               >
                 {proof.map((metric, index) => (
-                  <li key={`${metric.value}-${metric.label}`} className="flex items-center gap-5">
+                  <li
+                    key={`${metric.value}-${metric.label}`}
+                    className="flex items-center gap-5"
+                  >
                     {index > 0 ? (
                       <span
                         aria-hidden="true"
@@ -288,22 +266,17 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
               </ul>
             </HeroFade>
           ) : null}
-        </motion.div>
+        </m.div>
       </Container>
 
-      <motion.div
+      <m.div
         className="pointer-events-none absolute inset-x-0 bottom-5 z-20 sm:bottom-8"
         style={prefersReducedMotion ? undefined : { opacity: cueOpacity }}
-        initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: d(HERO.type.cue),
-          duration: 1.15,
-          ease: HERO_EASE,
-        }}
       >
-        <ScrollCue />
-      </motion.div>
+        <HeroFade delay={HERO.type.cue}>
+          <ScrollCue />
+        </HeroFade>
+      </m.div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { MotionProvider } from "@/components/motion/motion-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 type AppProvidersProps = {
@@ -10,5 +11,9 @@ type AppProvidersProps = {
  * (or its bootstrap script) is needed.
  */
 export function AppProviders({ children }: AppProvidersProps) {
-  return <TooltipProvider delay={300}>{children}</TooltipProvider>;
+  return (
+    <MotionProvider>
+      <TooltipProvider delay={300}>{children}</TooltipProvider>
+    </MotionProvider>
+  );
 }

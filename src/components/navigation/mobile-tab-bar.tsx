@@ -10,7 +10,7 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { AppLink } from "@/components/shared/app-link";
@@ -97,7 +97,7 @@ export function MobileTabBar({ site, navigation }: MobileTabBarProps) {
               >
                 <span className="mobile-tab-bar__icon-wrap">
                   {!prefersReducedMotion && active ? (
-                    <motion.span
+                    <m.span
                       layoutId="mobile-tab-indicator"
                       className="mobile-tab-bar__indicator"
                       transition={{ type: "spring", stiffness: 420, damping: 32 }}
