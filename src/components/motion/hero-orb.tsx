@@ -525,5 +525,3 @@ export function HeroOrb({ className }: HeroOrbProps) {
     />
   );
 }
-
-export const HeroField = HeroOrb;

@@ -21,8 +21,8 @@ export const SECURITY_HEADERS = [
  * Content-Security-Policy.
  *
  * Notes on the chosen policy:
- * - `'unsafe-inline'` is required for scripts (next-themes bootstrap, Next.js
- *   runtime) and styles (Tailwind/Next inline styles). Without per-request
+ * - `'unsafe-inline'` is required for scripts (Next.js runtime and
+ *   streaming bootstrap) and styles (Tailwind/Next inline styles). Without per-request
  *   nonce infrastructure this cannot be tightened safely.
  * - `https:` is permitted for scripts/connections so admin-configured
  *   analytics (Plausible/GA4) and Supabase/Sentry keep working.
