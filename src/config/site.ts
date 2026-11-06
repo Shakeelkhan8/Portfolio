@@ -30,12 +30,12 @@ export const siteConfig = {
     message: "Open to remote backend roles and Laravel project work",
   },
   expertise: [
-    "PHP and Laravel",
-    "Payments and webhooks",
-    "AI integration",
-    "APIs and integrations",
-    "PostgreSQL",
-    "Docker and CI",
+    "Laravel and PHP",
+    "SaaS and multi-tenancy",
+    "Payments and integrations",
+    "API development",
+    "OpenAI and Claude",
+    "Performance",
   ],
   philosophy: [
     {
