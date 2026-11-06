@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AppProviders } from "@/components/providers/app-providers";
 import { CustomScripts } from "@/components/seo/custom-scripts";
 import { RootJsonLd } from "@/components/seo/root-json-ld";
@@ -45,6 +46,13 @@ export default function RootLayout({
         <AppProviders>{children}</AppProviders>
         <SiteAnalytics />
         <CustomScripts />
+        {/*
+          Real-user LCP, INP and CLS per route (Vercel Speed Insights); lab
+          tools cannot measure INP. Its script is served by Vercel, so it is
+          only rendered there (VERCEL is set on every Vercel build) and needs
+          Speed Insights enabled for the project in the Vercel dashboard.
+        */}
+        {process.env.VERCEL ? <SpeedInsights /> : null}
       </body>
     </html>
   );
