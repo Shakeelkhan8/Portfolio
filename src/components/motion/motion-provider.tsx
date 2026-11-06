@@ -1,27 +1,34 @@
 "use client";
 
-import { LazyMotion } from "framer-motion";
+import { LazyMotion, MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
 
 const loadFeatures = () =>
   import("@/components/motion/motion-features").then((mod) => mod.default);
 
 /**
- * Lazy-loads Motion's animation features after hydration.
+ * Site-wide Motion setup.
  *
- * Components render `m.*` (a thin shell) instead of `motion.*`, which bundles
- * every feature into first-load JavaScript. `strict` throws if a full
- * `motion.*` component is added, so the saving cannot silently regress.
+ * Reduced motion: `reducedMotion="user"` makes Motion skip transform and
+ * layout animations (opacity fades remain) when the visitor asks for less
+ * motion. Components must not branch their markup on `useReducedMotion()`:
+ * it is `null` on the server and the real preference on the client's first
+ * render, so a branch that swaps elements made React throw hydration error
+ * #418 and re-render the whole page for those visitors.
  *
- * Nothing that must be visible at first paint depends on this: above-the-fold
- * entrances are CSS (see "Entrance motion" in globals.css). What waits for
- * the features chunk is scroll reveals, hover tilt, the nav sheet stagger
- * and the tab indicator, all of which only run after interaction or scroll.
+ * Features: components render `m.*` (a thin shell) instead of `motion.*`,
+ * and the animation features load in their own chunk after hydration.
+ * `strict` throws if a full `motion.*` component is added, so the saving
+ * cannot silently regress. Nothing that must be visible at first paint
+ * depends on this: above-the-fold entrances are CSS (see "Entrance motion"
+ * in globals.css).
  */
 export function MotionProvider({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={loadFeatures} strict>
-      {children}
-    </LazyMotion>
+    <MotionConfig reducedMotion="user">
+      <LazyMotion features={loadFeatures} strict>
+        {children}
+      </LazyMotion>
+    </MotionConfig>
   );
 }

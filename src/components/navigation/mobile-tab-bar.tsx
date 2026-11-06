@@ -10,7 +10,7 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react";
-import { m, useReducedMotion } from "framer-motion";
+import { m } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { AppLink } from "@/components/shared/app-link";
@@ -52,7 +52,6 @@ function isTabActive(pathname: string, href: string) {
  */
 export function MobileTabBar({ site, navigation }: MobileTabBarProps) {
   const pathname = usePathname();
-  const prefersReducedMotion = useReducedMotion();
   const [moreOpen, setMoreOpen] = useState(false);
 
   const tabs = useMemo(() => {
@@ -96,7 +95,7 @@ export function MobileTabBar({ site, navigation }: MobileTabBarProps) {
                 aria-current={active ? "page" : undefined}
               >
                 <span className="mobile-tab-bar__icon-wrap">
-                  {!prefersReducedMotion && active ? (
+                  {active ? (
                     <m.span
                       layoutId="mobile-tab-indicator"
                       className="mobile-tab-bar__indicator"

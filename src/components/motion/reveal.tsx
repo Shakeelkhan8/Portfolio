@@ -2,7 +2,6 @@
 
 import {
   m,
-  useReducedMotion,
   type HTMLMotionProps,
 } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
@@ -28,7 +27,6 @@ export function Reveal({
   className,
   ...props
 }: RevealProps) {
-  const prefersReducedMotion = useReducedMotion();
   const [softMotion, setSoftMotion] = useState(true);
 
   useEffect(() => {
@@ -43,10 +41,6 @@ export function Reveal({
       narrow.removeEventListener("change", sync);
     };
   }, []);
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
 
   // Mobile/touch: opacity only. Transforms on text ancestors stay soft on GPU.
   if (softMotion) {

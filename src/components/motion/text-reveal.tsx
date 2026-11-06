@@ -1,6 +1,6 @@
 "use client";
 
-import { m, useReducedMotion } from "framer-motion";
+import { m } from "framer-motion";
 import type { CSSProperties } from "react";
 import {
   HERO_EASE,
@@ -111,12 +111,6 @@ function InViewReveal({
   duration: number;
   cinematic: boolean;
 }) {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <Tag className={className}>{parts.join("")}</Tag>;
-  }
-
   // Mask reveal via translate only — never CSS filter/scale (softens glyphs).
   const wordVariants = {
     hidden: { y: cinematic ? "115%" : "110%", opacity: 0 },
