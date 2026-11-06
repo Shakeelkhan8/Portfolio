@@ -4,40 +4,46 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ─── Dark-only cinematic palette (public site + app shell) ─── */
+/* ─── Dark-only palette: "the night shift" (see docs/DESIGN.md) ─── */
 :root,
 .dark {
   color-scheme: dark;
   /*
-   * Near-black rather than #000: pure black behind bright white text makes
-   * glyphs bloom on many screens, and leaves no room for card surfaces to
-   * read as layers. Text is eased off pure white for the same reason.
+   * Warm near-black and warm paper-white instead of neutral greys: the warm
+   * bias reads as a lit desk rather than a UI kit. Near-black rather than
+   * #000 so bright text doesn't bloom and card surfaces can read as layers.
    */
-  --background: #0a0a0b;
-  --foreground: #ededed;
-  --muted: #141416;
-  --muted-foreground: #8f8f94;
-  --border: #1f1f22;
-  --border-subtle: #161618;
-  --surface: #111113;
-  --surface-elevated: #18181b;
-  --accent-muted: #18181b;
+  --background: #0b0a09;
+  --foreground: #ece7df;
+  --muted: #151311;
+  --muted-foreground: #9c958c;
+  --border: #23201c;
+  --border-subtle: #181613;
+  --surface: #121110;
+  --surface-elevated: #1a1815;
+  --accent-muted: #1a1815;
   --success: #3ecf8e;
   --success-muted: #0a1f14;
-  --ring: #d4d4d4;
+  /*
+   * The one signal colour. It marks results, the current item, focus and
+   * live state, and nothing decorative. 9.6:1 on --background.
+   */
+  --signal: #e6a957;
+  --signal-muted: color-mix(in oklch, var(--signal) 14%, transparent);
+  --ring: #e6a957;
 
-  --card: #111113;
-  --card-foreground: #ededed;
-  --popover: #111113;
-  --popover-foreground: #ededed;
-  --primary: #ededed;
-  --primary-foreground: #0a0a0b;
-  --secondary: #18181b;
-  --secondary-foreground: #ededed;
-  --accent: #18181b;
-  --accent-foreground: #ededed;
+  --card: #121110;
+  --card-foreground: #ece7df;
+  --popover: #121110;
+  --popover-foreground: #ece7df;
+  --primary: #ece7df;
+  --primary-foreground: #0b0a09;
+  --secondary: #1a1815;
+  --secondary-foreground: #ece7df;
+  --accent: #1a1815;
+  --accent-foreground: #ece7df;
   --destructive: #f07171;
-  --input: #1f1f22;
+  --input: #23201c;
 
   --prose-width: 680px;
   --content-width: 1120px;
@@ -113,6 +119,8 @@
   --color-accent-muted: var(--accent-muted);
   --color-success: var(--success);
   --color-success-muted: var(--success-muted);
+  --color-signal: var(--signal);
+  --color-signal-muted: var(--signal-muted);
   --color-ring: var(--ring);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -143,6 +151,29 @@
   --font-sans: var(--font-ibm-plex-sans), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
   --font-heading: var(--font-mona-sans), var(--font-ibm-plex-sans), system-ui, sans-serif;
+
+  /*
+   * Type scale (docs/DESIGN.md). Fluid between a 375px and a 1280px
+   * viewport. Use these instead of one-off sizes so a heading of a given
+   * role is the same size on every page.
+   */
+  --text-display: clamp(2.125rem, 1.6rem + 2.3vw, 3.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.035em;
+  --text-title: clamp(2.125rem, 1.7rem + 1.8vw, 3.125rem);
+  --text-title--line-height: 1.06;
+  --text-title--letter-spacing: -0.03em;
+  --text-heading: clamp(1.625rem, 1.37rem + 1.1vw, 2.25rem);
+  --text-heading--line-height: 1.14;
+  --text-heading--letter-spacing: -0.022em;
+  --text-subheading: clamp(1.1875rem, 1.13rem + 0.25vw, 1.3125rem);
+  --text-subheading--line-height: 1.3;
+  --text-subheading--letter-spacing: -0.012em;
+  --text-figure: clamp(1.75rem, 1.45rem + 1.25vw, 2.375rem);
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.03em;
+  --text-lead: 1.0625rem;
+  --text-lead--line-height: 1.65;
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -309,20 +340,7 @@
   }
 }
 
-@keyframes scroll-cue {
-  50% {
-    opacity: 0.25;
-    transform: translate3d(0, 4px, 0);
-  }
-}
-
-.scroll-cue-dot {
-  opacity: 0.9;
-  animation: scroll-cue 2s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .scroll-cue-dot,
   .enter-fade,
   .enter-rise,
   .enter-drop,
@@ -372,6 +390,35 @@
 
 @utility section-spacing-lg {
   padding-block: clamp(4rem, 11vw, 9rem);
+}
+
+/*
+ * Small uppercase mono label: section labels, metadata, captions. One style
+ * everywhere (it used to vary between 0.16em and 0.32em of tracking).
+ */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Text link whose underline draws in from the left on hover and focus. */
+@utility link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  padding-bottom: 2px;
+  transition: background-size 0.35s var(--ease-out);
+
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+  }
 }
 
 /* Subtle dotted grid for hero / feature backdrops */
@@ -540,6 +587,31 @@
   .diagram-edge[data-state="on"] path {
     animation: none;
     stroke-dasharray: none;
+  }
+}
+
+/*
+ * Section rule (SectionHeader): a hairline that draws across as its section
+ * scrolls in. Scroll-driven, so it runs off the main thread; browsers without
+ * scroll timelines (and reduced motion) show the finished rule.
+ */
+.section-rule {
+  transform-origin: left center;
+}
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .section-rule {
+      animation: rule-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
   }
 }
 

@@ -7,11 +7,13 @@
  */
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 
+/** Mirrors the site palette in globals.css (docs/DESIGN.md). */
 const COLORS = {
-  background: "#0a0a0b",
-  foreground: "#ededed",
-  muted: "#8f8f94",
-  border: "#1f1f22",
+  background: "#0b0a09",
+  foreground: "#ece7df",
+  muted: "#9c958c",
+  border: "#23201c",
+  signal: "#e6a957",
 } as const;
 
 type OgCardProps = {
@@ -36,7 +38,7 @@ export function OgCard({ eyebrow, title, description, metric, footer }: OgCardPr
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "72px 80px",
-        background: `radial-gradient(ellipse 70% 55% at 50% 0%, rgba(237,237,237,0.08), transparent 70%), ${COLORS.background}`,
+        background: `radial-gradient(ellipse 70% 55% at 50% 0%, rgba(230,169,87,0.10), transparent 70%), ${COLORS.background}`,
         color: COLORS.foreground,
         fontFamily: "system-ui, sans-serif",
       }}
@@ -89,7 +91,7 @@ export function OgCard({ eyebrow, title, description, metric, footer }: OgCardPr
       >
         {metric ? (
           <div style={{ display: "flex", alignItems: "baseline" }}>
-            <div style={{ fontSize: 44, marginRight: 18 }}>
+            <div style={{ fontSize: 44, marginRight: 18, color: COLORS.signal }}>
               {clamp(metric.value, 24)}
             </div>
             <div style={{ fontSize: 24, color: COLORS.muted }}>
