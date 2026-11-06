@@ -48,7 +48,7 @@ export const homeSectionHeaders = [
     page_key: "home",
     section_key: "experience",
     title: "Experience",
-    description: null,
+    description: "What I'm doing now, and what came before.",
     display_order: 4,
   },
   {
@@ -62,7 +62,7 @@ export const homeSectionHeaders = [
     page_key: "home",
     section_key: "testimonials",
     title: "What people say",
-    description: null,
+    description: "In a client's words.",
     display_order: 6,
   },
 ] as const;
@@ -73,7 +73,7 @@ export const ctaSections = [
     title:
       "Senior Backend Engineer for payments, integrations and multi-tenant SaaS.",
     description:
-      "I build payment integrations that never charge twice, multi-tenant systems where one customer can never see another's data, and AI features that stay within budget. Agencies can hire me white-label: the work ships under your name.",
+      "I design the backend of SaaS products that handle money: payment integrations that are safe to retry, double-entry ledgers, and tenancy that keeps each customer's data separate. Agencies can also hire me white-label.",
     primary_label: "See the case studies",
     primary_href: "/projects",
     secondary_label: "Work with me",
