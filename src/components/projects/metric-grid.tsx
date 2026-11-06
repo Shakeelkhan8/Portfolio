@@ -11,7 +11,7 @@ export function MetricGrid({ metrics }: MetricGridProps) {
       {metrics.map((metric, index) => (
         <Reveal key={metric.label} delay={index * 0.05}>
           <div>
-            <p className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            <p className="font-heading font-stretch-semi-expanded text-xl font-semibold tracking-tight tabular-nums text-foreground sm:text-2xl">
               {metric.value}
             </p>
             <p className="mt-1.5 text-sm text-muted-foreground">{metric.label}</p>

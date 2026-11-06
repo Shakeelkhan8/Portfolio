@@ -55,6 +55,9 @@
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Mirrors HERO_EASE_SOFT / HERO_EASE_DRAMATIC in hero-timeline.ts. */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-dramatic: cubic-bezier(0.12, 0.8, 0.2, 1);
 
   --header-height: 4rem;
 
@@ -139,7 +142,7 @@
 
   --font-sans: var(--font-ibm-plex-sans), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --font-heading: var(--font-space-grotesk), var(--font-ibm-plex-sans), system-ui, sans-serif;
+  --font-heading: var(--font-mona-sans), var(--font-ibm-plex-sans), system-ui, sans-serif;
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -222,6 +225,111 @@
   outline: 2px solid var(--ring);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+/*
+ * ─── Entrance motion: runs on first paint, before hydration ───
+ *
+ * Above-the-fold copy used to start at opacity 0 inside Motion components, so
+ * it stayed invisible until React hydrated. On a 4x-throttled phone that put
+ * LCP at 5.6 s, 97% of it render delay. CSS keyframes start as soon as the
+ * HTML paints, so the same choreography no longer waits for JavaScript.
+ *
+ * Per element: `--enter-delay` (and optionally `--enter-duration`) inline.
+ * Every keyframe only states its `from`, so the resting state is the
+ * element's own style: nothing stays on a transformed layer afterwards.
+ */
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+}
+
+@keyframes enter-drop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+@keyframes enter-word {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 110%, 0);
+  }
+}
+
+.enter-fade {
+  animation: enter-fade var(--enter-duration, 1s) var(--ease-soft)
+    var(--enter-delay, 0s) both;
+}
+
+.enter-rise {
+  animation: enter-rise var(--enter-duration, 0.55s) var(--ease-out)
+    var(--enter-delay, 0s) both;
+}
+
+.enter-drop {
+  animation: enter-drop 0.6s var(--ease-out) var(--enter-delay, 0s) both;
+}
+
+/* One word of a masked headline reveal (see TextReveal). */
+.enter-word {
+  display: inline-block;
+  animation: enter-word var(--enter-duration, 0.7s) var(--ease-out)
+    var(--enter-delay, 0s) both;
+}
+
+/* Route change: template.tsx remounts this wrapper, which restarts it. */
+.page-enter {
+  animation: enter-rise 0.42s var(--ease-out) both;
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+  /* Opacity only: transforms on text ancestors rasterize soft on mobile GPUs. */
+  .enter-rise,
+  .enter-drop,
+  .page-enter {
+    animation-name: enter-fade;
+  }
+
+  .page-enter {
+    animation-duration: 0.32s;
+  }
+
+  .enter-fade {
+    animation-duration: min(var(--enter-duration, 1s), 0.7s);
+  }
+}
+
+@keyframes scroll-cue {
+  50% {
+    opacity: 0.25;
+    transform: translate3d(0, 4px, 0);
+  }
+}
+
+.scroll-cue-dot {
+  opacity: 0.9;
+  animation: scroll-cue 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-dot,
+  .enter-fade,
+  .enter-rise,
+  .enter-drop,
+  .enter-word,
+  .page-enter {
+    animation: none;
+  }
 }
 
 @utility container-content {
@@ -321,6 +429,118 @@
 
 .site-card:hover img {
   transform: scale(1.04);
+}
+
+/*
+ * Keyboard focus for cards whose whole surface is a link overlay. The overlay
+ * (an absolutely positioned <a>) sits inside `overflow: hidden`, which clipped
+ * its own focus outline, so focused cards showed no indicator at all. The
+ * ring is drawn on the card itself instead.
+ */
+.site-card:has(> a:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-color: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
+.site-card > a:focus-visible {
+  outline: none;
+}
+
+/*
+ * Pointer spotlight on project-card borders. HoverTilt (fine pointers only,
+ * no reduced motion) writes --spot-x / --spot-y on its wrapper from the same
+ * pointer handler that drives the tilt, so this costs no extra listener. A
+ * mask keeps the light on the 1px border; a fainter wash lights the surface.
+ */
+[data-spotlight] .site-card::before,
+[data-spotlight] .site-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+[data-spotlight] .site-card::before {
+  background: radial-gradient(
+    520px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    color-mix(in oklch, var(--foreground) 5%, transparent),
+    transparent 55%
+  );
+}
+
+[data-spotlight] .site-card::after {
+  padding: 1px;
+  background: radial-gradient(
+    360px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    color-mix(in oklch, var(--foreground) 42%, transparent),
+    transparent 65%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+[data-spotlight] .site-card:hover::before,
+[data-spotlight] .site-card:hover::after {
+  opacity: 1;
+}
+
+/*
+ * Architecture diagram edges (ArchitectureDiagram). Idle: quiet hairlines.
+ * Traced: brighter, with a dash pattern flowing in the request direction.
+ * Off-path edges dim. Reduced motion keeps the highlight, drops the flow.
+ */
+.diagram-edge path {
+  fill: none;
+  stroke: color-mix(in oklch, var(--foreground) 18%, transparent);
+  stroke-width: 1.25;
+  transition:
+    stroke var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.diagram-edge circle {
+  fill: color-mix(in oklch, var(--foreground) 30%, transparent);
+  transition:
+    fill var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.diagram-edge[data-state="off"] path,
+.diagram-edge[data-state="off"] circle {
+  opacity: 0.2;
+}
+
+.diagram-edge[data-state="on"] path {
+  stroke: color-mix(in oklch, var(--foreground) 72%, transparent);
+  stroke-dasharray: 5 5;
+  animation: diagram-flow 0.8s linear infinite;
+}
+
+.diagram-edge[data-state="on"] circle {
+  fill: var(--foreground);
+}
+
+@keyframes diagram-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diagram-edge[data-state="on"] path {
+    animation: none;
+    stroke-dasharray: none;
+  }
 }
 
 /* Touch press — app-like feedback without hover dependency */

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -21,14 +21,8 @@ export function Stagger({
   stagger = 0.08,
   once = true,
 }: StaggerProps) {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
-    <motion.div
+    <m.div
       className={className}
       initial="hidden"
       whileInView="show"
@@ -44,7 +38,7 @@ export function Stagger({
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -54,15 +48,9 @@ type StaggerItemProps = {
 };
 
 export function StaggerItem({ children, className }: StaggerItemProps) {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
   // No CSS filter — filter (even blur(0)) rasterizes text soft on mobile GPUs.
   return (
-    <motion.div
+    <m.div
       className={cn(className)}
       variants={{
         hidden: { opacity: 0, y: 24 },
@@ -74,6 +62,6 @@ export function StaggerItem({ children, className }: StaggerItemProps) {
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

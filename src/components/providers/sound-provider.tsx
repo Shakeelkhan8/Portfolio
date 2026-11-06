@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-type SoundName = "click" | "whoosh";
+type SoundName = "click";
 
 type SoundContextValue = {
   muted: boolean;
@@ -48,44 +48,6 @@ function getMuteServerSnapshot() {
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function scheduleGain(
-  gain: GainNode,
-  ctx: AudioContext,
-  peak: number,
-  attack: number,
-  release: number,
-) {
-  const now = ctx.currentTime;
-  gain.gain.cancelScheduledValues(now);
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), now + attack);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + attack + release);
-}
-
-/** Soft whoosh / transition */
-function playWhoosh(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const bufferSize = Math.floor(ctx.sampleRate * 0.28);
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i += 1) {
-    data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI);
-  }
-  const noise = ctx.createBufferSource();
-  const filter = ctx.createBiquadFilter();
-  const gain = ctx.createGain();
-  noise.buffer = buffer;
-  filter.type = "bandpass";
-  filter.frequency.setValueAtTime(400, now);
-  filter.frequency.exponentialRampToValueAtTime(1600, now + 0.22);
-  filter.Q.value = 0.7;
-  scheduleGain(gain, ctx, 0.12, 0.02, 0.22);
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start(now);
 }
 
 const BGM_SRC = "/bg-music.mp3";
@@ -217,9 +179,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
         if (name === "click") {
           const buffer = await ensureClickBuffer(ctx);
           if (buffer && !mutedRef.current) playClickSample(ctx, buffer);
-          return;
         }
-        playWhoosh(ctx);
       })();
     },
     [ensureContext, ensureClickBuffer],

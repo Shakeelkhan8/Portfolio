@@ -1,12 +1,20 @@
-import { IBM_Plex_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Sans, JetBrains_Mono, Mona_Sans } from "next/font/google";
 
-// Body font is preloaded for LCP. Display/mono fonts stay available via CSS
-// variables but skip preload to avoid unused-preload console warnings.
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+/**
+ * Display: Mona Sans (GitHub, SIL OFL), a variable grotesque with weight and
+ * width axes. Headlines use its semi-expanded width (`font-stretch-semi-expanded`),
+ * which gives the type a voice of its own; Space Grotesk, the previous
+ * display face, is one of the most common "developer portfolio" fonts.
+ * Preloaded because the hero headline is above the fold on every visit.
+ *
+ * Body: IBM Plex Sans (preloaded for LCP). Data and labels: JetBrains Mono.
+ */
+const monaSans = Mona_Sans({
+  variable: "--font-mona-sans",
   subsets: ["latin"],
+  axes: ["wdth"],
   display: "swap",
-  preload: false,
+  preload: true,
 });
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -26,7 +34,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const fontVariables = [
-  spaceGrotesk.variable,
+  monaSans.variable,
   ibmPlexSans.variable,
   jetbrainsMono.variable,
 ].join(" ");

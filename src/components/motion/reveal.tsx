@@ -1,8 +1,7 @@
 "use client";
 
 import {
-  motion,
-  useReducedMotion,
+  m,
   type HTMLMotionProps,
 } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
@@ -28,7 +27,6 @@ export function Reveal({
   className,
   ...props
 }: RevealProps) {
-  const prefersReducedMotion = useReducedMotion();
   const [softMotion, setSoftMotion] = useState(true);
 
   useEffect(() => {
@@ -44,14 +42,10 @@ export function Reveal({
     };
   }, []);
 
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
-
   // Mobile/touch: opacity only. Transforms on text ancestors stay soft on GPU.
   if (softMotion) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
@@ -64,7 +58,7 @@ export function Reveal({
         {...props}
       >
         {children}
-      </motion.div>
+      </m.div>
     );
   }
 
@@ -77,7 +71,7 @@ export function Reveal({
   }[direction];
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, ...offset }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
@@ -86,6 +80,6 @@ export function Reveal({
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

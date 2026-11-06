@@ -44,7 +44,7 @@ export function ProjectCard({ project, diagram, delay = 0 }: ProjectCardProps) {
             </p>
             {highlightMetric ? (
               <div className="mt-4">
-                <p className="font-heading text-[1.75rem] leading-none font-semibold tracking-tight text-foreground sm:text-[2.125rem]">
+                <p className="font-heading font-stretch-semi-expanded text-[1.75rem] leading-none font-semibold tracking-tight tabular-nums text-foreground sm:text-[2.125rem]">
                   {highlightMetric.value}
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">

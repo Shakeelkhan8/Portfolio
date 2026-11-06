@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { NavLink } from "@/components/navigation/nav-link";
 import { SocialLinks } from "@/components/shared/social-links";
 import {
@@ -53,7 +53,7 @@ export function MobileNavSheet({
             <AnimatePresence>
               {open
                 ? navigation.mainNav.map((item, index) => (
-                    <motion.div
+                    <m.div
                       key={item.href}
                       initial={
                         prefersReducedMotion ? false : { opacity: 0, y: 12 }
@@ -70,7 +70,7 @@ export function MobileNavSheet({
                         className="block min-h-12 rounded-2xl px-4 py-3.5 text-lg font-medium after:hidden active:bg-muted/70"
                         onClick={() => onOpenChange(false)}
                       />
-                    </motion.div>
+                    </m.div>
                   ))
                 : null}
             </AnimatePresence>

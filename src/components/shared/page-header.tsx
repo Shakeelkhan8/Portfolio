@@ -55,7 +55,7 @@ export function PageHeader({
             as="h1"
             text={title}
             delay={0.06}
-            className="font-heading text-[2.125rem] font-semibold leading-[1.05] tracking-tight text-foreground -tracking-[0.03em] sm:text-5xl md:text-5xl lg:text-6xl"
+            className="font-heading font-stretch-semi-expanded text-[2.125rem] font-semibold leading-[1.05] text-foreground -tracking-[0.03em] sm:text-5xl md:text-5xl lg:text-6xl"
           />
 
           {description ? (

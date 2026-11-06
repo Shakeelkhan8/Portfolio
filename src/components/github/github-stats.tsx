@@ -22,7 +22,7 @@ export function GitHubStats({ profile }: GitHubStatsProps) {
       {stats.map((stat, index) => (
         <Reveal key={stat.label} delay={index * 0.05}>
           <div>
-            <p className="font-heading text-2xl font-semibold tracking-tight text-foreground">
+            <p className="font-heading font-stretch-semi-expanded text-2xl font-semibold tracking-tight tabular-nums text-foreground">
               {stat.value}
             </p>
             <p className="mt-1.5 text-sm text-muted-foreground">{stat.label}</p>
