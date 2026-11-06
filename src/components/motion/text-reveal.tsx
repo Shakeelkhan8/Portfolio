@@ -22,6 +22,12 @@ type TextRevealProps = {
    * `default` — clean mask reveal
    */
   intensity?: "default" | "cinematic";
+  /**
+   * Mount mode only: words from this index on are set in the quieter text
+   * colour, for a two-tone headline ("Senior Backend Engineer" bright, "for
+   * payments, ..." quiet). Hierarchy by tone instead of by size.
+   */
+  quietFrom?: number;
 };
 
 const WORD_STAGGER = { default: 0.045, cinematic: 0.07 } as const;
@@ -51,6 +57,7 @@ export function TextReveal({
   mode = "word",
   when = "mount",
   intensity = "default",
+  quietFrom,
 }: TextRevealProps) {
   const parts = mode === "line" ? [text] : text.split(" ");
   const stagger = mode === "word" ? WORD_STAGGER[intensity] : 0;
@@ -65,7 +72,12 @@ export function TextReveal({
         {parts.map((part, index) => (
           <span key={`${part}-${index}`} className={MASK_CLASS}>
             <span
-              className="enter-word max-w-full"
+              className={cn(
+                "enter-word max-w-full",
+                quietFrom !== undefined &&
+                  index >= quietFrom &&
+                  "text-muted-foreground",
+              )}
               style={
                 {
                   "--enter-delay": `${delay + index * stagger}s`,

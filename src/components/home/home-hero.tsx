@@ -15,14 +15,12 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { AvailabilityBadge } from "@/components/shared/availability-badge";
+import { AppLink } from "@/components/shared/app-link";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Container } from "@/components/layout/container";
 import { HeroOrb } from "@/components/motion/hero-orb";
 import { HERO } from "@/components/motion/hero-timeline";
-import { ScrollCue } from "@/components/motion/scroll-cue";
 import { TextReveal } from "@/components/motion/text-reveal";
-import { Text } from "@/components/typography/text";
 import { routes } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import type { CtaSection, PublicSiteConfig } from "@/types/cms";
@@ -38,9 +36,9 @@ type HomeHeroProps = {
 
 /**
  * Opacity-only entrance for the hero's supporting lines. CSS (`.enter-fade`),
- * so it runs from first paint: the intro paragraph is the page's LCP element
- * and must not wait for hydration. Phones get the shorter duration and
- * reduced motion gets no animation, both in globals.css.
+ * so it runs from first paint: the intro paragraph can be the page's LCP
+ * element and must not wait for hydration. Phones get the shorter duration
+ * and reduced motion gets no animation, both in globals.css.
  */
 function HeroFade({
   children,
@@ -69,8 +67,27 @@ function lowercaseFirstWord(label: string): string {
 }
 
 /**
- * Immersive hero: cosmic visual chapter, then CMS identity over the living star.
- * Orb is section-width (not 100vw) so it never causes horizontal scroll.
+ * Index of the word where the headline's qualifier starts ("for payments,
+ * ..."), so the role reads bright and the specialisation quieter. Undefined
+ * when the CMS headline has no such split: it then renders in one tone.
+ */
+function qualifierStart(headline: string): number | undefined {
+  const words = headline.split(" ");
+  const index = words.findIndex(
+    (word, i) => i > 0 && ["for", "who", "building"].includes(word.toLowerCase()),
+  );
+  return index > 0 ? index : undefined;
+}
+
+/**
+ * Home hero (docs/DESIGN.md).
+ *
+ * Left-aligned editorial composition instead of a centred stack: one line of
+ * identity and availability, a two-tone headline, the intro, one primary
+ * action and a quiet text link, then the case-study results set as a small
+ * ledger along the bottom edge, where they read as evidence rather than as
+ * fine print. The particle star sits to the right as the visual, warm at its
+ * core, and drifts away as you scroll.
  */
 export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -89,15 +106,12 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
   const primaryHref = cta?.primaryHref?.trim() || routes.projects;
   const secondaryLabel = cta?.secondaryLabel?.trim() || null;
   const secondaryHref = cta?.secondaryHref?.trim() || routes.contact;
-  // The hero leads with the work, not the person: the H1 is the CMS headline
-  // and the name lives in the header. Older CMS rows set the headline to the
-  // site name, so fall back to the job title rather than repeat it.
+  // Older CMS rows set the headline to the site name, which the identity line
+  // already shows, so fall back to the professional title.
   const ctaTitle = cta?.title?.trim();
   const headline = ctaTitle && ctaTitle !== site.name ? ctaTitle : site.title;
-  // The CMS hero intro is specific (current role and integrations); the site
-  // description stays generic for meta tags and is only the fallback here.
   const intro = cta?.description?.trim() || site.description;
-  const focus = ["Backend engineering", ...site.expertise.slice(0, 2)];
+  const available = site.availability.status === "available";
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -110,22 +124,25 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
     mass: 0.4,
   });
 
-  const orbY = useTransform(smooth, [0, 1], [0, mobile ? 64 : 140]);
-  const orbScale = useTransform(smooth, [0, 1], [1, mobile ? 1.18 : 1.55]);
+  const orbY = useTransform(smooth, [0, 1], [0, mobile ? 48 : 120]);
+  const orbScale = useTransform(smooth, [0, 1], [1, mobile ? 1.12 : 1.3]);
   const orbOpacity = useTransform(smooth, [0, 0.8], [1, 0.05]);
-  const contentOpacity = useTransform(smooth, [0, 0.5], [1, 0]);
-  const cueOpacity = useTransform(smooth, [0, 0.18], [1, 0]);
+  const contentOpacity = useTransform(smooth, [0, 0.55], [1, 0]);
 
   return (
     <div
       ref={sectionRef}
       className="relative flex min-h-[calc(100svh-var(--header-height)-var(--mobile-tab-bar-height))] w-full max-w-full flex-col overflow-x-clip md:min-h-[calc(100svh-var(--header-height))]"
     >
-      {/* Full-bleed within section — clipped, never uses 100vw */}
+      {/*
+        The star: upper right on phones (behind the copy, dimmed by the scrim
+        below), the right half of the hero from md up. Clipped to the
+        section, never 100vw, so it can't cause horizontal scroll.
+      */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <m.div
           aria-hidden="true"
-          className="absolute inset-0 origin-center will-change-transform"
+          className="absolute -top-[6%] -right-[30%] h-[62%] w-[110%] origin-center will-change-transform md:top-0 md:-right-[6%] md:h-full md:w-[62%]"
           style={
             prefersReducedMotion
               ? undefined
@@ -133,84 +150,75 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
           }
         >
           <HeroOrb />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_46%,transparent_0%,transparent_32%,rgba(0,0,0,0.28)_68%,var(--background)_96%)]" />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 opacity-[0.04] mix-blend-overlay site-noise"
-          />
         </m.div>
+        {/* Keeps the copy readable where it overlaps the star. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,var(--background)_78%)] md:bg-[linear-gradient(90deg,var(--background)_0%,color-mix(in_oklch,var(--background)_82%,transparent)_38%,transparent_70%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,transparent,var(--background))]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-[0.04] mix-blend-overlay site-noise"
+        />
       </div>
 
       <Container className="relative z-10 flex flex-1 flex-col">
-        {/* Dark scrim under the copy so text stays legible over the orb's core. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-[14%] bottom-[18%] -z-10 mx-auto max-w-4xl bg-[radial-gradient(ellipse_closest-side,rgb(0_0_0/0.78),rgb(0_0_0/0.45)_55%,transparent)]"
-        />
         <m.div
-          className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-0 pb-24 pt-4 text-center sm:pb-28 sm:pt-6"
+          className="flex flex-1 flex-col justify-center pt-10 pb-12 sm:pt-14 md:max-w-[42rem] md:pb-16 lg:max-w-[46rem]"
           style={
             prefersReducedMotion
               ? undefined
-              : // Opacity only — translateY on this text tree softens glyphs on mobile GPUs.
+              : // Opacity only: translateY on this text tree softens glyphs on mobile GPUs.
                 { opacity: contentOpacity }
           }
         >
-          <HeroFade delay={HERO.type.badge} className="mb-5 sm:mb-7">
-            <AvailabilityBadge site={site} />
-          </HeroFade>
-
-          <HeroFade delay={HERO.type.location} className="mb-4 sm:mb-5">
-            <p className="font-mono text-[10px] tracking-[0.24em] text-muted-foreground uppercase sm:text-[11px] sm:tracking-[0.32em]">
-              {focus.map((part, index) => (
-                // Phones get the first two parts so the line doesn't wrap.
+          <HeroFade delay={HERO.type.badge} className="mb-7 sm:mb-9">
+            <p className="label-mono flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <span className="text-foreground/85">{site.name}</span>
+              <span aria-hidden="true" className="h-px w-6 bg-foreground/25" />
+              <span className="inline-flex items-center gap-2">
                 <span
-                  key={part}
-                  className={index > 1 ? "hidden sm:inline" : undefined}
-                >
-                  {index > 0 ? " · " : null}
-                  {part}
-                </span>
-              ))}
+                  aria-hidden="true"
+                  className={cn(
+                    "size-1.5 rounded-full",
+                    available
+                      ? "bg-success shadow-[0_0_0_3px_color-mix(in_oklch,var(--success)_22%,transparent)]"
+                      : "bg-muted-foreground",
+                  )}
+                />
+                {available ? "Available for work" : "Not taking new work"}
+              </span>
             </p>
           </HeroFade>
 
-          <div className="relative mb-6 w-full max-w-4xl sm:mb-7">
-            <TextReveal
-              as="h1"
-              text={headline}
-              intensity="default"
-              delay={HERO.type.name}
-              className="font-heading font-stretch-semi-expanded relative z-10 max-w-full text-[clamp(2rem,8.5vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-balance text-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.75)] sm:text-5xl md:text-6xl lg:text-[4.25rem]"
-            />
-          </div>
+          <TextReveal
+            as="h1"
+            text={headline}
+            delay={HERO.type.name}
+            quietFrom={qualifierStart(headline)}
+            className="font-heading font-stretch-normal max-w-[22ch] text-display font-semibold text-balance text-foreground sm:font-stretch-semi-expanded"
+          />
 
           {intro ? (
-            <HeroFade
-              delay={HERO.type.description}
-              className="mb-8 w-full max-w-md sm:mb-10 sm:max-w-2xl"
-            >
-              <Text
-                size="lg"
-                leading="relaxed"
-                className="relative z-10 text-[0.9375rem] leading-relaxed text-pretty text-foreground/72 [text-shadow:0_1px_18px_rgb(0_0_0/0.9)] sm:text-lg"
-              >
+            <HeroFade delay={HERO.type.description} className="mt-7 sm:mt-8">
+              <p className="max-w-[36rem] text-lead text-pretty text-foreground/75">
                 {intro}
-              </Text>
+              </p>
             </HeroFade>
           ) : null}
 
           {primaryLabel || secondaryLabel ? (
-            <HeroFade
-              delay={HERO.type.actions}
-              className="w-full max-w-xs sm:max-w-none"
-            >
-              <div className="relative z-10 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <HeroFade delay={HERO.type.actions} className="mt-9 sm:mt-10">
+              <div className="flex flex-wrap items-center gap-x-7 gap-y-4 sm:gap-x-8">
                 {primaryLabel ? (
                   <ButtonLink
                     href={primaryHref}
                     size="lg"
-                    className="group min-h-12 w-full transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:min-w-[10.5rem] sm:w-auto"
+                    className="group min-h-12 px-6 transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
                   >
                     {primaryLabel}
                     <ArrowRight
@@ -220,63 +228,39 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
                   </ButtonLink>
                 ) : null}
                 {secondaryLabel ? (
-                  <ButtonLink
+                  <AppLink
                     href={secondaryHref}
-                    variant="outline"
-                    size="lg"
-                    className="min-h-12 w-full border-border/80 bg-background/20 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] sm:min-w-[10.5rem] sm:w-auto"
+                    showExternalIcon={false}
+                    className="link-draw inline-flex min-h-11 items-center text-[0.9375rem] font-medium text-foreground"
                   >
                     {secondaryLabel}
-                  </ButtonLink>
+                  </AppLink>
                 ) : null}
               </div>
             </HeroFade>
           ) : null}
-
-          {proof.length > 0 ? (
-            <HeroFade
-              delay={HERO.type.actions + 0.15}
-              className="mt-9 w-full sm:mt-11"
-            >
-              <ul
-                aria-label="Results from the case studies"
-                className="relative z-10 mx-auto flex max-w-3xl flex-col items-center justify-center gap-x-5 gap-y-1.5 font-mono sm:flex-row sm:flex-wrap text-[11px] tracking-wide text-muted-foreground sm:text-xs"
-              >
-                {proof.map((metric, index) => (
-                  <li
-                    key={`${metric.value}-${metric.label}`}
-                    className="flex items-center gap-5"
-                  >
-                    {index > 0 ? (
-                      <span
-                        aria-hidden="true"
-                        className="hidden text-foreground/20 sm:inline"
-                      >
-                        ·
-                      </span>
-                    ) : null}
-                    <span>
-                      <span className="font-medium text-foreground/90">
-                        {metric.value}
-                      </span>{" "}
-                      {lowercaseFirstWord(metric.label)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </HeroFade>
-          ) : null}
         </m.div>
-      </Container>
 
-      <m.div
-        className="pointer-events-none absolute inset-x-0 bottom-5 z-20 sm:bottom-8"
-        style={prefersReducedMotion ? undefined : { opacity: cueOpacity }}
-      >
-        <HeroFade delay={HERO.type.cue}>
-          <ScrollCue />
-        </HeroFade>
-      </m.div>
+        {proof.length > 0 ? (
+          <HeroFade delay={HERO.type.actions + 0.15} className="pb-8 sm:pb-10">
+            <ul
+              aria-label="Results from the case studies"
+              className="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-foreground/10 pt-6 sm:pt-7 md:flex md:gap-14"
+            >
+              {proof.map((metric) => (
+                <li key={`${metric.value}-${metric.label}`} className="min-w-0">
+                  <p className="font-heading font-stretch-semi-expanded text-figure font-semibold text-signal tabular-nums">
+                    {metric.value}
+                  </p>
+                  <p className="mt-2 max-w-[18ch] text-sm leading-snug text-muted-foreground">
+                    {lowercaseFirstWord(metric.label)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </HeroFade>
+        ) : null}
+      </Container>
     </div>
   );
 }
