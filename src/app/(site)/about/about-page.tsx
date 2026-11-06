@@ -1,10 +1,10 @@
 import { DecisionHighlight } from "@/components/about/decision-highlight";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
+import { SectionHeader } from "@/components/layout/section-header";
 import { PageHeader } from "@/components/shared/page-header";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { Reveal } from "@/components/motion/reveal";
-import { Heading } from "@/components/typography/heading";
 import { Text } from "@/components/typography/text";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,9 +23,9 @@ export default async function AboutPage() {
   return (
     <>
       <PageHeader
-        eyebrow="About"
         title="About"
-        description="I build the parts of SaaS products that handle money and operations: tenancy, payments, ledgers and the integrations around them."
+        heading="I work on the parts of a product that move money."
+        description="Tenancy, payments, ledgers and the integrations around them, mostly in Laravel, PHP and PostgreSQL."
       >
         <AvailabilityBadge site={site} />
       </PageHeader>
@@ -34,7 +34,10 @@ export default async function AboutPage() {
         <Container className="space-y-5">
           {about.paragraphs.map((paragraph, index) => (
             <Reveal key={paragraph.slice(0, 30)} delay={index * 0.05}>
-              <Text leading="relaxed" muted className="text-pretty">
+              <Text
+                leading="relaxed"
+                className="max-w-[68ch] text-lead text-pretty text-foreground/80"
+              >
                 {paragraph}
               </Text>
             </Reveal>
@@ -44,81 +47,58 @@ export default async function AboutPage() {
 
       <DecisionHighlight />
 
-      <Section spacing="none" className="pb-16 pt-10 sm:pb-20 sm:pt-12">
+      <Section spacing="none" className="pb-16 pt-10 sm:pb-20 sm:pt-14">
         <Container>
-          <Reveal>
-            <p className="mb-3 font-mono text-[11px] font-medium tracking-[0.28em] text-muted-foreground uppercase">
-              Toolkit
-            </p>
-            <Heading as="h2" size="lg" className="mb-8 text-foreground sm:mb-10">
-              Skills
-            </Heading>
-          </Reveal>
-
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <SectionHeader
+            title="Toolkit"
+            description="What I reach for, grouped by the job it does."
+          />
+          {/* Ruled rows, like a ledger: the job on the left, the tools on the right. */}
+          <dl className="border-t border-foreground/10">
             {skillGroups.map((group, index) => (
-              <Reveal key={group.category} delay={index * 0.045} className="h-full">
-                <article className="flex h-full flex-col rounded-2xl border border-foreground/[0.06] bg-foreground/[0.03] p-5 transition-[border-color,background-color] duration-300 hover:border-foreground/12 hover:bg-foreground/[0.045] sm:p-6">
-                  <div className="mb-4 flex items-baseline gap-3 border-b border-foreground/[0.06] pb-3.5">
-                    <span
-                      className="font-mono text-[11px] font-medium tracking-wide text-muted-foreground tabular-nums"
-                      aria-hidden="true"
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <Text className="font-heading text-[0.98rem] font-semibold tracking-tight text-foreground">
-                      {group.category}
-                    </Text>
-                  </div>
-                  <ul className="flex flex-wrap gap-2">
-                    {group.skills.map((skill) => (
-                      <li key={skill}>
-                        <Badge
-                          variant="secondary"
-                          className="border border-foreground/8 bg-background/50 px-2.5 py-1 text-[0.75rem] font-medium text-foreground/85"
-                        >
-                          {skill}
-                        </Badge>
-                      </li>
-                    ))}
-                  </ul>
-                </article>
+              <Reveal key={group.category} delay={index * 0.03}>
+                <div className="grid gap-3 border-b border-foreground/10 py-5 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-8 sm:py-6">
+                  <dt className="font-heading text-subheading font-semibold text-foreground">
+                    {group.category}
+                  </dt>
+                  <dd>
+                    <ul className="flex flex-wrap gap-2">
+                      {group.skills.map((skill) => (
+                        <li key={skill}>
+                          <Badge
+                            variant="secondary"
+                            className="border border-foreground/8 bg-foreground/[0.03] px-2.5 py-1 text-[0.8125rem] font-medium text-foreground/85"
+                          >
+                            {skill}
+                          </Badge>
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
               </Reveal>
             ))}
-          </div>
+          </dl>
         </Container>
       </Section>
 
       {site.languagesVisible !== false && site.languages.length > 0 ? (
         <Section spacing="none" className="pb-16 pt-2 sm:pb-20 sm:pt-4">
           <Container>
-            <Reveal>
-              <p className="mb-3 font-mono text-[11px] font-medium tracking-[0.28em] text-muted-foreground uppercase">
-                Communication
-              </p>
-              <Heading as="h2" size="lg" className="mb-8 text-foreground sm:mb-10">
-                Languages
-              </Heading>
-            </Reveal>
-
-            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-              {site.languages.map((language, index) => (
-                <Reveal
+            <SectionHeader title="Languages" />
+            <ul className="grid gap-x-10 gap-y-6 sm:grid-cols-3">
+              {site.languages.map((language) => (
+                <li
                   key={`${language.name}-${language.level}`}
-                  delay={index * 0.045}
-                  className="h-full"
+                  className="border-t border-foreground/10 pt-4"
                 >
-                  <article className="flex h-full flex-col justify-between rounded-2xl border border-foreground/[0.06] bg-foreground/[0.03] p-5 transition-[border-color,background-color] duration-300 hover:border-foreground/12 hover:bg-foreground/[0.045] sm:p-6">
-                    <Text className="font-heading text-[0.98rem] font-semibold tracking-tight text-foreground">
-                      {language.name}
-                    </Text>
-                    <p className="mt-3 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">
-                      {language.level}
-                    </p>
-                  </article>
-                </Reveal>
+                  <p className="font-heading text-subheading font-semibold text-foreground">
+                    {language.name}
+                  </p>
+                  <p className="label-mono mt-2">{language.level}</p>
+                </li>
               ))}
-            </div>
+            </ul>
           </Container>
         </Section>
       ) : null}

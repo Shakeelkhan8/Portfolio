@@ -2,8 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import { Heading } from "@/components/typography/heading";
-import { Text } from "@/components/typography/text";
+import { SectionHeader } from "@/components/layout/section-header";
 import { Reveal } from "@/components/motion/reveal";
 import { routes } from "@/config/navigation";
 import { getProjects } from "@/lib/content";
@@ -47,13 +46,11 @@ export async function DecisionHighlight() {
   return (
     <Section spacing="none" className="py-10 sm:py-12">
       <Container>
+        <SectionHeader
+          title="How I decide"
+          description="One call from a live system, with the reasoning and what it cost."
+        />
         <Reveal>
-          <Heading as="h2" size="lg" className="mb-3 text-foreground">
-            How I decide
-          </Heading>
-          <Text muted leading="relaxed" className="mb-6">
-            One call from a live system, with the reasoning and what it cost:
-          </Text>
 
           <AppLink
             href={href}

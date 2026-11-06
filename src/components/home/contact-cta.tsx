@@ -4,7 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Text } from "@/components/typography/text";
 import { Reveal } from "@/components/motion/reveal";
-import { TextReveal } from "@/components/motion/text-reveal";
+import { SectionHeader } from "@/components/layout/section-header";
+import { AppLink } from "@/components/shared/app-link";
 import { routes } from "@/config/navigation";
 import {
   getMailtoHref,
@@ -20,107 +21,93 @@ type ContactCTAProps = {
 
 /**
  * Closing call to action with two paths: someone hiring for a role, and
- * someone with a project. Replaces the separate "Working together" service
- * cards, which said the same thing in a generic way one section earlier.
+ * someone with a project. Ruled columns under the shared section header
+ * rather than two boxed cards: the paths hold very different amounts of
+ * text, and boxes made the shorter one look half empty.
  */
 export function ContactCTA({ site, services = [] }: ContactCTAProps) {
   const email = site.email?.trim() ?? "";
   const availability = site.availability.message?.trim();
 
   return (
-    <Reveal>
-      <div className="relative isolate overflow-hidden px-2 py-8 sm:px-6 sm:py-12">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgb(245_245_245/0.04),transparent_70%)]"
-        />
-        <div className="text-center">
-          <p className="mb-4 font-mono text-[11px] tracking-[0.32em] text-muted-foreground uppercase">
-            Contact
+    <div>
+      <SectionHeader
+        title="Contact"
+        description="Have a backend problem, or a role to fill?"
+      />
+      {availability ? (
+        <Text muted className="-mt-4 mb-10 max-w-xl text-pretty sm:-mt-6 sm:mb-14">
+          {availability}
+        </Text>
+      ) : null}
+
+      <div className="grid gap-12 md:grid-cols-2 md:gap-16">
+        <Reveal className="flex flex-col border-t border-foreground/10 pt-6">
+          <p className="label-mono">For hiring managers</p>
+          <h3 className="mt-3 font-heading text-subheading font-semibold text-foreground">
+            Hiring for a backend role
+          </h3>
+          <p className="mt-3 max-w-[48ch] leading-relaxed text-pretty text-muted-foreground">
+            I&apos;m open to remote backend roles on product teams. The resume
+            has the detail; email is the quickest way to reach me.
           </p>
-          <TextReveal
-            as="h2"
-            text="Have a backend problem, or a role to fill?"
-            when="inView"
-            className="font-heading font-stretch-semi-expanded mx-auto mb-3 max-w-2xl text-3xl font-semibold tracking-tight text-balance text-foreground sm:text-4xl"
-          />
-          {availability ? (
-            <Text muted className="mx-auto max-w-lg text-balance">
-              {availability}
-            </Text>
-          ) : null}
-        </div>
-
-        <div className="mx-auto mt-10 grid max-w-4xl gap-5 text-left md:grid-cols-2">
-          <div className="site-card flex flex-col rounded-2xl p-5 sm:p-6">
-            <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
-              Hiring for a backend role
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              I&apos;m open to remote backend roles on product teams. The resume
-              has the detail; email is the quickest way to reach me.
-            </p>
-            <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
-              <ButtonLink href={routes.resume} className="group/btn">
-                Read the resume
-                <ArrowRight
-                  className="size-4 transition-transform duration-300 group-hover/btn:translate-x-1"
-                  data-icon="inline-end"
-                />
-              </ButtonLink>
-              {email ? (
-                <ButtonLink
-                  href={getMailtoHref(email)}
-                  variant="outline"
-                  className="bg-transparent"
-                >
-                  {getPublicEmailLabel(email)}
-                </ButtonLink>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="site-card flex flex-col rounded-2xl p-5 sm:p-6">
-            <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
-              For agencies and product teams
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">
-              Scope and price in writing before I start, a short update every
-              working day, and a test with every fix. For agencies the work is
-              white-label: NDA on request, and I never contact your client.
-            </p>
-            {services.length > 0 ? (
-              <ul className="mt-4 space-y-2.5">
-                {services.map((service) => (
-                  <li key={service.id} className="text-sm leading-relaxed">
-                    <span className="font-medium text-foreground">
-                      {service.title}.
-                    </span>{" "}
-                    <span className="text-muted-foreground">
-                      {service.description}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+          <div className="flex flex-col items-start gap-4 pt-8 sm:flex-row sm:items-center sm:gap-7">
+            <ButtonLink href={routes.resume} className="group/btn">
+              Read the resume
+              <ArrowRight
+                className="size-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+                data-icon="inline-end"
+              />
+            </ButtonLink>
+            {email ? (
+              <a
+                href={getMailtoHref(email)}
+                className="link-draw text-sm font-medium text-foreground"
+              >
+                {getPublicEmailLabel(email)}
+              </a>
             ) : null}
-            <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
-              <ButtonLink href={routes.contact}>
-                Book a code health check
-              </ButtonLink>
-              {site.links.upwork ? (
-                <ButtonLink
-                  href={site.links.upwork}
-                  variant="outline"
-                  className="bg-transparent"
-                  showExternalIcon
-                >
-                  See packages on Upwork
-                </ButtonLink>
-              ) : null}
-            </div>
           </div>
-        </div>
+        </Reveal>
+
+        <Reveal delay={0.08} className="flex flex-col border-t border-foreground/10 pt-6">
+          <p className="label-mono">For agencies and product teams</p>
+          <h3 className="mt-3 font-heading text-subheading font-semibold text-foreground">
+            Project work, scoped in writing
+          </h3>
+          <p className="mt-3 max-w-[48ch] leading-relaxed text-pretty text-muted-foreground">
+            Scope and price in writing before I start, a short update every
+            working day, and a test with every fix. For agencies the work is
+            white-label: NDA on request, and I never contact your client.
+          </p>
+          {services.length > 0 ? (
+            <ul className="mt-6 divide-y divide-foreground/[0.07] border-y border-foreground/[0.07]">
+              {services.map((service) => (
+                <li key={service.id} className="py-3.5 text-sm leading-relaxed">
+                  <span className="font-medium text-foreground">
+                    {service.title}.
+                  </span>{" "}
+                  <span className="text-muted-foreground">
+                    {service.description}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <div className="flex flex-col items-start gap-4 pt-8 sm:flex-row sm:items-center sm:gap-7">
+            <ButtonLink href={routes.contact}>Book a code health check</ButtonLink>
+            {site.links.upwork ? (
+              <AppLink
+                href={site.links.upwork}
+                showExternalIcon
+                className="link-draw text-sm font-medium text-foreground"
+              >
+                See packages on Upwork
+              </AppLink>
+            ) : null}
+          </div>
+        </Reveal>
       </div>
-    </Reveal>
+    </div>
   );
 }
