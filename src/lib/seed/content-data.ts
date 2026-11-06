@@ -25,8 +25,7 @@ export const homeSectionHeaders = [
     page_key: "home",
     section_key: "projects",
     title: "Case studies",
-    description:
-      "Live systems I've built and run: what the problem was, what I decided, and what it cost.",
+    description: "Engineering systems that work in production.",
     display_order: 1,
   },
   {
@@ -71,13 +70,13 @@ export const ctaSections = [
   {
     section_key: "home_hero",
     title:
-      "Senior Backend Engineer for payments, integrations and multi-tenant SaaS.",
+      "Senior Backend Engineer building scalable SaaS, payment systems and AI-powered applications.",
     description:
-      "I design the backend of SaaS products that handle money: payment integrations that are safe to retry, double-entry ledgers, and tenancy that keeps each customer's data separate. Agencies can also hire me white-label.",
-    primary_label: "See the case studies",
-    primary_href: "/projects",
-    secondary_label: "Work with me",
-    secondary_href: "/contact",
+      "I help businesses build, fix and scale production Laravel and PHP applications: PostgreSQL and Redis underneath, payments, APIs and AI integrations around them. Agencies can also hire me white-label.",
+    primary_label: "Discuss your project",
+    primary_href: "/contact#contact-form",
+    secondary_label: "Explore my work",
+    secondary_href: "/projects",
   },
   {
     section_key: "home_contact",

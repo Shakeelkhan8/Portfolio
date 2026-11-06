@@ -8,6 +8,7 @@ import {
   Mail,
   MoreHorizontal,
   User,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import { m } from "framer-motion";
@@ -29,6 +30,7 @@ const ICON_BY_HREF: Record<string, LucideIcon> = {
   [routes.home]: Home,
   [routes.about]: User,
   [routes.projects]: FolderKanban,
+  [routes.services]: Wrench,
   [routes.writing]: BookOpen,
   [routes.experience]: Briefcase,
   [routes.contact]: Mail,
@@ -56,8 +58,11 @@ export function MobileTabBar({ site, navigation }: MobileTabBarProps) {
 
   const tabs = useMemo(() => {
     const home: NavItem = { title: "Home", href: routes.home };
+    // Services before About: on a phone the tab bar is the main way to find
+    // what can be hired; About stays one tap away in the "More" sheet.
     const preferred = [
       routes.projects,
+      routes.services,
       routes.experience,
       routes.writing,
       routes.contact,

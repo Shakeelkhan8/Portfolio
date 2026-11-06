@@ -413,6 +413,8 @@ export type Database = {
         name: string;
         email: string;
         message: string;
+        project_type: string | null;
+        budget: string | null;
         status: ContactStatus;
         ip_hash: string | null;
         user_agent: string | null;

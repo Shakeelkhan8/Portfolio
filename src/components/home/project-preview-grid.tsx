@@ -1,7 +1,11 @@
 import { ArrowUpRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
 import { Reveal } from "@/components/motion/reveal";
-import { getFeaturedProjects } from "@/lib/content";
+import { ArchitectureStrip } from "@/components/architecture/architecture-strip";
+import {
+  getArchitectureDiagramsBySlugs,
+  getFeaturedProjects,
+} from "@/lib/content";
 import { routes } from "@/config/navigation";
 import type { Project } from "@/types";
 
@@ -27,6 +31,9 @@ export async function ProjectPreviewGrid({
   const items = (projects ?? (await getFeaturedProjects())).slice(
     0,
     limit ?? undefined,
+  );
+  const diagrams = await getArchitectureDiagramsBySlugs(
+    items.map((project) => project.slug),
   );
 
   return (
@@ -69,8 +76,15 @@ export async function ProjectPreviewGrid({
                     <p className="mt-3 max-w-[60ch] leading-relaxed text-pretty text-muted-foreground">
                       {project.summary}
                     </p>
+                    {diagrams[project.slug] ? (
+                      // The real system, layer by layer, from the case study's diagram.
+                      <ArchitectureStrip
+                        diagram={diagrams[project.slug]!}
+                        className="mt-5"
+                      />
+                    ) : null}
                     {project.stack.length > 0 ? (
-                      <p className="mt-5 font-mono text-xs text-foreground/55">
+                      <p className="mt-3 font-mono text-xs text-foreground/55">
                         {project.stack.slice(0, 5).join("  ·  ")}
                       </p>
                     ) : null}

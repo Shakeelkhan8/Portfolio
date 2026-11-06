@@ -1,6 +1,36 @@
 import type { ArchitectureDiagramData } from "@/types";
 
 export const architectureDiagrams: Record<string, ArchitectureDiagramData> = {
+  "ai-mentor-health": {
+    title: "AI Mentor Health: architecture",
+    nodes: [
+      { id: "web", label: "Web app", type: "frontend", layer: 0 },
+      { id: "http", label: "HTTP and actions", type: "api", layer: 1 },
+      { id: "coaching", label: "Coaching", type: "service", layer: 2 },
+      { id: "habits", label: "Habits", type: "service", layer: 2 },
+      { id: "plans", label: "Weekly plans", type: "service", layer: 2 },
+      { id: "billing", label: "Billing", type: "service", layer: 2 },
+      { id: "client", label: "AiCoachClient contract", type: "service", layer: 3 },
+      { id: "mysql", label: "MySQL", type: "database", layer: 3 },
+      { id: "ai", label: "AI provider", type: "external", layer: 4 },
+      { id: "stripe", label: "Stripe", type: "external", layer: 4 },
+    ],
+    edges: [
+      { from: "web", to: "http" },
+      { from: "http", to: "coaching" },
+      { from: "http", to: "habits" },
+      { from: "http", to: "plans" },
+      { from: "http", to: "billing" },
+      { from: "coaching", to: "client" },
+      { from: "plans", to: "client" },
+      { from: "coaching", to: "mysql" },
+      { from: "habits", to: "mysql" },
+      { from: "plans", to: "mysql" },
+      { from: "billing", to: "mysql" },
+      { from: "client", to: "ai" },
+      { from: "billing", to: "stripe" },
+    ],
+  },
   portfolio: {
     title: "Portfolio and CMS: architecture",
     nodes: [

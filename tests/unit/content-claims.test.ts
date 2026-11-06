@@ -5,6 +5,8 @@ import {
   DEFAULT_SEO_TITLE,
 } from "@/lib/db/fallback/settings";
 import { getSeedPayload } from "@/lib/seed/content-data";
+import * as serviceCatalog from "@/content/service-catalog";
+import { impact } from "@/content/impact";
 
 /**
  * Claims the 2026-10-29 git audit contradicts, or that were never verified.
@@ -48,6 +50,8 @@ const publicText = JSON.stringify({
   seed: getSeedPayload(),
   site: siteConfig,
   seo: [DEFAULT_SEO_TITLE, DEFAULT_SEO_DESCRIPTION],
+  services: serviceCatalog,
+  impact,
 });
 
 describe("public content claims", () => {

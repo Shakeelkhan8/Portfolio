@@ -17,22 +17,22 @@ function websiteId(site: SiteConfig): string {
 
 const personRef = (site: SiteConfig) => ({ "@id": personId(site) });
 
+/**
+ * The site owner. Deliberately no legal name, address, city or country: the
+ * same fields toPublicSiteConfig() keeps out of client components (see the
+ * "keep phone and location out of the page HTML" fix). This schema is on
+ * every page, so it must not reintroduce them.
+ */
 export function getPersonSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": personId(site),
     name: site.name,
-    alternateName: site.legalName,
     jobTitle: site.title,
     description: site.description,
     email: site.email,
     url: site.url,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: site.city,
-      addressCountry: site.location,
-    },
     sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
     knowsAbout: site.expertise,
   };
@@ -149,5 +149,64 @@ export function getArticleSchema(
     url: `${site.url}${routes.article(article.slug)}`,
     datePublished: article.date,
     author: personRef(site),
+  };
+}
+
+/** "From $1,500" -> 1500; null when the text has no dollar amount. */
+export function parseStartingPrice(price: string): number | null {
+  const match = /\$([\d,]+)/.exec(price);
+  return match ? Number(match[1]!.replace(/,/g, "")) : null;
+}
+
+/**
+ * The /services offers as schema.org Services provided by the Person, each
+ * with its starting price. Prices are "from" prices, so they are expressed
+ * as a minimum (`minPrice`), never as a fixed price. No ratings or reviews.
+ */
+export function getServiceCatalogSchema(
+  site: SiteConfig,
+  offers: Array<{ title: string; summary: string; price: string }>,
+  pageUrl: string,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "OfferCatalog",
+    name: `${site.name}: backend engineering services`,
+    url: pageUrl,
+    itemListElement: offers.map((offer) => {
+      const minPrice = parseStartingPrice(offer.price);
+      return {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: offer.title,
+          description: offer.summary,
+          provider: personRef(site),
+          areaServed: "Worldwide",
+        },
+        ...(minPrice !== null
+          ? {
+              priceSpecification: {
+                "@type": "PriceSpecification",
+                minPrice,
+                priceCurrency: "USD",
+                ...(/month/i.test(offer.price) ? { unitText: "MONTH" } : {}),
+              },
+            }
+          : {}),
+      };
+    }),
+  };
+}
+
+export function getFaqSchema(items: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
   };
 }

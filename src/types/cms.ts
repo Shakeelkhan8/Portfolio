@@ -416,6 +416,9 @@ export type ContactSubmissionRecord = {
   name: string;
   email: string;
   message: string;
+  /** Stable keys from PROJECT_TYPES / BUDGETS; null on older rows. */
+  projectType: string | null;
+  budget: string | null;
   status: "unread" | "read" | "archived";
   ipHash: string | null;
   userAgent: string | null;
