@@ -16,8 +16,8 @@ export default async function ContactPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Contact"
         title="Contact"
+        heading="Tell me what you need."
         description={site.availability.message}
       >
         <AvailabilityBadge site={site} />

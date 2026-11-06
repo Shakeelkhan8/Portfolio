@@ -16,6 +16,13 @@ type Mote = {
   elev: number;
 };
 
+/**
+ * Warm palette (docs/DESIGN.md): the particles are warm white and the core
+ * glows ember, so the hero's one point of light is the site's signal colour.
+ */
+const STAR = "255,243,226";
+const EMBER = "236,170,92";
+
 type HeroOrbProps = {
   className?: string;
 };
@@ -269,7 +276,7 @@ export function HeroOrb({ className }: HeroOrbProps) {
           const dx = (d.x + t * d.s * 4) % width;
           const dy = (d.y + Math.sin(t * 0.2 + i) * 2 + height) % height;
           ctx!.beginPath();
-          ctx!.fillStyle = `rgba(255,255,255,${d.a * presence * gather})`;
+          ctx!.fillStyle = `rgba(${STAR},${d.a * presence * gather})`;
           ctx!.arc(dx, dy, d.r, 0, Math.PI * 2);
           ctx!.fill();
         }
@@ -279,10 +286,10 @@ export function HeroOrb({ className }: HeroOrbProps) {
       const atmR = Math.min(width, height) * (0.22 + awaken * 0.42) * scale;
       const atm = safeRadialGradient(ctx!, cx, cy, 0, cx, cy, atmR);
       if (atm) {
-        atm.addColorStop(0, `rgba(255,255,255,${0.065 * presence * spark})`);
-        atm.addColorStop(0.35, `rgba(255,255,255,${0.022 * presence})`);
-        atm.addColorStop(0.7, `rgba(255,255,255,${0.006 * presence})`);
-        atm.addColorStop(1, "rgba(255,255,255,0)");
+        atm.addColorStop(0, `rgba(${EMBER},${0.065 * presence * spark})`);
+        atm.addColorStop(0.35, `rgba(${EMBER},${0.022 * presence})`);
+        atm.addColorStop(0.7, `rgba(${EMBER},${0.006 * presence})`);
+        atm.addColorStop(1, `rgba(${EMBER},0)`);
         ctx!.fillStyle = atm;
         ctx!.fillRect(0, 0, width, height);
       }
@@ -300,15 +307,15 @@ export function HeroOrb({ className }: HeroOrbProps) {
       if (heart) {
         heart.addColorStop(
           0,
-          `rgba(255,255,255,${0.82 * presence * corePulse})`,
+          `rgba(${EMBER},${0.82 * presence * corePulse})`,
         );
         heart.addColorStop(
           0.1,
-          `rgba(255,255,255,${0.32 * presence * spark})`,
+          `rgba(${EMBER},${0.32 * presence * spark})`,
         );
-        heart.addColorStop(0.28, `rgba(255,255,255,${0.09 * presence})`);
-        heart.addColorStop(0.55, `rgba(255,255,255,${0.025 * presence})`);
-        heart.addColorStop(1, "rgba(255,255,255,0)");
+        heart.addColorStop(0.28, `rgba(${EMBER},${0.09 * presence})`);
+        heart.addColorStop(0.55, `rgba(${EMBER},${0.025 * presence})`);
+        heart.addColorStop(1, `rgba(${EMBER},0)`);
         ctx!.fillStyle = heart;
         ctx!.beginPath();
         ctx!.arc(cx, cy, Math.max(coreR * 3.6, 1e-6), 0, Math.PI * 2);
@@ -323,7 +330,7 @@ export function HeroOrb({ className }: HeroOrbProps) {
         ctx!.translate(cx, cy);
         ctx!.rotate(t * 0.065 + Math.sin(t * 0.2) * 0.05);
         ctx!.beginPath();
-        ctx!.strokeStyle = `rgba(255,255,255,${0.12 * presence * gather})`;
+        ctx!.strokeStyle = `rgba(${STAR},${0.12 * presence * gather})`;
         ctx!.lineWidth = 0.85;
         ctx!.ellipse(
           0,
@@ -398,7 +405,7 @@ export function HeroOrb({ className }: HeroOrbProps) {
         const p = projected[i]!;
         if (p.a < 0.018) continue;
         ctx!.beginPath();
-        ctx!.fillStyle = `rgba(255,255,255,${p.a})`;
+        ctx!.fillStyle = `rgba(${STAR},${p.a})`;
         ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx!.fill();
       }
@@ -417,7 +424,7 @@ export function HeroOrb({ className }: HeroOrbProps) {
           const ea =
             (0.1 + Math.sin(t * 1.3 + e.phase) * 0.07) * presence * gather;
           ctx!.beginPath();
-          ctx!.fillStyle = `rgba(255,255,255,${ea})`;
+          ctx!.fillStyle = `rgba(${STAR},${ea})`;
           ctx!.arc(ex, ey, e.size, 0, Math.PI * 2);
           ctx!.fill();
         }
@@ -438,9 +445,9 @@ export function HeroOrb({ className }: HeroOrbProps) {
             Math.min(width, height) * 0.58 * scale,
           );
           if (g) {
-            g.addColorStop(0, `rgba(255,255,255,${bloom})`);
-            g.addColorStop(0.35, `rgba(255,255,255,${bloom * 0.28})`);
-            g.addColorStop(1, "rgba(255,255,255,0)");
+            g.addColorStop(0, `rgba(${STAR},${bloom})`);
+            g.addColorStop(0.35, `rgba(${STAR},${bloom * 0.28})`);
+            g.addColorStop(1, `rgba(${STAR},0)`);
             ctx!.fillStyle = g;
             ctx!.fillRect(0, 0, width, height);
           }
@@ -465,15 +472,15 @@ export function HeroOrb({ className }: HeroOrbProps) {
         Math.min(width, height) * 0.4,
       );
       if (g) {
-        g.addColorStop(0, "rgba(255,255,255,0.35)");
-        g.addColorStop(0.28, "rgba(255,255,255,0.09)");
-        g.addColorStop(1, "rgba(255,255,255,0)");
+        g.addColorStop(0, `rgba(${STAR},0.35)`);
+        g.addColorStop(0.28, `rgba(${STAR},0.09)`);
+        g.addColorStop(1, `rgba(${STAR},0)`);
         ctx!.fillStyle = g;
         ctx!.fillRect(0, 0, width, height);
       }
       for (const p of shell) {
         ctx!.beginPath();
-        ctx!.fillStyle = "rgba(255,255,255,0.5)";
+        ctx!.fillStyle = `rgba(${STAR},0.5)`;
         ctx!.arc(cx + p.x, cy + p.y * 0.95, 0.8, 0, Math.PI * 2);
         ctx!.fill();
       }

@@ -2,15 +2,26 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import type { ComponentPropsWithoutRef, ElementType } from "react";
 
-const headingVariants = cva("font-heading tracking-tight text-foreground", {
+/**
+ * Heading sizes map onto the site type scale (`--text-*` tokens in
+ * globals.css, documented in docs/DESIGN.md). Each token carries its own
+ * line height and tracking, so variants don't set them.
+ */
+const headingVariants = cva("font-heading text-foreground", {
   variants: {
     size: {
-      sm: "text-lg font-medium leading-snug",
-      md: "text-xl font-semibold leading-snug sm:text-2xl",
-      lg: "text-2xl font-semibold leading-tight sm:text-3xl",
-      xl: "font-stretch-semi-expanded text-3xl font-semibold leading-tight -tracking-[0.01em] sm:text-4xl",
-      "2xl": "font-stretch-semi-expanded text-[2rem] font-semibold leading-[1.1] -tracking-[0.015em] sm:text-[2.75rem]",
-      hero: "font-stretch-semi-expanded text-[2.5rem] font-semibold leading-[1.05] -tracking-[0.025em] sm:text-6xl lg:text-[4.25rem]",
+      /** Small item titles inside lists. */
+      sm: "text-lg leading-snug font-medium tracking-tight",
+      /** Card and item titles. */
+      md: "text-subheading font-semibold",
+      /** Section headings inside a page. */
+      lg: "font-stretch-semi-expanded text-heading font-semibold",
+      /** Page titles: one per page. */
+      xl: "font-stretch-semi-expanded text-title font-semibold",
+      /** Section statements on the home page. */
+      "2xl": "font-stretch-semi-expanded text-heading font-semibold",
+      /** Home hero headline. */
+      hero: "font-stretch-semi-expanded text-display font-semibold",
     },
     balance: {
       true: "text-balance",

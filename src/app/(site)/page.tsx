@@ -123,12 +123,12 @@ export default async function Home() {
                 "Things I build in my own time, mostly to solve problems I have."
               }
             />
-            <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
               {sideProjects.map((project, index) => (
                 <SideProjectCard
                   key={project.slug}
                   project={project}
-                  delay={(index % 2) * 0.06}
+                  delay={(index % 3) * 0.06}
                 />
               ))}
             </div>
@@ -163,7 +163,13 @@ export default async function Home() {
 
       <Section spacing="sm" className="relative">
         <Container>
-          <SectionHeader title={experienceHeader?.title ?? "Experience"} />
+          <SectionHeader
+            title={experienceHeader?.title ?? "Experience"}
+            description={
+              experienceHeader?.description ??
+              "What I'm doing now, and what came before."
+            }
+          />
           <ExperienceSnapshot experience={experience} />
         </Container>
       </Section>
@@ -174,8 +180,7 @@ export default async function Home() {
             <SectionHeader
               title={testimonialsHeader?.title ?? "Testimonials"}
               description={
-                testimonialsHeader?.description ??
-                "What colleagues and clients say about working together."
+                testimonialsHeader?.description ?? "In a client's words."
               }
             />
             <TestimonialsSection testimonials={testimonials} />

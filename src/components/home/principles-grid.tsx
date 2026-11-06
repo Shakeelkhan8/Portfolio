@@ -6,32 +6,33 @@ type PrinciplesGridProps = {
 };
 
 /**
- * Numbered engineering principles (CMS `philosophy_items`). Replaces the old
- * expertise list on the home page, which repeated the hero's skill chips
- * without adding anything a reader could learn from.
+ * Engineering principles (CMS `philosophy_items`) as a ruled two-column
+ * list: each rule opens with a hairline and a short index, like clauses in
+ * a written agreement, rather than four floating items with circle badges.
  */
 export function PrinciplesGrid({ principles }: PrinciplesGridProps) {
   if (principles.length === 0) return null;
 
   return (
-    <Stagger className="grid gap-x-10 gap-y-9 sm:grid-cols-2" stagger={0.06}>
+    <Stagger
+      className="grid gap-x-12 gap-y-10 sm:grid-cols-2 lg:gap-x-16"
+      stagger={0.06}
+    >
       {principles.map((item, index) => (
         <StaggerItem key={item.title}>
-          <div className="group flex gap-4">
-            <span
-              className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-foreground/10 font-mono text-[11px] font-medium text-muted-foreground transition-colors duration-300 group-hover:border-foreground/25 group-hover:text-foreground"
+          <div className="group border-t border-foreground/10 pt-5 transition-colors duration-500 hover:border-foreground/25">
+            <p
               aria-hidden="true"
+              className="font-mono text-xs text-signal/80 tabular-nums"
             >
               {String(index + 1).padStart(2, "0")}
-            </span>
-            <div className="min-w-0">
-              <h3 className="font-heading text-base font-semibold tracking-tight text-foreground sm:text-[1.0625rem]">
-                {item.title}
-              </h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-pretty text-muted-foreground">
-                {item.description}
-              </p>
-            </div>
+            </p>
+            <h3 className="mt-3 font-heading text-subheading font-semibold text-foreground">
+              {item.title}
+            </h3>
+            <p className="mt-2.5 max-w-[46ch] leading-relaxed text-pretty text-muted-foreground">
+              {item.description}
+            </p>
           </div>
         </StaggerItem>
       ))}
