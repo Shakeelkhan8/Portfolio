@@ -4,6 +4,11 @@ import { Section } from "@/components/layout/section";
 import { SectionHeader } from "@/components/layout/section-header";
 import { AppLink } from "@/components/shared/app-link";
 import { HomeHero } from "@/components/home/home-hero";
+import { ImpactSection } from "@/components/home/impact-section";
+import { ServicesTeaser } from "@/components/home/services-teaser";
+import { AiSection } from "@/components/home/ai-section";
+import { impact } from "@/content/impact";
+import { services as catalogServices } from "@/content/service-catalog";
 import { PrinciplesGrid } from "@/components/home/principles-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { SideProjectCard } from "@/components/home/side-project-card";
@@ -80,12 +85,6 @@ export default async function Home() {
     getArticles(),
   ]);
   const sideProjects = projects.filter(isSideProject);
-  // One headline result per case study, for the hero's proof line.
-  const proof = projects
-    .filter((project) => project.featured && !isSideProject(project))
-    .map((project) => project.metrics[0])
-    .filter((metric) => metric !== undefined)
-    .slice(0, 3);
   // A writing section with one or two short posts reads as unfinished, so it
   // stays off the home page (and out of the default nav) until there are more.
   const showWriting = articles.length >= MIN_ARTICLES_FOR_HOME;
@@ -96,7 +95,17 @@ export default async function Home() {
         spacing="none"
         className="relative isolate max-w-full overflow-x-clip pb-12 sm:pb-16 md:pb-20"
       >
-        <HomeHero site={site} cta={heroCta} proof={proof} />
+        <HomeHero site={site} cta={heroCta} />
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader
+            title="Impact"
+            description="What the work changed, in numbers I can back up."
+          />
+          <ImpactSection items={impact} />
+        </Container>
       </Section>
 
       <Section spacing="sm" className="relative">
@@ -110,6 +119,27 @@ export default async function Home() {
             action={<ViewAllLink href={routes.projects} />}
           />
           <ProjectPreviewGrid limit={2} staggered />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader
+            title="Services"
+            description="What you can hire me for, from a $60 fix to a monthly care plan."
+            action={<ViewAllLink href={routes.services} label="Prices and packages" />}
+          />
+          <ServicesTeaser services={catalogServices} />
+        </Container>
+      </Section>
+
+      <Section spacing="sm" className="relative">
+        <Container>
+          <SectionHeader
+            title="AI integration"
+            description="Practical AI integrations for real business applications."
+          />
+          <AiSection />
         </Container>
       </Section>
 

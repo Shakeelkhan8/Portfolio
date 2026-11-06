@@ -24,14 +24,11 @@ import { TextReveal } from "@/components/motion/text-reveal";
 import { routes } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import type { CtaSection, PublicSiteConfig } from "@/types/cms";
-import type { ProjectMetric } from "@/types";
 
 type HomeHeroProps = {
   site: PublicSiteConfig;
   /** CMS-managed headline, intro and CTAs (`cta_sections.home_hero`). */
   cta?: CtaSection | null;
-  /** Headline results from the case studies, shown under the actions. */
-  proof?: ProjectMetric[];
 };
 
 /**
@@ -59,13 +56,6 @@ function HeroFade({
   );
 }
 
-/** "Companies onboarded" -> "companies onboarded"; leaves "ISPs ..." alone. */
-function lowercaseFirstWord(label: string): string {
-  const [first = "", ...rest] = label.split(" ");
-  const isAcronym = first.length > 1 && first[1] === first[1]?.toUpperCase();
-  return isAcronym ? label : [first.toLowerCase(), ...rest].join(" ");
-}
-
 /**
  * Index of the word where the headline's qualifier starts ("for payments,
  * ..."), so the role reads bright and the specialisation quieter. Undefined
@@ -84,12 +74,12 @@ function qualifierStart(headline: string): number | undefined {
  *
  * Left-aligned editorial composition instead of a centred stack: one line of
  * identity and availability, a two-tone headline, the intro, one primary
- * action and a quiet text link, then the case-study results set as a small
- * ledger along the bottom edge, where they read as evidence rather than as
- * fine print. The particle star sits to the right as the visual, warm at its
+ * action and a quiet text link, then the areas of expertise as a ruled line
+ * along the bottom edge. The results have their own section below, with
+ * context. The particle star sits to the right as the visual, warm at its
  * core, and drifts away as you scroll.
  */
-export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
+export function HomeHero({ site, cta }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [mobile, setMobile] = useState(false);
@@ -241,20 +231,23 @@ export function HomeHero({ site, cta, proof = [] }: HomeHeroProps) {
           ) : null}
         </m.div>
 
-        {proof.length > 0 ? (
+        {site.expertise.length > 0 ? (
           <HeroFade delay={HERO.type.actions + 0.15} className="pb-8 sm:pb-10">
+            {/*
+              What I do, in one ruled line along the bottom of the first
+              screen (CMS `expertise_items`). The results that used to sit
+              here have their own section just below, with context.
+            */}
             <ul
-              aria-label="Results from the case studies"
-              className="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-foreground/10 pt-6 sm:pt-7 md:flex md:gap-14"
+              aria-label="Areas of expertise"
+              className="flex flex-wrap gap-x-3 gap-y-2 border-t border-foreground/10 pt-5 sm:pt-6"
             >
-              {proof.map((metric) => (
-                <li key={`${metric.value}-${metric.label}`} className="min-w-0">
-                  <p className="font-heading font-stretch-semi-expanded text-figure font-semibold text-signal tabular-nums">
-                    {metric.value}
-                  </p>
-                  <p className="mt-2 max-w-[18ch] text-sm leading-snug text-muted-foreground">
-                    {lowercaseFirstWord(metric.label)}
-                  </p>
+              {site.expertise.map((area, index) => (
+                <li key={area} className="label-mono flex items-center gap-3 text-foreground/75">
+                  {index > 0 ? (
+                    <span aria-hidden="true" className="h-3 w-px bg-foreground/20" />
+                  ) : null}
+                  {area}
                 </li>
               ))}
             </ul>
