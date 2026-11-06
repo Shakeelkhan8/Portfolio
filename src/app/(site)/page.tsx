@@ -122,6 +122,30 @@ export default async function Home() {
         </Container>
       </Section>
 
+      {testimonials.length > 0 ? (
+        <Section spacing="sm" className="relative">
+          <Container>
+            {/*
+              The statement follows the count, not the CMS: "Trusted by people
+              I've worked with" over a single quote would overstate it. With
+              one, it speaks for one client; from two, it switches.
+            */}
+            <SectionHeader
+              title={testimonialsHeader?.title ?? "Testimonials"}
+              description={
+                testimonials.length >= 2
+                  ? "Trusted by people I've worked with."
+                  : "In a client's words."
+              }
+            />
+            <TestimonialsSection
+              testimonials={testimonials}
+              upworkUrl={site.links.upwork}
+            />
+          </Container>
+        </Section>
+      ) : null}
+
       <Section spacing="sm" className="relative">
         <Container>
           <SectionHeader
@@ -203,20 +227,6 @@ export default async function Home() {
           <ExperienceSnapshot experience={experience} />
         </Container>
       </Section>
-
-      {testimonials.length > 0 ? (
-        <Section spacing="sm" className="relative">
-          <Container>
-            <SectionHeader
-              title={testimonialsHeader?.title ?? "Testimonials"}
-              description={
-                testimonialsHeader?.description ?? "In a client's words."
-              }
-            />
-            <TestimonialsSection testimonials={testimonials} />
-          </Container>
-        </Section>
-      ) : null}
 
       <Section spacing="sm" className="relative">
         <Container>
