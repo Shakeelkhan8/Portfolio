@@ -17,22 +17,22 @@ function websiteId(site: SiteConfig): string {
 
 const personRef = (site: SiteConfig) => ({ "@id": personId(site) });
 
+/**
+ * The site owner. Deliberately no legal name, address, city or country: the
+ * same fields toPublicSiteConfig() keeps out of client components (see the
+ * "keep phone and location out of the page HTML" fix). This schema is on
+ * every page, so it must not reintroduce them.
+ */
 export function getPersonSchema(site: SiteConfig) {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": personId(site),
     name: site.name,
-    alternateName: site.legalName,
     jobTitle: site.title,
     description: site.description,
     email: site.email,
     url: site.url,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: site.city,
-      addressCountry: site.location,
-    },
     sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
     knowsAbout: site.expertise,
   };

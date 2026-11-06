@@ -14,6 +14,20 @@ describe("root schema graph", () => {
     expect(profile?.mainEntity).toEqual({ "@id": people[0]!["@id"] });
   });
 
+  /*
+   * Regression: the Person node carried the legal name and a PostalAddress
+   * (city, country) on every page, after the privacy fix had removed those
+   * fields from everything else the page ships.
+   */
+  it("keeps the legal name and location out of the page", () => {
+    const json = JSON.stringify(getRootSchemaGraph(site));
+
+    for (const value of [site.legalName, site.city, site.location]) {
+      if (value) expect(json).not.toContain(value);
+    }
+    expect(json).not.toContain("PostalAddress");
+  });
+
   it("leaves @context only on the document, not on each node", () => {
     const schema = getRootSchemaGraph(site);
 
