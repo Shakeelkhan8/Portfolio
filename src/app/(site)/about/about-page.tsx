@@ -54,10 +54,18 @@ export default async function AboutPage() {
             description="What I reach for, grouped by the job it does."
           />
           {/* Ruled rows, like a ledger: the job on the left, the tools on the right. */}
-          <dl className="border-t border-foreground/10">
-            {skillGroups.map((group, index) => (
-              <Reveal key={group.category} delay={index * 0.03}>
-                <div className="grid gap-3 border-b border-foreground/10 py-5 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-8 sm:py-6">
+          {/*
+            One reveal for the whole list: a <dl> may only contain <dt>/<dd>
+            groups wrapped in a single <div>, so each row must be a direct
+            child (a per-row Reveal added a second wrapper and failed axe).
+          */}
+          <Reveal>
+            <dl className="border-t border-foreground/10">
+              {skillGroups.map((group) => (
+                <div
+                  key={group.category}
+                  className="grid gap-3 border-b border-foreground/10 py-5 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-8 sm:py-6"
+                >
                   <dt className="font-heading text-subheading font-semibold text-foreground">
                     {group.category}
                   </dt>
@@ -76,9 +84,9 @@ export default async function AboutPage() {
                     </ul>
                   </dd>
                 </div>
-              </Reveal>
-            ))}
-          </dl>
+              ))}
+            </dl>
+          </Reveal>
         </Container>
       </Section>
 
