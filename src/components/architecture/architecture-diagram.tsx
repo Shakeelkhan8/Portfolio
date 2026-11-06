@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import type { ArchitectureDiagramData } from "@/types";
 import { cn } from "@/lib/utils";
 import { diagramNodeStyles } from "@/lib/architecture/node-styles";
@@ -182,11 +189,20 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
           })}
         </svg>
 
-        <div className="relative flex flex-col items-center gap-11 @3xl:flex-row @3xl:items-center @3xl:justify-between @3xl:gap-10">
+        <div className="relative flex flex-col items-center gap-10 @3xl:flex-row @3xl:items-center @3xl:justify-between @3xl:gap-10">
           {layers.map(({ layer, nodes }) => (
+            // Narrow: one even row per layer (up to three columns, labels
+            // wrap) so no node lands in the gap where edges run. Wide: a
+            // column per layer.
             <div
               key={layer}
-              className="flex flex-wrap justify-center gap-2.5 @3xl:flex-col @3xl:flex-nowrap @3xl:gap-3"
+              className="grid w-full grid-cols-[repeat(var(--cols),minmax(0,1fr))] gap-2 @3xl:flex @3xl:w-auto @3xl:flex-col @3xl:gap-3"
+              style={
+                {
+                  "--cols": Math.min(nodes.length, 3),
+                  maxWidth: `${Math.min(nodes.length, 3) * 11}rem`,
+                } as CSSProperties
+              }
             >
               {nodes.map((node) => {
                 const state = nodeState(node.id);
@@ -210,13 +226,13 @@ export function ArchitectureDiagram({ diagram }: ArchitectureDiagramProps) {
                     onBlur={() => setFocused(null)}
                     // Opaque base so edges crossing a row pass behind nodes.
                     className={cn(
-                      "group/node relative rounded-lg bg-background text-left transition-opacity duration-300 ease-out data-[state=off]:opacity-40",
+                      "group/node relative flex rounded-lg bg-background text-center transition-opacity @3xl:text-left duration-300 ease-out data-[state=off]:opacity-40",
                       active === node.id && "ring-2 ring-ring/40 ring-offset-2 ring-offset-background",
                     )}
                   >
                     <span
                       className={cn(
-                        "block min-w-[8.5rem] rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors duration-300",
+                        "flex w-full items-center justify-center rounded-lg border px-2 py-2 text-[0.8125rem] leading-snug font-medium text-balance transition-colors duration-300 @md:px-3 @md:py-2.5 @md:text-sm @3xl:min-w-[8.5rem] @3xl:justify-start",
                         diagramNodeStyles[node.type],
                         state === "on" && "border-foreground/45",
                       )}
