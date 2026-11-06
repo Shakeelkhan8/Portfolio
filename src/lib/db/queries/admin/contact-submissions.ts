@@ -6,13 +6,19 @@ import {
   type PaginatedResult,
 } from "@/lib/admin/pagination";
 import type { ContactSubmissionRecord } from "@/types/cms";
-import type { ContactStatusFilter } from "@/lib/validators/contact";
+import {
+  budgetLabel,
+  projectTypeLabel,
+  type ContactStatusFilter,
+} from "@/lib/validators/contact";
 
 function mapContactSubmission(row: {
   id: string;
   name: string;
   email: string;
   message: string;
+  project_type?: string | null;
+  budget?: string | null;
   status: "unread" | "read" | "archived";
   ip_hash: string | null;
   user_agent: string | null;
@@ -24,6 +30,8 @@ function mapContactSubmission(row: {
     name: row.name,
     email: row.email,
     message: row.message,
+    projectType: row.project_type ?? null,
+    budget: row.budget ?? null,
     status: row.status,
     ipHash: row.ip_hash,
     userAgent: row.user_agent,
@@ -72,7 +80,7 @@ export async function getContactSubmissions(
     supabase
       .from("contact_submissions")
       .select(
-        "id, name, email, message, status, ip_hash, user_agent, read_at, created_at",
+        "*",
       )
       .order("created_at", { ascending: false }),
     options,
@@ -105,7 +113,7 @@ export async function getContactSubmissionsPaginated(
     supabase
       .from("contact_submissions")
       .select(
-        "id, name, email, message, status, ip_hash, user_agent, read_at, created_at",
+        "*",
         { count: "exact" },
       )
       .order("created_at", { ascending: false })
@@ -138,7 +146,7 @@ export async function getContactSubmissionById(
   const { data, error } = await supabase
     .from("contact_submissions")
     .select(
-      "id, name, email, message, status, ip_hash, user_agent, read_at, created_at",
+      "*",
     )
     .eq("id", id)
     .maybeSingle();
@@ -153,13 +161,23 @@ export async function getContactSubmissionById(
 export function contactSubmissionsToCsv(
   submissions: ContactSubmissionRecord[],
 ) {
-  const header = ["created_at", "status", "name", "email", "message"];
+  const header = [
+    "created_at",
+    "status",
+    "name",
+    "email",
+    "project_type",
+    "budget",
+    "message",
+  ];
   const rows = submissions.map((submission) =>
     [
       submission.createdAt,
       submission.status,
       submission.name,
       submission.email,
+      projectTypeLabel(submission.projectType) ?? "",
+      budgetLabel(submission.budget) ?? "",
       submission.message.replace(/\r?\n/g, " "),
     ]
       .map((value) => `"${value.replace(/"/g, '""')}"`)

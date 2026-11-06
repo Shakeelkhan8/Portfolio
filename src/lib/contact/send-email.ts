@@ -1,11 +1,14 @@
 import * as Sentry from "@sentry/nextjs";
 import { Resend } from "resend";
 import { getContactEnv } from "@/lib/env";
+import { budgetLabel, projectTypeLabel } from "@/lib/validators/contact";
 
 type SendContactEmailInput = {
   name: string;
   email: string;
   message: string;
+  projectType?: string;
+  budget?: string;
   to: string;
 };
 
@@ -13,6 +16,8 @@ export async function sendContactNotificationEmail({
   name,
   email,
   message,
+  projectType,
+  budget,
   to,
 }: SendContactEmailInput) {
   const { resendApiKey, resendFrom } = getContactEnv();
@@ -26,8 +31,17 @@ export async function sendContactNotificationEmail({
     from: resendFrom,
     to,
     replyTo: email,
-    subject: `Portfolio contact from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+    subject: `Portfolio contact from ${name}${
+      projectTypeLabel(projectType) ? `: ${projectTypeLabel(projectType)}` : ""
+    }`,
+    text: [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Project type: ${projectTypeLabel(projectType) ?? "Not given"}`,
+      `Budget: ${budgetLabel(budget) ?? "Not given"}`,
+      "",
+      message,
+    ].join("\n"),
   });
 
   if (error) {

@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   }
 
-  const { name, email, message } = parsed.data;
+  const { name, email, message, projectType, budget } = parsed.data;
   const { ipSalt } = getContactEnv();
   const ipHash = hashContactIp(getRequestIp(request), ipSalt);
   const userAgent = request.headers.get("user-agent");
@@ -51,6 +51,8 @@ export async function POST(request: Request) {
     name,
     email,
     message,
+    projectType,
+    budget,
     ipHash,
     userAgent,
   });
@@ -82,6 +84,8 @@ export async function POST(request: Request) {
     name,
     email,
     message,
+    projectType,
+    budget,
     to: recipientEmail,
   });
 

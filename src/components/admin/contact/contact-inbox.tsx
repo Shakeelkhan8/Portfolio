@@ -20,7 +20,11 @@ import { buildAdminQueryString } from "@/lib/admin/pagination";
 import { formatDate } from "@/lib/formatters";
 import type { PaginatedResult } from "@/lib/admin/pagination";
 import type { ContactSubmissionRecord } from "@/types/cms";
-import type { ContactStatusFilter } from "@/lib/validators/contact";
+import {
+  budgetLabel,
+  projectTypeLabel,
+  type ContactStatusFilter,
+} from "@/lib/validators/contact";
 
 type ContactInboxProps = {
   result: PaginatedResult<ContactSubmissionRecord>;
@@ -209,6 +213,24 @@ export function ContactInbox({ result, status, search }: ContactInboxProps) {
                   {selectedSubmission.status}
                 </Badge>
               </div>
+
+              {projectTypeLabel(selectedSubmission.projectType) ||
+              budgetLabel(selectedSubmission.budget) ? (
+                <dl className="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Project type</dt>
+                    <dd className="mt-0.5 font-medium">
+                      {projectTypeLabel(selectedSubmission.projectType) ?? "Not given"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Budget</dt>
+                    <dd className="mt-0.5 font-medium">
+                      {budgetLabel(selectedSubmission.budget) ?? "Not given"}
+                    </dd>
+                  </div>
+                </dl>
+              ) : null}
 
               <div className="mt-6 rounded-lg border border-border bg-muted/20 p-4">
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
