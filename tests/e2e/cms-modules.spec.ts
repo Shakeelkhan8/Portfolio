@@ -13,6 +13,23 @@ test.describe("Phase 9 CMS surfaces", () => {
     await expect(page.getByText("Dispatch Management SaaS")).toBeVisible();
   });
 
+  test("home hero shows availability under the headline, not beside the name", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const headline = page.getByRole("heading", { level: 1 });
+    const availability = page
+      .getByText(/^(Available for work|Not taking new work)$/)
+      .first();
+    await expect(availability).toBeVisible();
+
+    const headlineBox = await headline.boundingBox();
+    const availabilityBox = await availability.boundingBox();
+    expect(availabilityBox!.y).toBeGreaterThan(
+      headlineBox!.y + headlineBox!.height,
+    );
+  });
+
   test("resume page renders", async ({ page }) => {
     await page.goto("/resume");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Resume");
