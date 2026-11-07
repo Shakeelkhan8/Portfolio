@@ -14,11 +14,17 @@ async function answerApi(page: Page, status: number, body: object) {
   );
 }
 
+/** Opens a styled select by its trigger id and picks an option by label. */
+async function choose(page: Page, id: string, label: string) {
+  await page.locator(`#${id}`).click();
+  await page.getByRole("option", { name: label, exact: true }).click();
+}
+
 async function fillValidForm(page: Page) {
   await page.fill("#name", "Ada Lovelace");
   await page.fill("#email", "ada@example.com");
-  await page.selectOption("#projectType", "fix");
-  await page.selectOption("#budget", "300-1000");
+  await choose(page, "projectType", "Bug fix or slow app");
+  await choose(page, "budget", "$300 to $1,000");
   await page.fill("#message", "Our nightly queue stalls and orders back up.");
 }
 
@@ -81,6 +87,47 @@ test.describe("Contact form", () => {
     page,
   }) => {
     await page.goto("/contact?type=ai");
-    await expect(page.locator("#projectType")).toHaveValue("ai");
+    await expect(page.locator("#projectType")).toHaveText(
+      "AI feature with OpenAI or Claude",
+    );
+    await expect(page.locator('input[name="projectType"]')).toHaveValue("ai");
+  });
+
+  test("the dropdowns are styled, keyboard-usable and fit a phone screen", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    // Keys pressed before hydration reach a button with no handlers yet.
+    await page.goto("/contact", { waitUntil: "networkidle" });
+
+    // Keyboard: open with Enter, move with the arrows, choose with Enter.
+    const trigger = page.locator("#projectType");
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    const listbox = page.getByRole("listbox");
+    await expect(listbox).toBeVisible();
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(listbox).toBeHidden();
+    await expect(page.locator('input[name="projectType"]')).not.toHaveValue("");
+
+    // The popup is a themed element (not the OS list) and stays on screen.
+    await trigger.click();
+    await expect(listbox).toBeVisible();
+    const box = (await listbox.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(375);
+    expect(box.y + box.height).toBeLessThanOrEqual(667);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    );
+    expect(overflow).toBe(0);
+    await page.keyboard.press("Escape");
+
+    // "Prefer not to say" clears the budget back to an empty value.
+    await choose(page, "budget", "Over $3,000");
+    await expect(page.locator('input[name="budget"]')).toHaveValue("3000-plus");
+    await choose(page, "budget", "Prefer not to say");
+    await expect(page.locator('input[name="budget"]')).toHaveValue("");
   });
 });

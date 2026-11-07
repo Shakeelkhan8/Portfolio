@@ -5,7 +5,7 @@ import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SelectField } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Text } from "@/components/typography/text";
 import { useSiteData } from "@/components/providers/site-data-provider";
@@ -22,6 +22,15 @@ import {
 type FormState = "idle" | "loading" | "success" | "error";
 type FieldName = "name" | "email" | "projectType" | "budget" | "message";
 type FieldErrors = Partial<Record<FieldName, string>>;
+
+const PROJECT_TYPE_OPTIONS = Object.entries(PROJECT_TYPES).map(
+  ([value, label]) => ({ value, label }),
+);
+
+const BUDGET_OPTIONS = [
+  { value: "", label: "Prefer not to say" },
+  ...Object.entries(BUDGETS).map(([value, label]) => ({ value, label })),
+];
 
 const FIELD_ORDER: FieldName[] = [
   "name",
@@ -86,6 +95,7 @@ export function ContactForm() {
   );
   const [chosenType, setProjectType] = useState<string | null>(null);
   const projectType = chosenType ?? typeFromUrl;
+  const [budget, setBudget] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -108,7 +118,9 @@ export function ContactForm() {
     const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
     if (firstInvalid) {
       setState("idle");
-      form.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+      // By id: the selects submit through a hidden input, but their id is on
+      // the focusable trigger.
+      form.querySelector<HTMLElement>(`#${firstInvalid}`)?.focus();
       return;
     }
 
@@ -131,6 +143,7 @@ export function ContactForm() {
 
       form.reset();
       setProjectType("");
+      setBudget("");
       setState("success");
     } catch (error) {
       setState("error");
@@ -218,46 +231,33 @@ export function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="projectType">What do you need?</Label>
-          <NativeSelect
+          <SelectField
             id="projectType"
             name="projectType"
             required
             disabled={isLoading}
+            placeholder="Choose one"
+            options={PROJECT_TYPE_OPTIONS}
             value={projectType}
-            onChange={(event) => setProjectType(event.target.value)}
-            className="bg-background/50"
+            onValueChange={setProjectType}
             {...fieldProps("projectType")}
-          >
-            <option value="" disabled>
-              Choose one
-            </option>
-            {Object.entries(PROJECT_TYPES).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </NativeSelect>
+          />
           <FieldError id="projectType-error" message={fieldErrors.projectType} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="budget">
             Budget <span className="font-normal text-muted-foreground">(optional)</span>
           </Label>
-          <NativeSelect
+          <SelectField
             id="budget"
             name="budget"
-            defaultValue=""
             disabled={isLoading}
-            className="bg-background/50"
+            placeholder="Prefer not to say"
+            options={BUDGET_OPTIONS}
+            value={budget}
+            onValueChange={setBudget}
             {...fieldProps("budget")}
-          >
-            <option value="">Prefer not to say</option>
-            {Object.entries(BUDGETS).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </NativeSelect>
+          />
           <FieldError id="budget-error" message={fieldErrors.budget} />
         </div>
       </div>
