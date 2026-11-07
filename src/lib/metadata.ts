@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSeoDefaults } from "@/lib/db/queries/settings";
 import { getSiteConfig } from "@/lib/db/queries/site";
+import { DEFAULT_OG_IMAGE_PATH } from "@/lib/og/default-image";
 import { parseRobotsDirective } from "@/lib/seo/robots";
 import type { SeoDefaultsRecord, SiteConfig } from "@/types/cms";
 
@@ -9,7 +10,7 @@ export type MetadataContext = {
   seo: SeoDefaultsRecord;
 };
 
-const DEFAULT_SOCIAL_IMAGE = "/opengraph-image";
+const DEFAULT_SOCIAL_IMAGE = DEFAULT_OG_IMAGE_PATH;
 
 /** Legacy CMS titles may still use em/en dash separators. */
 function withPipeSeparator(title: string): string {
@@ -30,7 +31,7 @@ function resolveTwitterCard(
   return "summary_large_image";
 }
 
-/** Prefer page OG image → CMS default → generated `/opengraph-image`. */
+/** Prefer page OG image → CMS default → generated site-wide card. */
 export function resolveSocialImages(
   ogImage?: string | null,
   defaultOgImageUrl?: string | null,

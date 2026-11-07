@@ -54,6 +54,25 @@ test.describe("SEO and crawl assets", () => {
     await expect(page).toHaveTitle(/Projects/i);
   });
 
+  test("home and articles share a preview image that actually loads", async ({
+    page,
+    request,
+  }) => {
+    // The meta tag once pointed at /opengraph-image while the route served
+    // /opengraph-image/default, so every non-project preview was a 404.
+    for (const path of ["/", "/writing/multi-tenant-data-isolation-in-saas"]) {
+      await page.goto(path);
+      const ogImage = await page
+        .locator('meta[property="og:image"]')
+        .getAttribute("content");
+
+      expect(ogImage).toBeTruthy();
+      const image = await request.get(new URL(ogImage!).pathname);
+      expect(image.status()).toBe(200);
+      expect(image.headers()["content-type"]).toContain("image/png");
+    }
+  });
+
   test("case studies share their own preview image", async ({ page, request }) => {
     await page.goto("/projects/dispatch-management-saas");
     const ogImage = await page
