@@ -72,10 +72,10 @@ function qualifierStart(headline: string): number | undefined {
 /**
  * Home hero (docs/DESIGN.md).
  *
- * Left-aligned editorial composition instead of a centred stack: the name as
- * one line of identity, a two-tone headline, the intro, one primary action and
- * a quiet text link with availability under them, then the areas of expertise
- * as a ruled line along the bottom edge. The results have their own section below, with
+ * Left-aligned editorial composition instead of a centred stack: a two-tone
+ * headline, the intro, one primary action and a quiet text link with
+ * availability under them, then the areas of expertise as a ruled line along
+ * the bottom edge. The results have their own section below, with
  * context. The particle star sits to the right as the visual, warm at its
  * core, and drifts away as you scroll.
  */
@@ -96,8 +96,8 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
   const primaryHref = cta?.primaryHref?.trim() || routes.projects;
   const secondaryLabel = cta?.secondaryLabel?.trim() || null;
   const secondaryHref = cta?.secondaryHref?.trim() || routes.contact;
-  // Older CMS rows set the headline to the site name, which the identity line
-  // already shows, so fall back to the professional title.
+  // Older CMS rows set the headline to the site name, which the header
+  // wordmark already shows, so fall back to the professional title.
   const ctaTitle = cta?.title?.trim();
   const headline = ctaTitle && ctaTitle !== site.name ? ctaTitle : site.title;
   const intro = cta?.description?.trim() || site.description;
@@ -166,10 +166,10 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
                 { opacity: contentOpacity }
           }
         >
-          <HeroFade delay={HERO.type.badge} className="mb-7 sm:mb-9">
-            <p className="label-mono text-foreground/85">{site.name}</p>
-          </HeroFade>
-
+          {/*
+            No name line above the headline: the header's wordmark already
+            shows the name directly above, so the headline opens the page.
+          */}
           <TextReveal
             as="h1"
             text={headline}
