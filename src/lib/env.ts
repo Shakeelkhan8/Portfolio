@@ -176,18 +176,38 @@ export function getContactEnv() {
   };
 }
 
+function describeEnvParseError(error: unknown): string[] {
+  if (error instanceof z.ZodError) {
+    // Issue paths name the variable; messages never echo the value.
+    return error.issues.map(
+      (issue) => `${issue.path.join(".") || "env"}: ${issue.message}`,
+    );
+  }
+
+  return [error instanceof Error ? error.message : String(error)];
+}
+
 /**
- * Validates production security env. Throws if enforced production is misconfigured.
- * Call from Node runtime instrumentation only.
+ * Lists what is wrong with the enforced production env (empty when fine or not
+ * enforced). Schema parse failures are returned as entries rather than thrown,
+ * so the caller decides whether a problem stops the build or is only logged.
  */
-export function assertProductionSecurityEnv(): void {
+export function getProductionSecurityEnvErrors(): string[] {
   if (!shouldEnforceProductionSecurityEnv()) {
-    return;
+    return [];
+  }
+
+  let publicEnv: PublicEnv;
+  let serverEnv: ServerEnv;
+
+  try {
+    publicEnv = getPublicEnv();
+    serverEnv = getServerEnv();
+  } catch (error) {
+    return describeEnvParseError(error);
   }
 
   const errors: string[] = [];
-  const publicEnv = getPublicEnv();
-  const serverEnv = getServerEnv();
 
   if (!process.env.NEXT_PUBLIC_SITE_URL) {
     errors.push("NEXT_PUBLIC_SITE_URL must be set explicitly in production.");
@@ -210,6 +230,22 @@ export function assertProductionSecurityEnv(): void {
       );
     }
   }
+
+  return errors;
+}
+
+/**
+ * Throws if the enforced production env is misconfigured.
+ *
+ * Called from next.config.ts in the production build phase, so a bad env fails
+ * the deploy and Vercel keeps serving the last good one. Deliberately NOT called
+ * at server boot: throwing from instrumentation register() makes every
+ * server-rendered route return 500 (admin login, contact API, 404 page, RSS,
+ * OG image) while CDN-cached pages keep loading, which hides the outage. That
+ * happened on 2026-11-07. Boot only logs, via getProductionSecurityEnvErrors().
+ */
+export function assertProductionSecurityEnv(): void {
+  const errors = getProductionSecurityEnvErrors();
 
   if (errors.length) {
     throw new Error(
