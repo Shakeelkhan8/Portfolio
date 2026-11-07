@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { PortfolioQr } from "@/components/shared/portfolio-qr";
 import { ResumeView } from "@/components/resume/resume-view";
 import { DownloadResumeButton } from "@/components/resume/download-resume-button";
+import { ExpandDetailsWhilePrinting } from "@/components/resume/expand-details-while-printing";
 import { CertificationsSection } from "@/components/resume/certifications-section";
 import { Reveal } from "@/components/motion/reveal";
 import { Heading } from "@/components/typography/heading";
@@ -51,6 +52,7 @@ export default async function ResumePage() {
 
   return (
     <>
+      <ExpandDetailsWhilePrinting />
       <PageHeader
         eyebrow="Resume"
         title="Resume"
@@ -72,7 +74,8 @@ export default async function ResumePage() {
 
       <Section spacing="sm" className="pt-0">
         <Container className="max-w-3xl space-y-10">
-          <Reveal>
+          {/* The full resume below repeats these two, so they stay off paper. */}
+          <Reveal className="no-print">
             <div>
               <Text
                 size="sm"
@@ -86,7 +89,7 @@ export default async function ResumePage() {
           </Reveal>
 
           {currentRole ? (
-            <Reveal delay={0.06}>
+            <Reveal delay={0.06} className="no-print">
               <div>
                 <Text
                   size="sm"

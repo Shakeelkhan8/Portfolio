@@ -72,10 +72,10 @@ function qualifierStart(headline: string): number | undefined {
 /**
  * Home hero (docs/DESIGN.md).
  *
- * Left-aligned editorial composition instead of a centred stack: one line of
- * identity and availability, a two-tone headline, the intro, one primary
- * action and a quiet text link, then the areas of expertise as a ruled line
- * along the bottom edge. The results have their own section below, with
+ * Left-aligned editorial composition instead of a centred stack: the name as
+ * one line of identity, a two-tone headline, the intro, one primary action and
+ * a quiet text link with availability under them, then the areas of expertise
+ * as a ruled line along the bottom edge. The results have their own section below, with
  * context. The particle star sits to the right as the visual, warm at its
  * core, and drifts away as you scroll.
  */
@@ -167,22 +167,7 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
           }
         >
           <HeroFade delay={HERO.type.badge} className="mb-7 sm:mb-9">
-            <p className="label-mono flex flex-wrap items-center gap-x-3 gap-y-1.5">
-              <span className="text-foreground/85">{site.name}</span>
-              <span aria-hidden="true" className="h-px w-6 bg-foreground/25" />
-              <span className="inline-flex items-center gap-2">
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "size-1.5 rounded-full",
-                    available
-                      ? "bg-success shadow-[0_0_0_3px_color-mix(in_oklch,var(--success)_22%,transparent)]"
-                      : "bg-muted-foreground",
-                  )}
-                />
-                {available ? "Available for work" : "Not taking new work"}
-              </span>
-            </p>
+            <p className="label-mono text-foreground/85">{site.name}</p>
           </HeroFade>
 
           <TextReveal
@@ -229,6 +214,25 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
               </div>
             </HeroFade>
           ) : null}
+
+          {/*
+            Availability sits under the actions it qualifies, not in the
+            identity line, so the top of the hero reads as just the name.
+          */}
+          <HeroFade delay={HERO.type.actions + 0.08} className="mt-6 sm:mt-7">
+            <p className="label-mono inline-flex items-center gap-2.5 text-foreground/60">
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "size-1.5 rounded-full",
+                  available
+                    ? "bg-success shadow-[0_0_0_3px_color-mix(in_oklch,var(--success)_22%,transparent)]"
+                    : "bg-muted-foreground",
+                )}
+              />
+              {available ? "Available for work" : "Not taking new work"}
+            </p>
+          </HeroFade>
         </m.div>
 
         {site.expertise.length > 0 ? (
