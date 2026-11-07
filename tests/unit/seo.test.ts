@@ -76,9 +76,9 @@ describe("parseRobotsDirective", () => {
 });
 
 describe("resolveSocialImages", () => {
-  it("falls back to generated opengraph-image when CMS image is missing", () => {
+  it("falls back to the generated card at /opengraph-image/default when no CMS image is set", () => {
     expect(resolveSocialImages(null, null)).toEqual([
-      { url: "/opengraph-image" },
+      { url: "/opengraph-image/default" },
     ]);
   });
 
@@ -103,8 +103,8 @@ describe("buildPageMetadata", () => {
     expect(metadata.title).toBe("About");
     expect(metadata.alternates?.canonical).toBe("https://example.com/about");
     expect(metadata.openGraph?.title).toBe("About | Shakeel Khan");
-    expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image" }]);
-    expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image" }]);
+    expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image/default" }]);
+    expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image/default" }]);
     expect(
       metadata.twitter && "card" in metadata.twitter && metadata.twitter.card,
     ).toBe("summary_large_image");
@@ -112,8 +112,8 @@ describe("buildPageMetadata", () => {
 
   it("mirrors Open Graph images onto Twitter cards for defaults", () => {
     const metadata = buildDefaultMetadata(ctx);
-    expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image" }]);
-    expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image" }]);
+    expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image/default" }]);
+    expect(metadata.twitter?.images).toEqual([{ url: "/opengraph-image/default" }]);
   });
 
   it("normalizes legacy em-dash CMS default titles at the metadata boundary", () => {

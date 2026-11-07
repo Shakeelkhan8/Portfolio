@@ -1,5 +1,6 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { CACHE_TAGS, type CacheTag } from "@/lib/db/cache-tags";
+import { DEFAULT_OG_IMAGE_PATH } from "@/lib/og/default-image";
 
 export function revalidateContent(...tags: CacheTag[]) {
   for (const tag of tags) {
@@ -51,7 +52,7 @@ export function revalidateAfterProjectChange(options?: {
 export function revalidateAllPublicContent() {
   revalidateContent(...Object.values(CACHE_TAGS));
   revalidatePublicPages();
-  revalidatePath("/opengraph-image");
+  revalidatePath(DEFAULT_OG_IMAGE_PATH);
 }
 
 export function revalidateAfterMediaChange() {
@@ -77,7 +78,7 @@ export function revalidateAfterSettingsChange() {
   revalidateAfterContentChange(CACHE_TAGS.site, CACHE_TAGS.pages);
   revalidatePath("/privacy");
   revalidatePath("/manifest.webmanifest");
-  revalidatePath("/opengraph-image");
+  revalidatePath(DEFAULT_OG_IMAGE_PATH);
   revalidatePath("/icon");
   revalidatePath("/robots.txt");
 }

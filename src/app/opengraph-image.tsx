@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getCtaSection, getSiteConfig } from "@/lib/content";
+import { DEFAULT_OG_IMAGE_ID } from "@/lib/og/default-image";
 import { OG_SIZE, OgCard } from "@/lib/og/og-card";
 
 // Use the Node.js runtime: the Edge runtime has a 1 MB bundle limit on Vercel,
@@ -12,7 +13,7 @@ export async function generateImageMetadata() {
   const site = await getSiteConfig();
   return [
     {
-      id: "default",
+      id: DEFAULT_OG_IMAGE_ID,
       alt: `${site.name} | ${site.title}`,
     },
   ];
