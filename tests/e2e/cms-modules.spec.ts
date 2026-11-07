@@ -30,6 +30,18 @@ test.describe("Phase 9 CMS surfaces", () => {
     );
   });
 
+  test("home hero opens with the headline, not a repeated name line", async ({
+    page,
+  }) => {
+    // The header wordmark shows the name directly above; the hero used to
+    // repeat it as a mono label over the headline.
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(
+      page.locator("main").getByText("Shakeel Khan", { exact: true }),
+    ).toHaveCount(0);
+  });
+
   test("resume page renders", async ({ page }) => {
     await page.goto("/resume");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Resume");
