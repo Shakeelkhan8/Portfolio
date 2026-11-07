@@ -46,6 +46,7 @@ export function Reveal({
   if (softMotion) {
     return (
       <m.div
+        data-reveal=""
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}
@@ -72,6 +73,7 @@ export function Reveal({
 
   return (
     <m.div
+      data-reveal=""
       initial={{ opacity: 0, ...offset }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once, amount: 0.12, margin: "0px 0px -40px 0px" }}

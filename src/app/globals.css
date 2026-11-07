@@ -910,8 +910,39 @@
 }
 
 @media print {
-  header,
-  footer,
+  /*
+   * The site is dark-only, and every text colour comes from these tokens, so
+   * printing on white paper came out near-white on white (a blank page).
+   * !important so the CMS theme variables injected in <head> can't win.
+   */
+  :root,
+  .dark {
+    color-scheme: light;
+    --background: #ffffff !important;
+    --foreground: #111111 !important;
+    --muted: #f3f3f3 !important;
+    --muted-foreground: #4a4a4a !important;
+    --border: #d6d6d6 !important;
+    --border-subtle: #e6e6e6 !important;
+    --surface: #ffffff !important;
+    --surface-elevated: #f7f7f7 !important;
+    --card: #ffffff !important;
+    --card-foreground: #111111 !important;
+    --popover: #ffffff !important;
+    --popover-foreground: #111111 !important;
+    --primary: #111111 !important;
+    --primary-foreground: #ffffff !important;
+    --secondary: #f3f3f3 !important;
+    --secondary-foreground: #111111 !important;
+    --accent: #f3f3f3 !important;
+    --accent-foreground: #111111 !important;
+    --signal: #8a5a14 !important;
+  }
+
+  /* Site chrome only: a bare `header` rule also hid page titles and the
+     resume's name and contact block. */
+  header[role="banner"],
+  footer[role="contentinfo"],
   .mobile-tab-bar,
   .no-print {
     display: none !important;
@@ -924,6 +955,26 @@
 
   details > *:not(summary) {
     display: block !important;
+  }
+
+  /*
+   * Current Chrome hides a closed <details> through this pseudo-element
+   * (content-visibility: hidden), which the rule above cannot undo. Browsers
+   * without it rely on ExpandDetailsWhilePrinting opening the element.
+   */
+  details::details-content {
+    content-visibility: visible !important;
+  }
+
+  /*
+   * Reveal starts at opacity 0 and only fades in once scrolled into view, so
+   * anything below the fold when you print would come out blank.
+   */
+  [data-reveal],
+  .page-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   body {
