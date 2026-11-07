@@ -37,7 +37,7 @@ Custom scripts (Settings) are intentionally powerful and admin-only. Only paste 
 - **Honeypot** — Hidden `company` field; bots receive silent success.
 - **Origin check** — Production rejects cross-site POSTs to `/api/contact`.
 - **IP storage** — IPs are hashed with `CONTACT_IP_SALT`; raw IPs are not stored.
-- **Production env gate** — On Vercel production (`VERCEL_ENV=production`), startup asserts `NEXT_PUBLIC_SITE_URL` (non-localhost), `SUPABASE_SERVICE_ROLE_KEY`, and `CONTACT_IP_SALT` (≥16 chars) when Supabase is configured.
+- **Production env gate** — On Vercel production (`VERCEL_ENV=production`), the production build (`next.config.ts`) fails unless it finds `NEXT_PUBLIC_SITE_URL` (non-localhost), `SUPABASE_SERVICE_ROLE_KEY`, and `CONTACT_IP_SALT` (≥16 chars) when Supabase is configured. A failed build keeps the last good deployment live. Server boot only logs the same check: throwing there would return 500 on every server-rendered route.
 
 ## HTTP security headers
 

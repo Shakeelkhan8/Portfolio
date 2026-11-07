@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
+import { assertProductionSecurityEnv } from "@/lib/env";
 import {
   CONTENT_SECURITY_POLICY,
   SECURITY_HEADERS,
@@ -63,7 +65,7 @@ const sentryOrg = process.env.SENTRY_ORG;
 const sentryProject = process.env.SENTRY_PROJECT;
 const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
 
-const config =
+const resolvedConfig =
   sentryOrg && sentryProject && sentryAuthToken
     ? withSentryConfig(analyzedConfig, {
         org: sentryOrg,
@@ -75,4 +77,15 @@ const config =
       })
     : analyzedConfig;
 
-export default config;
+/**
+ * Production env is checked while building, not at server boot: a bad env then
+ * fails the deploy and Vercel keeps serving the last good one, instead of every
+ * server-rendered route returning 500. See assertProductionSecurityEnv().
+ */
+export default function config(phase: string): NextConfig {
+  if (phase === PHASE_PRODUCTION_BUILD) {
+    assertProductionSecurityEnv();
+  }
+
+  return resolvedConfig;
+}
