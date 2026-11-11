@@ -12,6 +12,15 @@ export type MetadataContext = {
 
 const DEFAULT_SOCIAL_IMAGE = DEFAULT_OG_IMAGE_PATH;
 
+/**
+ * Google Search Console ownership token for the https://shakeelkhan.vercel.app/
+ * property (owner: the site owner's personal Google account), added
+ * 2026-11-11. Public by design: Google reads it from the page. Removing it
+ * unverifies the property. A move to a custom domain needs a new property and
+ * a new token.
+ */
+const GOOGLE_SITE_VERIFICATION = "XLWLeZnOG5xT3wOHXB2uzSLMvpZtJkyCJ4tmtDhupuM";
+
 /** Legacy CMS titles may still use em/en dash separators. */
 function withPipeSeparator(title: string): string {
   return title.replace(/\s*[—–]\s*/g, " | ").trim();
@@ -108,6 +117,9 @@ export function buildDefaultMetadata(ctx: MetadataContext): Metadata {
       types: {
         "application/rss+xml": `${site.url}/rss.xml`,
       },
+    },
+    verification: {
+      google: GOOGLE_SITE_VERIFICATION,
     },
   };
 }

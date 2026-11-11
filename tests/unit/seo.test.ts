@@ -110,6 +110,16 @@ describe("buildPageMetadata", () => {
     ).toBe("summary_large_image");
   });
 
+  // The Search Console property for the live site is verified by this meta
+  // tag, so it has to be on every page; removing it unverifies the property.
+  it("carries the Google Search Console verification tag", () => {
+    const metadata = buildDefaultMetadata(ctx);
+
+    expect(metadata.verification).toEqual({
+      google: "XLWLeZnOG5xT3wOHXB2uzSLMvpZtJkyCJ4tmtDhupuM",
+    });
+  });
+
   it("mirrors Open Graph images onto Twitter cards for defaults", () => {
     const metadata = buildDefaultMetadata(ctx);
     expect(metadata.openGraph?.images).toEqual([{ url: "/opengraph-image/default" }]);
