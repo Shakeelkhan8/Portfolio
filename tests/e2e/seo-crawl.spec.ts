@@ -42,7 +42,7 @@ test.describe("SEO and crawl assets", () => {
 
   test("article page exposes metadata and content", async ({ page }) => {
     await page.goto("/writing/multi-tenant-data-isolation-in-saas");
-    await expect(page).toHaveTitle(/Multi-Tenant/i);
+    await expect(page).toHaveTitle(/tenant scoping/i);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
 
