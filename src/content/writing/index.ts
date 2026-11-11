@@ -66,7 +66,7 @@ export const articles: Article[] = [
 `.trim(),
     date: "2026-11-11T00:00:00.000Z",
     readingTime: 3,
-    tags: ["Laravel","Multi-tenancy","PostgreSQL"],
+    tags: ["Laravel", "Multi-tenancy", "PostgreSQL"],
     published: true,
   },
   {
@@ -145,7 +145,7 @@ export const articles: Article[] = [
 `.trim(),
     date: "2026-11-11T00:00:00.000Z",
     readingTime: 3,
-    tags: ["Laravel","Payments","Webhooks"],
+    tags: ["Laravel", "Payments", "Webhooks"],
     published: true,
   },
 ];
