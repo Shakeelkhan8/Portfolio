@@ -33,7 +33,10 @@ export function getPersonSchema(site: SiteConfig) {
     description: site.description,
     email: site.email,
     url: site.url,
-    sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
+    // Every public profile, so search engines connect them to this person.
+    sameAs: [site.links.github, site.links.linkedin, site.links.upwork].filter(
+      Boolean,
+    ),
     knowsAbout: site.expertise,
   };
 }
