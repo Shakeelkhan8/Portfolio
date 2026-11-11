@@ -44,7 +44,7 @@ public function handle(Request $request): Response
 {
     $this->verifySignature($request); // reject anything unsigned first
 
-    $event = WebhookEvent::firstOrCreate(
+    $event = WebhookEvent::createOrFirst(
         ['provider' => 'gateway', 'event_id' => $request->input('id')],
         ['type' => $request->input('type'), 'payload' => $request->all()],
     );
@@ -57,7 +57,9 @@ public function handle(Request $request): Response
 }
 ```
 
-Notice what happens with a duplicate: it's acknowledged with a 200 and nothing else. Returning an error for a duplicate just makes the provider retry it again.
+I use `createOrFirst` rather than `firstOrCreate`: it tries the insert first and falls back to reading the row when the unique index rejects it, so two copies arriving at the same moment both get the same event instead of one of them crashing.
+
+Notice what happens with a duplicate: it's acknowledged with a 204 and nothing else. Returning an error for a duplicate just makes the provider retry it again.
 
 The controller also does as little as possible. It verifies the signature, stores the event and hands the work to a queue. A slow endpoint is one of the main reasons providers retry in the first place.
 
@@ -88,7 +90,7 @@ If the job dies halfway through, the transaction rolls back and the event is sti
 
 ## Let the ledger say no as well
 
-The last line of defence is the ledger. On the platform I work on, money movements are posted to a double-entry ledger. If entries are only ever appended, never edited, it's worth giving each ledger transaction a reference to what caused it and a unique constraint on that reference. Then even if some future code path skipped the checks above, the database would refuse a second posting for the same payment.
+The last line of defence is the ledger. On the platform I work on, money movements are posted to a double-entry ledger. If entries are only ever appended, never edited, it's worth giving each ledger transaction a reference to what caused it, and a unique constraint on that reference together with the kind of posting. Then a payment can still be refunded later, but even if some future code path skipped the checks above, the database would refuse a second payment posting for the same event.
 
 Belt and braces? A little. But this is the code path where a bug costs real money, and the extra constraint is one line.
 

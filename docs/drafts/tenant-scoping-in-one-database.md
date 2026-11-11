@@ -34,8 +34,14 @@ trait BelongsToCompany
         static::addGlobalScope('company', function (Builder $query) {
             $companyId = app(CurrentCompany::class)->id();
 
-            // No company in context means no rows, not every row.
-            $query->where($query->qualifyColumn('company_id'), $companyId ?? 0);
+            if ($companyId === null) {
+                // No company in context means no rows, not every row.
+                $query->whereRaw('1 = 0');
+
+                return;
+            }
+
+            $query->where($query->qualifyColumn('company_id'), $companyId);
         });
 
         static::creating(function (Model $model) {
@@ -48,6 +54,8 @@ trait BelongsToCompany
 Two details matter more than the trait itself.
 
 First, when there's no company in context, the scope returns nothing. It's tempting to skip the filter when the company is missing, and that's exactly the case that leaks: a queued job or an artisan command that runs without a request, quietly reading every tenant's rows.
+
+The fix for jobs isn't to skip the scope. A job carries the company ID it was dispatched for and sets the context before it runs, so it sees exactly one company.
 
 Second, new records get the company set automatically. If creating a record depends on someone remembering to set `company_id`, eventually someone won't.
 
@@ -72,7 +80,7 @@ it('does not return another company\'s orders', function () {
 });
 ```
 
-A test like this fails the moment someone adds a model without the trait, or writes a raw query that skips it. That's the point: it guards the property you care about, not the code you happened to write.
+Written once per tenant-owned model, and once for every report or export endpoint, tests like this fail the moment someone adds a model without the trait or writes a raw query that skips it. That's the point: they guard the property you care about, not the code you happened to write.
 
 ## What this approach costs
 
