@@ -12,11 +12,14 @@ import {
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
 import type { ServiceRecord, PublicSiteConfig } from "@/types/cms";
+import { ContactCards } from "@/components/home/contact-cards";
 
 type ContactCTAProps = {
   site: PublicSiteConfig;
   /** Project-work offerings (CMS `services`), listed on the project path. */
   services?: ServiceRecord[];
+  /** WhatsApp click-to-chat link derived on the server, or null. */
+  whatsappHref?: string | null;
 };
 
 /**
@@ -25,7 +28,7 @@ type ContactCTAProps = {
  * rather than two boxed cards: the paths hold very different amounts of
  * text, and boxes made the shorter one look half empty.
  */
-export function ContactCTA({ site, services = [] }: ContactCTAProps) {
+export function ContactCTA({ site, services = [], whatsappHref = null }: ContactCTAProps) {
   const email = site.email?.trim() ?? "";
   const availability = site.availability.message?.trim();
 
@@ -40,6 +43,14 @@ export function ContactCTA({ site, services = [] }: ContactCTAProps) {
           {availability}
         </Text>
       ) : null}
+
+      <div className="mb-14">
+        <ContactCards
+          email={email}
+          linkedin={site.links.linkedin}
+          whatsappHref={whatsappHref}
+        />
+      </div>
 
       <div className="grid gap-12 md:grid-cols-2 md:gap-16">
         <Reveal className="flex flex-col border-t border-foreground/10 pt-6">

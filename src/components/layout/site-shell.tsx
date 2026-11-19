@@ -16,6 +16,8 @@ type SiteShellProps = {
   site: PublicSiteConfig;
   navigation: NavigationData;
   searchIndex: SearchResult[];
+  /** Active CMS resume PDF for the footer, or null. */
+  resumeUrl?: string | null;
 };
 
 export function SiteShell({
@@ -23,6 +25,7 @@ export function SiteShell({
   site,
   navigation,
   searchIndex,
+  resumeUrl = null,
 }: SiteShellProps) {
   return (
     <SoundProvider>
@@ -32,7 +35,7 @@ export function SiteShell({
           <SkipLink />
           <Header site={site} navigation={navigation} />
           <MainContent>{children}</MainContent>
-          <Footer site={site} navigation={navigation} />
+          <Footer site={site} navigation={navigation} resumeUrl={resumeUrl} />
           <MobileTabBar site={site} navigation={navigation} />
           <CommandPalette searchIndex={searchIndex} />
           <CommandPaletteShortcuts />
