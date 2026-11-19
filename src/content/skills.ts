@@ -3,13 +3,13 @@ import type { SkillGroup } from "@/types";
 /**
  * Tech stack groups (CMS skill categories via content:sync). Each item is
  * verified from the CV, a repository, or the user's own confirmation
- * (mobile and security items, 2026-11-19). Vue.js and Livewire were dropped
- * with the CV's 2026-11-15 rewrite for lack of work evidence.
+ * (mobile and security items, 2026-11-19). The user asked to keep every
+ * earlier skill (2026-11-19), so the previous groups' items all live on here.
  */
 export const skillGroups: SkillGroup[] = [
   {
     category: "Languages",
-    skills: ["TypeScript", "JavaScript", "PHP", "Go", "SQL"],
+    skills: ["TypeScript", "JavaScript", "PHP 8.4", "Go", "SQL"],
   },
   {
     category: "Backend",
@@ -23,11 +23,22 @@ export const skillGroups: SkillGroup[] = [
       "Queues and scheduled jobs",
       "Idempotent webhooks",
       "Multi-tenancy",
+      "RBAC",
+      "Adapter pattern",
     ],
   },
   {
     category: "Frontend",
-    skills: ["React", "Next.js", "Vite", "Tailwind CSS", "Blade", "jQuery"],
+    skills: [
+      "React",
+      "Next.js",
+      "Vue.js",
+      "Livewire",
+      "Vite",
+      "Tailwind CSS",
+      "Blade",
+      "jQuery",
+    ],
   },
   {
     category: "Mobile",
@@ -44,6 +55,7 @@ export const skillGroups: SkillGroup[] = [
       "Row-level security",
       "Schema design",
       "Indexing",
+      "Migrations",
     ],
   },
   {
@@ -57,6 +69,7 @@ export const skillGroups: SkillGroup[] = [
       "Zid",
       "WooCommerce",
       "Odoo",
+      "Webhooks",
     ],
   },
   {
@@ -76,6 +89,7 @@ export const skillGroups: SkillGroup[] = [
       "Claude API",
       "Structured output",
       "Evals",
+      "Batch processing",
       "Spend limits",
     ],
   },
@@ -90,8 +104,9 @@ export const skillGroups: SkillGroup[] = [
       "OpenTelemetry",
       "Sentry",
       "Vitest",
-      "PHPUnit",
+      "Pest and PHPUnit",
       "Playwright",
+      "Larastan",
     ],
   },
 ];
