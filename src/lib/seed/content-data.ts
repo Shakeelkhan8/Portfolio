@@ -70,7 +70,7 @@ export const ctaSections = [
   {
     section_key: "home_hero",
     title:
-      "Senior Backend Engineer building scalable SaaS, payment systems and AI-powered applications.",
+      "Full stack developer and software engineer building SaaS, payment systems and AI-powered applications.",
     description:
       "I help businesses build, fix and scale production Laravel and PHP applications: PostgreSQL and Redis underneath, payments, APIs and AI integrations around them. Agencies can also hire me white-label.",
     primary_label: "Discuss your project",

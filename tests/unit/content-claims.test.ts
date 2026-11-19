@@ -89,8 +89,8 @@ describe("public content claims", () => {
     });
   });
 
-  // "Senior Backend Engineer" is the chosen professional title (user's
-  // decision, 2026-11-03, risk accepted). The timeline is a factual record,
+  // "Full Stack Developer & Software Engineer" is the chosen professional
+  // title (user's decision, 2026-11-19). The timeline is a factual record,
   // so every role there stays the employer's official title.
   it("keeps official job titles in the experience timeline", () => {
     const roles = getSeedPayload().experience.map((entry) => entry.role);
