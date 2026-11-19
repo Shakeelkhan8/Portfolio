@@ -46,6 +46,18 @@ test.describe("Phase 9 CMS surfaces", () => {
     await expect(wordmark).toHaveCSS("opacity", "1");
   });
 
+  test("home page has an About section with the story and highlights", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const about = page.locator("#about");
+    await about.scrollIntoViewIfNeeded();
+    await expect(
+      about.getByRole("heading", { level: 2, name: /Careful systems/ }),
+    ).toBeVisible();
+    await expect(about.getByText("Full cycle", { exact: true })).toBeVisible();
+  });
+
   test("home hero offers the resume next to the main action", async ({
     page,
   }) => {

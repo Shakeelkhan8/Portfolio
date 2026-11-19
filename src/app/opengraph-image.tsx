@@ -34,7 +34,7 @@ export default async function OpenGraphImage() {
   return new ImageResponse(
     (
       <OgCard
-        eyebrow={["Backend engineering", ...site.expertise.slice(0, 2)].join(" · ")}
+        eyebrow={["Full stack engineering", ...site.expertise.slice(0, 2)].join(" · ")}
         title={title}
         description={hero?.description?.trim() || site.description}
         footer={`${site.name} · ${site.title}`}

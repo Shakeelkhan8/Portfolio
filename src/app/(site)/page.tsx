@@ -8,6 +8,8 @@ import { ImpactSection } from "@/components/home/impact-section";
 import { ServicesTeaser } from "@/components/home/services-teaser";
 import { AiSection } from "@/components/home/ai-section";
 import { impact } from "@/content/impact";
+import { heroStats } from "@/content/home-about";
+import { AboutSnapshot } from "@/components/home/about-snapshot";
 import { services as catalogServices } from "@/content/service-catalog";
 import { PrinciplesGrid } from "@/components/home/principles-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
@@ -22,6 +24,7 @@ import {
   getCtaSection,
   getExperience,
   getFeaturedTestimonials,
+  getPrimaryEducation,
   getProjects,
   getSectionHeader,
   getServices,
@@ -72,6 +75,7 @@ export default async function Home() {
     experience,
     articles,
     activeResume,
+    education,
   ] = await Promise.all([
     getCtaSection("home_hero"),
     getSectionHeader("home", "philosophy"),
@@ -86,14 +90,9 @@ export default async function Home() {
     getExperience(),
     getArticles(),
     getActiveResumeVersion(),
+    getPrimaryEducation(),
   ]);
   const sideProjects = projects.filter(isSideProject);
-  // Proof points under the hero. The figures are the Impact section's, which
-  // explains each one; "since 2021" matches the experience summary.
-  const heroStats = [
-    { value: "Since 2021", label: "building for the web" },
-    ...impact.slice(0, 2).map(({ value, label }) => ({ value, label })),
-  ];
   // A writing section with one or two short posts reads as unfinished, so it
   // stays off the home page (and out of the default nav) until there are more.
   const showWriting = articles.length >= MIN_ARTICLES_FOR_HOME;
@@ -110,6 +109,12 @@ export default async function Home() {
           stats={heroStats}
           resumeUrl={activeResume?.fileUrl ?? null}
         />
+      </Section>
+
+      <Section spacing="sm" className="relative" id="about">
+        <Container>
+          <AboutSnapshot education={education} />
+        </Container>
       </Section>
 
       <Section spacing="sm" className="relative">

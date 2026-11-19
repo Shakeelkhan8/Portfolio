@@ -290,18 +290,18 @@ export function HomeHero({ site, cta, stats = [], resumeUrl }: HomeHeroProps) {
           <HeroFade delay={HERO.type.actions + 0.15} className="pb-6 sm:pb-8">
             {/*
               Proof points in one ruled line along the bottom of the first
-              screen. Each figure has a full explanation in the Impact
-              section just below.
+              screen (src/content/home-about.ts). The measured results have
+              their own Impact section below, with context.
             */}
             <dl className="grid grid-cols-1 gap-x-8 gap-y-4 border-t border-foreground/10 pt-5 sm:grid-cols-3 sm:pt-6">
               {stats.map((stat) => (
                 <div
                   key={stat.value}
-                  className="flex flex-row-reverse items-baseline justify-end gap-3 sm:flex-col-reverse sm:items-start sm:gap-1.5"
+                  className="flex items-baseline gap-3 sm:flex-col sm:items-start sm:gap-1.5"
                 >
                   {/* Label first in the DOM so it's read as the term; shown under the figure. */}
-                  <dt className="label-mono text-foreground/60">{stat.label}</dt>
-                  <dd className="font-heading text-figure font-semibold text-foreground">
+                  <dt className="label-mono order-2 text-foreground/60">{stat.label}</dt>
+                  <dd className="order-1 font-heading text-figure font-semibold text-foreground">
                     {stat.value}
                   </dd>
                 </div>

@@ -7,6 +7,7 @@ import {
 import { getSeedPayload } from "@/lib/seed/content-data";
 import * as serviceCatalog from "@/content/service-catalog";
 import { impact } from "@/content/impact";
+import { heroStats, homeAbout } from "@/content/home-about";
 
 /**
  * Claims the 2026-10-29 git audit contradicts, or that were never verified.
@@ -52,6 +53,8 @@ const publicText = JSON.stringify({
   seo: [DEFAULT_SEO_TITLE, DEFAULT_SEO_DESCRIPTION],
   services: serviceCatalog,
   impact,
+  heroStats,
+  homeAbout,
 });
 
 describe("public content claims", () => {
