@@ -50,6 +50,9 @@ test.describe("Phase 9 CMS surfaces", () => {
     page,
   }) => {
     await page.goto("/");
+    // Let hydration finish first: the home page swaps DOM nodes while it
+    // hydrates, and scrolling a node mid-swap fails with "not attached".
+    await page.waitForLoadState("networkidle");
     const about = page.locator("#about");
     await about.scrollIntoViewIfNeeded();
     await expect(
@@ -60,6 +63,9 @@ test.describe("Phase 9 CMS surfaces", () => {
 
   test("tech stack filters by group", async ({ page }) => {
     await page.goto("/");
+    // Let hydration finish first: the home page swaps DOM nodes while it
+    // hydrates, and scrolling a node mid-swap fails with "not attached".
+    await page.waitForLoadState("networkidle");
     const stack = page.locator("#tech-stack");
     await stack.scrollIntoViewIfNeeded();
     const all = stack.getByRole("button", { name: "All", exact: true });
@@ -78,6 +84,9 @@ test.describe("Phase 9 CMS surfaces", () => {
 
   test("live platforms link out to the live sites", async ({ page }) => {
     await page.goto("/");
+    // Let hydration finish first: the home page swaps DOM nodes while it
+    // hydrates, and scrolling a node mid-swap fails with "not attached".
+    await page.waitForLoadState("networkidle");
     const section = page.locator("#live-platforms");
     await section.scrollIntoViewIfNeeded();
     await expect(
