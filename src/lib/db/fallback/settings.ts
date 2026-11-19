@@ -8,11 +8,11 @@ import type {
 } from "@/types/cms";
 
 /** ~60 characters: name first for branded searches, then the role people search for. */
-export const DEFAULT_SEO_TITLE = `${siteConfig.name} | Senior Laravel & PHP Backend Engineer`;
+export const DEFAULT_SEO_TITLE = `${siteConfig.name} | Full Stack Developer & Software Engineer`;
 
 /** Under 160 characters so search results show it whole. */
 export const DEFAULT_SEO_DESCRIPTION =
-  "Senior Backend Engineer specializing in Laravel, PHP, SaaS architecture, payment integrations, APIs, PostgreSQL, Redis and AI integrations.";
+  "Full stack developer and software engineer: payments, integrations, multi-tenant SaaS and AI features with TypeScript, Node.js, React, PHP and Laravel.";
 
 export function getFallbackSeoDefaults(): SeoDefaultsRecord {
   return {

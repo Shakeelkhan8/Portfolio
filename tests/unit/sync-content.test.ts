@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { siteConfig } from "@/config/site";
 import {
   hasChanges,
   planFromBackup,
@@ -81,7 +82,7 @@ describe("content sync", () => {
     const plans = planFromSeed(liveSnapshot());
 
     const site = planFor(plans, "site_settings");
-    expect(site.updates[0]?.row.tagline).toBe("Senior Backend Engineer");
+    expect(site.updates[0]?.row.tagline).toBe(siteConfig.title);
     expect(site.updates[0]?.row.response_time_text).toBe(
       "Within one working day.",
     );

@@ -7,6 +7,7 @@ import {
 import { getSeedPayload } from "@/lib/seed/content-data";
 import * as serviceCatalog from "@/content/service-catalog";
 import { impact } from "@/content/impact";
+import { heroStats, homeAbout } from "@/content/home-about";
 
 /**
  * Claims the 2026-10-29 git audit contradicts, or that were never verified.
@@ -52,6 +53,8 @@ const publicText = JSON.stringify({
   seo: [DEFAULT_SEO_TITLE, DEFAULT_SEO_DESCRIPTION],
   services: serviceCatalog,
   impact,
+  heroStats,
+  homeAbout,
 });
 
 describe("public content claims", () => {
@@ -89,8 +92,8 @@ describe("public content claims", () => {
     });
   });
 
-  // "Senior Backend Engineer" is the chosen professional title (user's
-  // decision, 2026-11-03, risk accepted). The timeline is a factual record,
+  // "Full Stack Developer & Software Engineer" is the chosen professional
+  // title (user's decision, 2026-11-19). The timeline is a factual record,
   // so every role there stays the employer's official title.
   it("keeps official job titles in the experience timeline", () => {
     const roles = getSeedPayload().experience.map((entry) => entry.role);

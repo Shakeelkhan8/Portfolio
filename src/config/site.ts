@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "Shakeel Khan",
   legalName: "Muhammad Shakeel",
-  title: "Senior Backend Engineer",
+  title: "Full Stack Developer & Software Engineer",
   description:
-    "Senior backend engineer specialising in payments, integrations and multi-tenant SaaS on Laravel and PostgreSQL: payment gateways and webhooks, ledgers, tenant isolation, APIs and AI features.",
+    "Full stack developer and software engineer specialising in payments, integrations and multi-tenant SaaS on Laravel and PostgreSQL: payment gateways and webhooks, ledgers, tenant isolation, APIs and AI features.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Pakistan",
   city: "Islamabad",
@@ -30,12 +30,11 @@ export const siteConfig = {
     message: "Open to remote backend roles and Laravel project work",
   },
   expertise: [
-    "Laravel and PHP",
-    "SaaS and multi-tenancy",
-    "Payments and integrations",
-    "API development",
-    "OpenAI and Claude",
-    "Performance",
+    "Payments & SaaS",
+    "DevOps",
+    "Security audits",
+    "Network & broadcast",
+    "Mobile apps",
   ],
   philosophy: [
     {

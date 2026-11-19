@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import {
   m,
   useReducedMotion,
@@ -15,27 +15,36 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { AppLink } from "@/components/shared/app-link";
 import { ButtonLink } from "@/components/shared/button-link";
 import { Container } from "@/components/layout/container";
 import { HeroOrb } from "@/components/motion/hero-orb";
 import { HERO } from "@/components/motion/hero-timeline";
 import { TextReveal } from "@/components/motion/text-reveal";
+import { buttonVariants } from "@/components/ui/button";
 import { routes } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import type { CtaSection, PublicSiteConfig } from "@/types/cms";
 
+/** One proof point under the hero actions: a short figure and what it means. */
+export type HeroStat = {
+  value: string;
+  label: string;
+};
+
 type HomeHeroProps = {
   site: PublicSiteConfig;
-  /** CMS-managed headline, intro and CTAs (`cta_sections.home_hero`). */
+  /** CMS-managed intro and CTAs (`cta_sections.home_hero`). */
   cta?: CtaSection | null;
+  /** Proof points along the bottom of the first screen. */
+  stats?: HeroStat[];
+  /** Active resume PDF from the CMS; without one the action opens /resume. */
+  resumeUrl?: string | null;
 };
 
 /**
  * Opacity-only entrance for the hero's supporting lines. CSS (`.enter-fade`),
- * so it runs from first paint: the intro paragraph can be the page's LCP
- * element and must not wait for hydration. Phones get the shorter duration
- * and reduced motion gets no animation, both in globals.css.
+ * so it runs from first paint and doesn't wait for hydration. Phones get the
+ * shorter duration and reduced motion gets no animation, both in globals.css.
  */
 function HeroFade({
   children,
@@ -57,29 +66,25 @@ function HeroFade({
 }
 
 /**
- * Index of the word where the headline's qualifier starts ("for payments,
- * ..."), so the role reads bright and the specialisation quieter. Undefined
- * when the CMS headline has no such split: it then renders in one tone.
+ * Splits the name into the two display lines: the first word, then the rest.
+ * A one-word name stays on one line.
  */
-function qualifierStart(headline: string): number | undefined {
-  const words = headline.split(" ");
-  const index = words.findIndex(
-    (word, i) => i > 0 && ["for", "who", "building"].includes(word.toLowerCase()),
-  );
-  return index > 0 ? index : undefined;
+function nameLines(name: string): [string, string | null] {
+  const [first, ...rest] = name.trim().split(/\s+/);
+  return [first ?? name, rest.length > 0 ? rest.join(" ") : null];
 }
 
 /**
  * Home hero (docs/DESIGN.md).
  *
- * Left-aligned editorial composition instead of a centred stack: a two-tone
- * headline, the intro, one primary action and a quiet text link with
- * availability under them, then the areas of expertise as a ruled line along
- * the bottom edge. The results have their own section below, with
- * context. The particle star sits to the right as the visual, warm at its
- * core, and drifts away as you scroll.
+ * Name-first editorial composition: the name set as the display line, the
+ * role and areas of expertise under it, the intro, the actions with
+ * availability, then the proof points as a ruled line along the bottom of
+ * the first screen. The header hides its wordmark at the top of this page
+ * (see Header), so the name still appears once. The particle star sits to
+ * the right as the visual, warm at its core, and drifts away as you scroll.
  */
-export function HomeHero({ site, cta }: HomeHeroProps) {
+export function HomeHero({ site, cta, stats = [], resumeUrl }: HomeHeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [mobile, setMobile] = useState(false);
@@ -94,14 +99,9 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
 
   const primaryLabel = cta?.primaryLabel?.trim() || null;
   const primaryHref = cta?.primaryHref?.trim() || routes.projects;
-  const secondaryLabel = cta?.secondaryLabel?.trim() || null;
-  const secondaryHref = cta?.secondaryHref?.trim() || routes.contact;
-  // Older CMS rows set the headline to the site name, which the header
-  // wordmark already shows, so fall back to the professional title.
-  const ctaTitle = cta?.title?.trim();
-  const headline = ctaTitle && ctaTitle !== site.name ? ctaTitle : site.title;
   const intro = cta?.description?.trim() || site.description;
   const available = site.availability.status === "available";
+  const [firstName, restOfName] = nameLines(site.name);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -158,7 +158,7 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
 
       <Container className="relative z-10 flex flex-1 flex-col">
         <m.div
-          className="flex flex-1 flex-col justify-center pt-10 pb-12 sm:pt-14 md:max-w-[42rem] md:pb-16 lg:max-w-[46rem]"
+          className="flex flex-1 flex-col justify-center pt-8 pb-8 sm:pt-10 md:pb-10"
           style={
             prefersReducedMotion
               ? undefined
@@ -167,59 +167,110 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
           }
         >
           {/*
-            No name line above the headline: the header's wordmark already
-            shows the name directly above, so the headline opens the page.
+            The name is the h1, set as a wordmark: the first name in a firm
+            weight, the rest light and quieter, offset under it. Each line is
+            its own reveal; the h1 carries the full name as its accessible
+            name so it reads once, not word by word.
           */}
-          <TextReveal
-            as="h1"
-            text={headline}
-            delay={HERO.type.name}
-            quietFrom={qualifierStart(headline)}
-            className="font-heading font-stretch-normal max-w-[22ch] text-display font-semibold text-balance text-foreground sm:font-stretch-semi-expanded"
-          />
+          <h1
+            aria-label={site.name}
+            className="font-heading text-hero-name font-semibold font-stretch-semi-expanded text-foreground"
+          >
+            <span aria-hidden="true" className="block">
+              <TextReveal as="span" text={firstName} delay={HERO.type.name} />
+            </span>
+            {restOfName ? (
+              <span
+                aria-hidden="true"
+                className="block pl-[0.6em] font-light text-foreground/55 sm:pl-[1.1em]"
+              >
+                <TextReveal
+                  as="span"
+                  text={restOfName}
+                  delay={HERO.type.name + 0.12}
+                />
+              </span>
+            ) : null}
+          </h1>
+
+          <HeroFade delay={HERO.type.title} className="mt-6 sm:mt-7">
+            <p className="font-heading text-lg font-semibold tracking-[0.08em] text-foreground uppercase sm:text-xl">
+              {site.title}
+            </p>
+            {site.expertise.length > 0 ? (
+              <ul
+                aria-label="Areas of expertise"
+                className="mt-3 flex max-w-[44rem] flex-wrap gap-x-3 gap-y-1.5"
+              >
+                {site.expertise.map((area, index) => (
+                  <li
+                    key={area}
+                    className="label-mono flex items-center gap-3 text-foreground/60"
+                  >
+                    {index > 0 ? (
+                      <span aria-hidden="true" className="text-signal">
+                        •
+                      </span>
+                    ) : null}
+                    {area}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </HeroFade>
 
           {intro ? (
-            <HeroFade delay={HERO.type.description} className="mt-7 sm:mt-8">
+            <HeroFade delay={HERO.type.description} className="mt-5 sm:mt-6">
               <p className="max-w-[36rem] text-lead text-pretty text-foreground/75">
                 {intro}
               </p>
             </HeroFade>
           ) : null}
 
-          {primaryLabel || secondaryLabel ? (
-            <HeroFade delay={HERO.type.actions} className="mt-9 sm:mt-10">
-              <div className="flex flex-wrap items-center gap-x-7 gap-y-4 sm:gap-x-8">
-                {primaryLabel ? (
-                  <ButtonLink
-                    href={primaryHref}
-                    size="lg"
-                    className="group min-h-12 px-6 transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
-                  >
-                    {primaryLabel}
-                    <ArrowRight
-                      className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                      data-icon="inline-end"
-                    />
-                  </ButtonLink>
-                ) : null}
-                {secondaryLabel ? (
-                  <AppLink
-                    href={secondaryHref}
-                    showExternalIcon={false}
-                    className="link-draw inline-flex min-h-11 items-center text-[0.9375rem] font-medium text-foreground"
-                  >
-                    {secondaryLabel}
-                  </AppLink>
-                ) : null}
-              </div>
-            </HeroFade>
-          ) : null}
+          <HeroFade delay={HERO.type.actions} className="mt-7 sm:mt-8">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              {primaryLabel ? (
+                <ButtonLink
+                  href={primaryHref}
+                  size="lg"
+                  className="group min-h-12 px-6 transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+                >
+                  {primaryLabel}
+                  <ArrowRight
+                    className="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                    data-icon="inline-end"
+                  />
+                </ButtonLink>
+              ) : null}
+              {resumeUrl ? (
+                <a
+                  href={resumeUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "lg" }),
+                    "min-h-12 px-6",
+                  )}
+                >
+                  <Download className="size-4" data-icon="inline-start" />
+                  Download resume
+                </a>
+              ) : (
+                <ButtonLink
+                  href={routes.resume}
+                  variant="outline"
+                  size="lg"
+                  className="min-h-12 px-6"
+                >
+                  View resume
+                </ButtonLink>
+              )}
+            </div>
+          </HeroFade>
 
-          {/*
-            Availability sits under the actions it qualifies, not in the
-            identity line, so the top of the hero reads as just the name.
-          */}
-          <HeroFade delay={HERO.type.actions + 0.08} className="mt-6 sm:mt-7">
+          {/* Availability sits under the actions it qualifies. */}
+          <HeroFade delay={HERO.type.actions + 0.08} className="mt-5">
             <p className="label-mono inline-flex items-center gap-2.5 text-foreground/60">
               <span
                 aria-hidden="true"
@@ -235,26 +286,27 @@ export function HomeHero({ site, cta }: HomeHeroProps) {
           </HeroFade>
         </m.div>
 
-        {site.expertise.length > 0 ? (
-          <HeroFade delay={HERO.type.actions + 0.15} className="pb-8 sm:pb-10">
+        {stats.length > 0 ? (
+          <HeroFade delay={HERO.type.actions + 0.15} className="pb-6 sm:pb-8">
             {/*
-              What I do, in one ruled line along the bottom of the first
-              screen (CMS `expertise_items`). The results that used to sit
-              here have their own section just below, with context.
+              Proof points in one ruled line along the bottom of the first
+              screen (src/content/home-about.ts). The measured results have
+              their own Impact section below, with context.
             */}
-            <ul
-              aria-label="Areas of expertise"
-              className="flex flex-wrap gap-x-3 gap-y-2 border-t border-foreground/10 pt-5 sm:pt-6"
-            >
-              {site.expertise.map((area, index) => (
-                <li key={area} className="label-mono flex items-center gap-3 text-foreground/75">
-                  {index > 0 ? (
-                    <span aria-hidden="true" className="h-3 w-px bg-foreground/20" />
-                  ) : null}
-                  {area}
-                </li>
+            <dl className="grid grid-cols-1 gap-x-8 gap-y-4 border-t border-foreground/10 pt-5 sm:grid-cols-3 sm:pt-6">
+              {stats.map((stat) => (
+                <div
+                  key={stat.value}
+                  className="flex items-baseline gap-3 sm:flex-col sm:items-start sm:gap-1.5"
+                >
+                  {/* Label first in the DOM so it's read as the term; shown under the figure. */}
+                  <dt className="label-mono order-2 text-foreground/60">{stat.label}</dt>
+                  <dd className="order-1 font-heading text-figure font-semibold text-foreground">
+                    {stat.value}
+                  </dd>
+                </div>
               ))}
-            </ul>
+            </dl>
           </HeroFade>
         ) : null}
       </Container>
