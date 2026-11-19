@@ -3,14 +3,17 @@ import { SocialLinks } from "@/components/shared/social-links";
 import { Container } from "@/components/layout/container";
 import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import { cn } from "@/lib/utils";
+import { routes } from "@/config/navigation";
 
 type FooterProps = {
   site: PublicSiteConfig;
   navigation: NavigationData;
+  /** Active CMS resume PDF; without one only the web resume is linked. */
+  resumeUrl?: string | null;
   className?: string;
 };
 
-export function Footer({ site, navigation, className }: FooterProps) {
+export function Footer({ site, navigation, resumeUrl = null, className }: FooterProps) {
   const year = new Date().getFullYear();
   const copyright =
     site.copyrightText || `© ${year} ${site.name}. All rights reserved.`;
@@ -56,6 +59,31 @@ export function Footer({ site, navigation, className }: FooterProps) {
                 </div>
               </nav>
             ) : null}
+            <nav aria-label="Resume" className="flex flex-col gap-3">
+              <p className="font-mono text-[10px] font-medium tracking-[0.28em] text-muted-foreground uppercase">
+                Resume
+              </p>
+              <div className="flex flex-col gap-2.5 text-sm">
+                <AppLink
+                  href={routes.resume}
+                  showExternalIcon={false}
+                  className="rounded-sm text-foreground/85 transition-colors hover:text-primary"
+                >
+                  View resume
+                </AppLink>
+                {resumeUrl ? (
+                  <a
+                    href={resumeUrl}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-sm text-foreground/85 transition-colors hover:text-primary"
+                  >
+                    Download PDF
+                  </a>
+                ) : null}
+              </div>
+            </nav>
             <SocialLinks navigation={navigation} />
           </div>
         </div>

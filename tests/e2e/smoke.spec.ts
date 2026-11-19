@@ -51,6 +51,8 @@ test.describe("Portfolio smoke tests", () => {
 
   test("command palette opens with keyboard shortcut", async ({ page }) => {
     await page.goto("/");
+    // The shortcut handler attaches on hydration; pressing earlier is a race.
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("ControlOrMeta+KeyK");
     await expect(page.getByPlaceholder("Search portfolio...")).toBeVisible();
   });

@@ -15,6 +15,7 @@ import {
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
 import { getSiteConfig } from "@/lib/content";
+import { getWhatsAppHref } from "@/lib/contact/whatsapp";
 
 function DetailRow({
   label,
@@ -83,6 +84,17 @@ export default async function ContactPage() {
                       </li>
                     ))}
                   </ul>
+                </DetailRow>
+              ) : null}
+              {getWhatsAppHref(site.phone) ? (
+                <DetailRow label="WhatsApp">
+                  <AppLink
+                    href={getWhatsAppHref(site.phone)!}
+                    showExternalIcon
+                    className={linkClass}
+                  >
+                    Message on WhatsApp
+                  </AppLink>
                 </DetailRow>
               ) : null}
               {site.responseTimeText ? (

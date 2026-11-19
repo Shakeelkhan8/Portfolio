@@ -97,6 +97,29 @@ test.describe("Phase 9 CMS surfaces", () => {
     await expect(link).toHaveAttribute("target", "_blank");
   });
 
+  test("home contact cards link to email, LinkedIn and WhatsApp", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const cards = page.getByRole("list", { name: "Contact details" });
+    await cards.scrollIntoViewIfNeeded();
+    await expect(cards.locator('a[href^="mailto:"]')).toHaveCount(1);
+    await expect(cards.locator('a[href*="linkedin.com"]')).toHaveCount(1);
+    // Only a wa.me link is published; the phone field stays out of the page
+    // (security.spec.ts checks that no "phone" key is serialised).
+    await expect(cards.locator('a[href^="https://wa.me/"]')).toHaveCount(1);
+  });
+
+  test("footer links to the resume", async ({ page }) => {
+    await page.goto("/about");
+    await expect(
+      page
+        .getByRole("navigation", { name: "Resume" })
+        .getByRole("link", { name: "View resume" }),
+    ).toHaveAttribute("href", "/resume");
+  });
+
   test("home hero offers the resume next to the main action", async ({
     page,
   }) => {

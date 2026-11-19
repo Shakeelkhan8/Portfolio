@@ -36,6 +36,7 @@ import {
 } from "@/lib/content";
 import { isSideProject } from "@/lib/projects";
 import { toPublicSiteConfig } from "@/lib/public-site";
+import { getWhatsAppHref } from "@/lib/contact/whatsapp";
 import { routes } from "@/config/navigation";
 
 function ViewAllLink({
@@ -64,7 +65,10 @@ const MIN_ARTICLES_FOR_HOME = 4;
 
 export default async function Home() {
   // HomeHero and ContactCTA are client components: their props reach the HTML.
-  const site = toPublicSiteConfig(await getSiteConfig());
+  const rawSite = await getSiteConfig();
+  const site = toPublicSiteConfig(rawSite);
+  // Only the wa.me link reaches the page; the phone field itself stays private.
+  const whatsappHref = getWhatsAppHref(rawSite.phone);
   const [
     heroCta,
     principlesHeader,
@@ -277,7 +281,7 @@ export default async function Home() {
 
       <Section spacing="sm" className="relative">
         <Container>
-          <ContactCTA site={site} services={services} />
+          <ContactCTA site={site} services={services} whatsappHref={whatsappHref} />
         </Container>
       </Section>
     </>
