@@ -58,6 +58,36 @@ test.describe("Phase 9 CMS surfaces", () => {
     await expect(about.getByText("Full cycle", { exact: true })).toBeVisible();
   });
 
+  test("tech stack filters by group", async ({ page }) => {
+    await page.goto("/");
+    const stack = page.locator("#tech-stack");
+    await stack.scrollIntoViewIfNeeded();
+    const all = stack.getByRole("button", { name: "All", exact: true });
+    await expect(all).toHaveAttribute("aria-pressed", "true");
+
+    const groups = stack.getByRole("group", { name: "Filter the tech stack" });
+    const firstGroup = groups.getByRole("button").nth(1);
+    const allCount = await stack.locator("ul[aria-live] > li").count();
+    await firstGroup.click();
+    await expect(firstGroup).toHaveAttribute("aria-pressed", "true");
+    await expect(all).toHaveAttribute("aria-pressed", "false");
+    expect(await stack.locator("ul[aria-live] > li").count()).toBeLessThan(
+      allCount,
+    );
+  });
+
+  test("live platforms link out to the live sites", async ({ page }) => {
+    await page.goto("/");
+    const section = page.locator("#live-platforms");
+    await section.scrollIntoViewIfNeeded();
+    await expect(
+      section.getByRole("heading", { level: 3, name: "HUM News" }),
+    ).toBeVisible();
+    const link = section.getByRole("link", { name: /Visit humnews\.pk/ });
+    await expect(link).toHaveAttribute("href", "https://humnews.pk/");
+    await expect(link).toHaveAttribute("target", "_blank");
+  });
+
   test("home hero offers the resume next to the main action", async ({
     page,
   }) => {

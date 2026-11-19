@@ -1,9 +1,37 @@
 import type { SkillGroup } from "@/types";
 
+/**
+ * Tech stack groups (CMS skill categories via content:sync). Each item is
+ * verified from the CV, a repository, or the user's own confirmation
+ * (mobile and security items, 2026-11-19). Vue.js and Livewire were dropped
+ * with the CV's 2026-11-15 rewrite for lack of work evidence.
+ */
 export const skillGroups: SkillGroup[] = [
   {
+    category: "Languages",
+    skills: ["TypeScript", "JavaScript", "PHP", "Go", "SQL"],
+  },
+  {
     category: "Backend",
-    skills: ["PHP 8.4", "Laravel", "Go", "Node.js", "REST APIs", "WebSockets"],
+    skills: [
+      "Node.js",
+      "NestJS",
+      "Express",
+      "Laravel",
+      "REST APIs",
+      "WebSockets",
+      "Queues and scheduled jobs",
+      "Idempotent webhooks",
+      "Multi-tenancy",
+    ],
+  },
+  {
+    category: "Frontend",
+    skills: ["React", "Next.js", "Vite", "Tailwind CSS", "Blade", "jQuery"],
+  },
+  {
+    category: "Mobile",
+    skills: ["React Native", "Flutter", "iOS (Swift)"],
   },
   {
     category: "Data",
@@ -11,32 +39,34 @@ export const skillGroups: SkillGroup[] = [
       "PostgreSQL",
       "MySQL",
       "Redis",
+      "Prisma",
+      "Supabase",
+      "Row-level security",
       "Schema design",
       "Indexing",
-      "Migrations",
     ],
   },
   {
-    category: "Architecture",
+    category: "Payments and integrations",
     skills: [
-      "Multi-tenancy",
-      "RBAC",
-      "Queues and scheduled jobs",
-      "Idempotent webhooks",
-      "Adapter pattern",
-    ],
-  },
-  {
-    category: "Integrations",
-    skills: [
-      "Salla",
-      "Zid",
-      "Shopify",
-      "WooCommerce",
+      "Stripe",
       "HyperPay",
       "EdfaPay",
-      "Stripe",
-      "Webhooks",
+      "Shopify",
+      "Salla",
+      "Zid",
+      "WooCommerce",
+      "Odoo",
+    ],
+  },
+  {
+    category: "Security",
+    skills: [
+      "Secure development",
+      "OWASP web app audits",
+      "Code security reviews",
+      "Server hardening",
+      "Dependency audits",
     ],
   },
   {
@@ -45,22 +75,23 @@ export const skillGroups: SkillGroup[] = [
       "OpenAI API",
       "Claude API",
       "Structured output",
-      "Batch processing",
+      "Evals",
       "Spend limits",
     ],
   },
   {
-    category: "Frontend",
-    skills: ["Vue.js", "Livewire", "Blade", "React", "Next.js", "Tailwind CSS"],
-  },
-  {
-    category: "Delivery",
+    category: "DevOps and testing",
     skills: [
       "Docker",
       "GitHub Actions",
+      "AWS (EC2, S3, RDS)",
+      "Vercel",
       "Linux",
-      "Pest and PHPUnit",
-      "Larastan",
+      "OpenTelemetry",
+      "Sentry",
+      "Vitest",
+      "PHPUnit",
+      "Playwright",
     ],
   },
 ];
