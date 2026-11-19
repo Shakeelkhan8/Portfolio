@@ -3,15 +3,19 @@ import { test, expect } from "@playwright/test";
 test.describe("Portfolio smoke tests", () => {
   test("homepage renders hero content", async ({ page }) => {
     await page.goto("/");
-    // The hero leads with the work; the name lives in the header. The H1 text
-    // comes from the CMS, so assert it exists rather than pin its wording.
+    // The hero leads with the name as its H1, so the header hides its
+    // wordmark until the page scrolls (see cms-modules.spec.ts).
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Shakeel Khan" }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /case studies|work/i }).first()).toBeVisible();
+  });
+
+  test("other pages keep the header wordmark", async ({ page }) => {
+    await page.goto("/about");
     await expect(
       page.getByRole("banner").getByRole("link", { name: "Shakeel Khan" }),
     ).toBeVisible();
-    const headline = page.getByRole("heading", { level: 1 });
-    await expect(headline).toBeVisible();
-    await expect(headline).not.toHaveText("Shakeel Khan");
-    await expect(page.getByRole("link", { name: /case studies|work/i }).first()).toBeVisible();
   });
 
   test("project cards are not remounted after hydration", async ({ page }) => {
