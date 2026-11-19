@@ -62,10 +62,10 @@ test.describe("Phase 9 CMS surfaces", () => {
     page,
   }) => {
     await page.goto("/");
+    // Matched by text, not role: ButtonLink renders <a role="button">, while
+    // the PDF download is a plain <a>, so the role depends on the CMS.
     await expect(
-      page
-        .getByRole("main")
-        .getByRole("link", { name: /Download resume|View resume/ }),
+      page.locator("main a", { hasText: /Download resume|View resume/ }).first(),
     ).toBeVisible();
   });
 
