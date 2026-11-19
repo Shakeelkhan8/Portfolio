@@ -17,6 +17,7 @@ import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
 import { ContactCTA } from "@/components/home/contact-cta";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import {
+  getActiveResumeVersion,
   getArticles,
   getCtaSection,
   getExperience,
@@ -70,6 +71,7 @@ export default async function Home() {
     projects,
     experience,
     articles,
+    activeResume,
   ] = await Promise.all([
     getCtaSection("home_hero"),
     getSectionHeader("home", "philosophy"),
@@ -83,8 +85,15 @@ export default async function Home() {
     getProjects(),
     getExperience(),
     getArticles(),
+    getActiveResumeVersion(),
   ]);
   const sideProjects = projects.filter(isSideProject);
+  // Proof points under the hero. The figures are the Impact section's, which
+  // explains each one; "since 2021" matches the experience summary.
+  const heroStats = [
+    { value: "Since 2021", label: "building for the web" },
+    ...impact.slice(0, 2).map(({ value, label }) => ({ value, label })),
+  ];
   // A writing section with one or two short posts reads as unfinished, so it
   // stays off the home page (and out of the default nav) until there are more.
   const showWriting = articles.length >= MIN_ARTICLES_FOR_HOME;
@@ -95,7 +104,12 @@ export default async function Home() {
         spacing="none"
         className="relative isolate max-w-full overflow-x-clip pb-12 sm:pb-16 md:pb-20"
       >
-        <HomeHero site={site} cta={heroCta} />
+        <HomeHero
+          site={site}
+          cta={heroCta}
+          stats={heroStats}
+          resumeUrl={activeResume?.fileUrl ?? null}
+        />
       </Section>
 
       <Section spacing="sm" className="relative">

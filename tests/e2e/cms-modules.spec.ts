@@ -30,16 +30,31 @@ test.describe("Phase 9 CMS surfaces", () => {
     );
   });
 
-  test("home hero opens with the headline, not a repeated name line", async ({
+  test("home hero opens with the name, shown once in the first screen", async ({
     page,
   }) => {
-    // The header wordmark shows the name directly above; the hero used to
-    // repeat it as a mono label over the headline.
+    // The name is the hero headline, so the header hides its wordmark until
+    // the page scrolls; otherwise the name would appear twice at the top.
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(
-      page.locator("main").getByText("Shakeel Khan", { exact: true }),
-    ).toHaveCount(0);
+      page.getByRole("heading", { level: 1, name: "Shakeel Khan" }),
+    ).toBeVisible();
+    const wordmark = page.getByRole("banner").locator('a[href="/"]').first();
+    await expect(wordmark).toHaveCSS("opacity", "0");
+
+    await page.mouse.wheel(0, 600);
+    await expect(wordmark).toHaveCSS("opacity", "1");
+  });
+
+  test("home hero offers the resume next to the main action", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(
+      page
+        .getByRole("main")
+        .getByRole("link", { name: /Download resume|View resume/ }),
+    ).toBeVisible();
   });
 
   test("resume page renders", async ({ page }) => {

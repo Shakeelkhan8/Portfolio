@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AppLink } from "@/components/shared/app-link";
 import { SoundToggle } from "@/components/shared/sound-toggle";
 import { NavBar } from "@/components/navigation/nav-bar";
@@ -17,6 +18,9 @@ type HeaderProps = {
 
 export function Header({ site, navigation, className }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  // The home hero sets the name as its headline, so the wordmark waits until
+  // the page scrolls: the name shows once in the first screen, not twice.
+  const hideWordmark = usePathname() === routes.home && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -42,7 +46,12 @@ export function Header({ site, navigation, className }: HeaderProps) {
       <Container className="flex h-[var(--header-height)] items-center justify-between gap-3">
         <AppLink
           href={routes.home}
-          className="group -mx-2 flex min-h-11 min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-colors active:opacity-70"
+          aria-hidden={hideWordmark || undefined}
+          tabIndex={hideWordmark ? -1 : undefined}
+          className={cn(
+            "group -mx-2 flex min-h-11 min-w-0 items-center rounded-md px-2 py-1 font-heading text-sm font-semibold tracking-tight text-foreground transition-[opacity,color] duration-300 active:opacity-70",
+            hideWordmark && "pointer-events-none opacity-0",
+          )}
         >
           <span
             className="mr-2.5 inline-flex size-2.5 shrink-0 rounded-full bg-foreground transition-transform duration-500 ease-out group-hover:scale-125"
