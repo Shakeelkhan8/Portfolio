@@ -10,6 +10,9 @@ import { AiSection } from "@/components/home/ai-section";
 import { impact } from "@/content/impact";
 import { heroStats } from "@/content/home-about";
 import { AboutSnapshot } from "@/components/home/about-snapshot";
+import { LivePlatformsGrid } from "@/components/home/live-platforms-grid";
+import { StackSection } from "@/components/home/stack-section";
+import { livePlatforms } from "@/content/live-platforms";
 import { services as catalogServices } from "@/content/service-catalog";
 import { PrinciplesGrid } from "@/components/home/principles-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
@@ -27,6 +30,7 @@ import {
   getPrimaryEducation,
   getProjects,
   getSectionHeader,
+  getSkillGroups,
   getServices,
   getSiteConfig,
 } from "@/lib/content";
@@ -76,6 +80,7 @@ export default async function Home() {
     articles,
     activeResume,
     education,
+    skillGroups,
   ] = await Promise.all([
     getCtaSection("home_hero"),
     getSectionHeader("home", "philosophy"),
@@ -91,6 +96,7 @@ export default async function Home() {
     getArticles(),
     getActiveResumeVersion(),
     getPrimaryEducation(),
+    getSkillGroups(),
   ]);
   const sideProjects = projects.filter(isSideProject);
   // A writing section with one or two short posts reads as unfinished, so it
@@ -140,6 +146,28 @@ export default async function Home() {
           <ProjectPreviewGrid limit={2} staggered />
         </Container>
       </Section>
+
+      <Section spacing="sm" className="relative" id="live-platforms">
+        <Container>
+          <SectionHeader
+            title="Live platforms"
+            description="Production websites I've worked on, and my part in each."
+          />
+          <LivePlatformsGrid items={livePlatforms} />
+        </Container>
+      </Section>
+
+      {skillGroups.length > 0 ? (
+        <Section spacing="sm" className="relative" id="tech-stack">
+          <Container>
+            <SectionHeader
+              title="Tech stack"
+              description="What I build with, across web, mobile, data, security and delivery."
+            />
+            <StackSection groups={skillGroups} />
+          </Container>
+        </Section>
+      ) : null}
 
       {testimonials.length > 0 ? (
         <Section spacing="sm" className="relative">

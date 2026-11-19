@@ -22,7 +22,7 @@ describe("seed content payload", () => {
     expect(payload.projects).toHaveLength(6);
     expect(payload.articles).toHaveLength(2);
     expect(payload.experience).toHaveLength(6);
-    expect(payload.skillGroups).toHaveLength(7);
+    expect(payload.skillGroups).toHaveLength(9);
     expect(payload.navigation.length).toBeGreaterThan(0);
     expect(payload.privacyPage.slug).toBe("privacy");
   });
