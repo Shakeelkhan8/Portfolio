@@ -166,17 +166,15 @@ export function HomeHero({ site, cta, stats = [], resumeUrl }: HomeHeroProps) {
                 { opacity: contentOpacity }
           }
         >
-          <HeroFade delay={HERO.type.badge}>
-            <p className="label-mono text-foreground/55">Hello, I&apos;m</p>
-          </HeroFade>
-
           {/*
-            The name is the h1. Each line is its own reveal; the h1 carries the
-            full name as its accessible name so it reads once, not word by word.
+            The name is the h1, set as a wordmark: the first name in a firm
+            weight, the rest light and quieter, offset under it. Each line is
+            its own reveal; the h1 carries the full name as its accessible
+            name so it reads once, not word by word.
           */}
           <h1
             aria-label={site.name}
-            className="mt-3 font-heading text-hero-name font-semibold uppercase font-stretch-semi-expanded text-foreground sm:mt-4"
+            className="font-heading text-hero-name font-semibold font-stretch-semi-expanded text-foreground"
           >
             <span aria-hidden="true" className="block">
               <TextReveal as="span" text={firstName} delay={HERO.type.name} />
@@ -184,7 +182,7 @@ export function HomeHero({ site, cta, stats = [], resumeUrl }: HomeHeroProps) {
             {restOfName ? (
               <span
                 aria-hidden="true"
-                className="block pl-[0.55em] text-foreground/35 sm:pl-[0.9em]"
+                className="block pl-[0.6em] font-light text-foreground/55 sm:pl-[1.1em]"
               >
                 <TextReveal
                   as="span"
