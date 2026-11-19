@@ -233,7 +233,7 @@ export const projects: Project[] = [
     slug: "ai-mentor-health",
     title: "AI Mentor Health",
     summary:
-      "A wellness-coaching app with AI chat, daily habit check-ins and weekly plans: a domain-structured Laravel codebase with Stripe subscriptions.",
+      "A wellness-coaching SaaS with AI chat, daily habit check-ins and weekly plans, and Stripe subscriptions whose webhooks stay correct when events arrive twice or out of order.",
     problem:
       "An MVP foundation for a consumer wellness product: coaching that remembers the user's goals instead of a generic chatbot, and a paid tier that's simple to run.",
     role: "Solo project",
@@ -241,9 +241,11 @@ export const projects: Project[] = [
     stack: [
       "Laravel",
       "PHP 8.4",
-      "MySQL",
+      "PostgreSQL",
       "Stripe",
+      "Tailwind CSS",
       "Larastan",
+      "Docker",
       "GitHub Actions",
     ],
     tags: ["Side project", "AI", "SaaS"],
@@ -256,15 +258,31 @@ export const projects: Project[] = [
     ],
     metrics: [],
     overview:
-      "Users set goals and focus areas, chat with an AI coach that has safety framing built in, check in on habits each day, and get an AI-generated weekly plan. A Pro tier on Stripe Checkout lifts the free plan's daily message limit. It gives general wellness guidance only and doesn't diagnose anything.",
+      "Users set goals and focus areas, chat with an AI coach that has safety framing built in, check in on habits each day, and get an AI-generated weekly plan. A Pro tier on Stripe Checkout lifts the free plan's daily message limit. A demo mode swaps the AI for pre-written replies and opens a shared, pre-filled account, so the app can be tried without keys or cost. It gives general wellness guidance only and doesn't diagnose anything.",
     challenges: [
-      "Keeping the AI provider swappable.",
+      "Stripe webhooks that arrive twice or out of order.",
+      "Calling a slow AI provider without holding database locks or using quota on failure.",
+      "Concurrent check-ins and plan writes that stay correct on PostgreSQL.",
       "Getting reliably structured output from a model for weekly plans.",
       "Keeping plan limits in one place.",
     ],
     architecture:
-      "Domain modules (Identity, Coaching, Habits, Plans, Billing) layered as HTTP → application actions and services → domain → infrastructure. The coach sits behind an AiCoachClient contract, Stripe Checkout and webhooks handle subscriptions, and feature flags keep deferred modules switched off.",
+      "Domain modules (Identity, Coaching, Habits, Plans, Billing) layered as HTTP → application actions and services → domain → infrastructure. The coach sits behind an AiCoachClient contract, Stripe Checkout and webhooks handle subscriptions, and feature flags switch whole modules on and off. Each webhook's event id is recorded in the same transaction as the subscription change it causes.",
     decisions: [
+      {
+        decision: "Webhook idempotency and ordering checked in one transaction",
+        rationale:
+          "A redelivered event changes nothing because its id is recorded in the same transaction as the change, and an event older than the last one applied is ignored, so it can't roll a subscription back.",
+        tradeoff:
+          "Every event adds a row to stripe_webhook_events, which needs a retention policy as traffic grows.",
+      },
+      {
+        decision: "AI calls run with no database transaction open",
+        rationale:
+          "A slow or failing provider never holds row locks, and a failed reply saves nothing and uses none of the daily allowance.",
+        tradeoff:
+          "The messages are saved in a second, short transaction after the call instead of one transaction around everything.",
+      },
       {
         decision: "The AI provider sits behind an AiCoachClient contract",
         rationale:
@@ -286,7 +304,8 @@ export const projects: Project[] = [
       },
     ],
     results: [
-      "Tests, Pint and Larastan (level 5, no baseline) run on every pull request.",
+      "Every pull request runs the test suite on SQLite and PostgreSQL, Pint, Larastan (level 5, no baseline) and a Docker image build.",
+      "A Docker image and Render blueprint run the whole app in demo mode with no API keys.",
     ],
     lessons: [],
   },
