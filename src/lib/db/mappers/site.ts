@@ -94,8 +94,18 @@ function mapNavItem(item: NavigationItemRecord): NavItem {
   };
 }
 
+/**
+ * Pages that no longer exist. Navigation rows pointing at them are left out of
+ * the public menus, so an Admin row that hasn't been deleted yet can't link to
+ * a 404. Admin still lists the row (getNavigationItems) so it can be removed.
+ * /services: removed with its prices on 2026-11-19.
+ */
+export const RETIRED_PATHS: ReadonlySet<string> = new Set(["/services"]);
+
 export function mapNavigation(items: NavigationItemRecord[]): NavigationData {
-  const visible = items.filter((item) => item.visible);
+  const visible = items.filter(
+    (item) => item.visible && !RETIRED_PATHS.has(item.href),
+  );
 
   const sort = (group: NavigationItemRecord["navGroup"]) =>
     visible

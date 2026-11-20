@@ -26,7 +26,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     routes.openSource,
     routes.resume,
     routes.contact,
-    routes.services,
   ];
 
   const lastModifiedByPath = new Map<string, Date>();

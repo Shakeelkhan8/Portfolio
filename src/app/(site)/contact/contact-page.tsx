@@ -1,15 +1,10 @@
-import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import { SectionHeader } from "@/components/layout/section-header";
 import { PageHeader } from "@/components/shared/page-header";
 import { AvailabilityBadge } from "@/components/shared/availability-badge";
 import { AppLink } from "@/components/shared/app-link";
 import { ContactForm } from "@/components/contact/contact-form";
-import { EngagementPaths } from "@/components/services/engagement-paths";
 import { Reveal } from "@/components/motion/reveal";
-import { engagementPaths } from "@/content/service-catalog";
-import { routes } from "@/config/navigation";
 import {
   getMailtoHref,
   getPublicEmailLabel,
@@ -39,7 +34,6 @@ export default async function ContactPage() {
   const profiles = [
     { label: "LinkedIn", href: site.links.linkedin },
     { label: "GitHub", href: site.links.github },
-    { label: "Upwork", href: site.links.upwork },
   ].filter((profile): profile is { label: string; href: string } =>
     Boolean(profile.href),
   );
@@ -48,8 +42,8 @@ export default async function ContactPage() {
     <>
       <PageHeader
         title="Contact"
-        heading="Have a backend challenge? Let's solve it."
-        description="Whether you need to fix an existing Laravel application, integrate a payment system, speed up a slow app, modernise legacy PHP code or build an AI feature, tell me what you need."
+        heading="Have something to build or fix? Let's talk."
+        description="Whether it's a role to fill, a web or mobile app to build, a payment integration, a slow or buggy app to fix, or an AI feature, tell me what you need."
       >
         <AvailabilityBadge site={site} />
       </PageHeader>
@@ -102,31 +96,8 @@ export default async function ContactPage() {
                   <p className="text-muted-foreground">{site.responseTimeText}</p>
                 </DetailRow>
               ) : null}
-              <DetailRow label="Prices">
-                <AppLink
-                  href={routes.services}
-                  showExternalIcon={false}
-                  className="group inline-flex items-center gap-1.5 font-medium text-foreground"
-                >
-                  <span className="link-draw">Services and starting prices</span>
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </AppLink>
-              </DetailRow>
             </aside>
           </Reveal>
-        </Container>
-      </Section>
-
-      <Section spacing="sm">
-        <Container>
-          <SectionHeader
-            title="Ways to work together"
-            description="Start small, build something, or keep it running."
-          />
-          <EngagementPaths paths={engagementPaths} />
         </Container>
       </Section>
     </>
