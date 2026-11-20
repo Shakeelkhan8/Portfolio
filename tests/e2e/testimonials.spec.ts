@@ -27,7 +27,7 @@ test.describe("Testimonials", () => {
       await expect(heading).toContainText("In a client's words");
     }
 
-    const cta = section.getByRole("link", { name: "Discuss your project" });
+    const cta = section.getByRole("link", { name: "Get in touch" });
     await expect(cta).toHaveAttribute("href", "/contact#contact-form");
   });
 
