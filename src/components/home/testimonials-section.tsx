@@ -166,7 +166,7 @@ export function TestimonialsSection({
           showExternalIcon={false}
           className="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
         >
-          <span className="link-draw">Discuss your project</span>
+          <span className="link-draw">Get in touch</span>
           <ArrowRight
             aria-hidden="true"
             className="size-4 transition-transform duration-300 group-hover:translate-x-1"
