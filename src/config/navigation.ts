@@ -4,7 +4,6 @@ import type { NavItem } from "@/types";
 
 export const mainNav: NavItem[] = [
   { title: "Work", href: "/projects" },
-  { title: "Services", href: "/services" },
   { title: "About", href: "/about" },
   { title: "Resume", href: "/resume" },
   { title: "Contact", href: "/contact" },
@@ -50,7 +49,6 @@ export const routes = {
   home: "/",
   about: "/about",
   projects: "/projects",
-  services: "/services",
   project: (slug: string) => `/projects/${slug}` as const,
   experience: "/experience",
   writing: "/writing",

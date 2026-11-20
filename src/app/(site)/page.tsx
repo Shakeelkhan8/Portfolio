@@ -5,7 +5,6 @@ import { SectionHeader } from "@/components/layout/section-header";
 import { AppLink } from "@/components/shared/app-link";
 import { HomeHero } from "@/components/home/home-hero";
 import { ImpactSection } from "@/components/home/impact-section";
-import { ServicesTeaser } from "@/components/home/services-teaser";
 import { AiSection } from "@/components/home/ai-section";
 import { impact } from "@/content/impact";
 import { heroStats } from "@/content/home-about";
@@ -13,7 +12,6 @@ import { AboutSnapshot } from "@/components/home/about-snapshot";
 import { LivePlatformsGrid } from "@/components/home/live-platforms-grid";
 import { StackSection } from "@/components/home/stack-section";
 import { livePlatforms } from "@/content/live-platforms";
-import { services as catalogServices } from "@/content/service-catalog";
 import { PrinciplesGrid } from "@/components/home/principles-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { SideProjectCard } from "@/components/home/side-project-card";
@@ -31,7 +29,6 @@ import {
   getProjects,
   getSectionHeader,
   getSkillGroups,
-  getServices,
   getSiteConfig,
 } from "@/lib/content";
 import { isSideProject } from "@/lib/projects";
@@ -77,7 +74,6 @@ export default async function Home() {
     writingHeader,
     experienceHeader,
     testimonialsHeader,
-    services,
     testimonials,
     projects,
     experience,
@@ -93,7 +89,6 @@ export default async function Home() {
     getSectionHeader("home", "writing"),
     getSectionHeader("home", "experience"),
     getSectionHeader("home", "testimonials"),
-    getServices(),
     getFeaturedTestimonials(),
     getProjects(),
     getExperience(),
@@ -200,17 +195,6 @@ export default async function Home() {
       <Section spacing="sm" className="relative">
         <Container>
           <SectionHeader
-            title="Services"
-            description="What you can hire me for, from a $60 fix to a monthly care plan."
-            action={<ViewAllLink href={routes.services} label="Prices and packages" />}
-          />
-          <ServicesTeaser services={catalogServices} />
-        </Container>
-      </Section>
-
-      <Section spacing="sm" className="relative">
-        <Container>
-          <SectionHeader
             title="AI integration"
             description="Practical AI integrations for real business applications."
           />
@@ -281,7 +265,7 @@ export default async function Home() {
 
       <Section spacing="sm" className="relative">
         <Container>
-          <ContactCTA site={site} services={services} whatsappHref={whatsappHref} />
+          <ContactCTA site={site} whatsappHref={whatsappHref} />
         </Container>
       </Section>
     </>

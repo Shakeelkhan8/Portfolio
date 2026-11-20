@@ -1,8 +1,5 @@
-import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/shared/app-link";
-import { ButtonLink } from "@/components/shared/button-link";
 import { Reveal } from "@/components/motion/reveal";
-import { contactHref } from "@/components/services/service-list";
 import { routes } from "@/config/navigation";
 
 const capabilities = [
@@ -61,15 +58,6 @@ export function AiSection() {
           interface so the provider can change, and has to get reliably
           structured output from the model for its weekly plans.
         </p>
-        <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
-          <ButtonLink href={contactHref("ai")} className="group">
-            Discuss an AI integration project
-            <ArrowRight
-              className="size-4 transition-transform duration-300 group-hover:translate-x-1"
-              data-icon="inline-end"
-            />
-          </ButtonLink>
-        </div>
       </Reveal>
 
       <Reveal delay={0.08}>

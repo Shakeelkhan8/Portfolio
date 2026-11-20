@@ -1,11 +1,10 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState } from "react";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SelectField } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Text } from "@/components/typography/text";
 import { useSiteData } from "@/components/providers/site-data-provider";
@@ -13,37 +12,19 @@ import {
   getMailtoHref,
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
-import {
-  BUDGETS,
-  PROJECT_TYPES,
-  contactFormSchema,
-} from "@/lib/validators/contact";
+import { contactFormSchema } from "@/lib/validators/contact";
 
 type FormState = "idle" | "loading" | "success" | "error";
-type FieldName = "name" | "email" | "projectType" | "budget" | "message";
+type FieldName = "name" | "email" | "message";
 type FieldErrors = Partial<Record<FieldName, string>>;
 
-const PROJECT_TYPE_OPTIONS = Object.entries(PROJECT_TYPES).map(
-  ([value, label]) => ({ value, label }),
-);
-
-const BUDGET_OPTIONS = [
-  { value: "", label: "Prefer not to say" },
-  ...Object.entries(BUDGETS).map(([value, label]) => ({ value, label })),
-];
-
-const FIELD_ORDER: FieldName[] = [
-  "name",
-  "email",
-  "projectType",
-  "budget",
-  "message",
-];
+const FIELD_ORDER: FieldName[] = ["name", "email", "message"];
 
 /**
  * Field errors for a payload, using the API's own schema so the browser and
- * the server agree. Project type is required here (it is optional on the
- * server only so a cached old form can still submit during a deploy).
+ * the server agree. The form no longer asks for a project type or budget
+ * (2026-11-19); the API still accepts both as optional, so older rows and a
+ * cached older form keep working.
  */
 function validate(payload: Record<string, string>): FieldErrors {
   const errors: FieldErrors = {};
@@ -55,9 +36,6 @@ function validate(payload: Record<string, string>): FieldErrors {
         errors[field] = issue.message;
       }
     }
-  }
-  if (!payload.projectType) {
-    errors.projectType = "Please choose a project type.";
   }
   return errors;
 }
@@ -71,31 +49,12 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-function subscribeToNothing() {
-  return () => {};
-}
-
-function readTypeFromUrl() {
-  const type = new URLSearchParams(window.location.search).get("type") ?? "";
-  return type in PROJECT_TYPES ? type : "";
-}
-
 export function ContactForm() {
   const { site } = useSiteData();
   const formRef = useRef<HTMLFormElement>(null);
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  // "Discuss this service" links arrive as /contact?type=<key>. Read through
-  // useSyncExternalStore so the server render (no URL) and hydration agree.
-  const typeFromUrl = useSyncExternalStore(
-    subscribeToNothing,
-    readTypeFromUrl,
-    () => "",
-  );
-  const [chosenType, setProjectType] = useState<string | null>(null);
-  const projectType = chosenType ?? typeFromUrl;
-  const [budget, setBudget] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -107,8 +66,6 @@ export function ContactForm() {
     const payload = {
       name: String(formData.get("name") ?? ""),
       email: String(formData.get("email") ?? ""),
-      projectType: String(formData.get("projectType") ?? ""),
-      budget: String(formData.get("budget") ?? ""),
       message: String(formData.get("message") ?? ""),
       company: String(formData.get("company") ?? ""),
     };
@@ -118,8 +75,6 @@ export function ContactForm() {
     const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
     if (firstInvalid) {
       setState("idle");
-      // By id: the selects submit through a hidden input, but their id is on
-      // the focusable trigger.
       form.querySelector<HTMLElement>(`#${firstInvalid}`)?.focus();
       return;
     }
@@ -142,8 +97,6 @@ export function ContactForm() {
       }
 
       form.reset();
-      setProjectType("");
-      setBudget("");
       setState("success");
     } catch (error) {
       setState("error");
@@ -228,50 +181,16 @@ export function ContactForm() {
         </div>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="projectType">What do you need?</Label>
-          <SelectField
-            id="projectType"
-            name="projectType"
-            required
-            disabled={isLoading}
-            placeholder="Choose one"
-            options={PROJECT_TYPE_OPTIONS}
-            value={projectType}
-            onValueChange={setProjectType}
-            {...fieldProps("projectType")}
-          />
-          <FieldError id="projectType-error" message={fieldErrors.projectType} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="budget">
-            Budget <span className="font-normal text-muted-foreground">(optional)</span>
-          </Label>
-          <SelectField
-            id="budget"
-            name="budget"
-            disabled={isLoading}
-            placeholder="Prefer not to say"
-            options={BUDGET_OPTIONS}
-            value={budget}
-            onValueChange={setBudget}
-            {...fieldProps("budget")}
-          />
-          <FieldError id="budget-error" message={fieldErrors.budget} />
-        </div>
-      </div>
-
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="message">Project details</Label>
+          <Label htmlFor="message">Message</Label>
           <span className="text-xs text-muted-foreground">Max 5000 characters</span>
         </div>
         <Textarea
           id="message"
           name="message"
           required
-          placeholder="What does the app do, what's wrong or missing, and when do you need it?"
+          placeholder="Tell me about the role or the project, and how I can help."
           rows={6}
           maxLength={5000}
           disabled={isLoading}

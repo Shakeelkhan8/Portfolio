@@ -73,7 +73,7 @@ export const ctaSections = [
       "Full stack developer and software engineer building SaaS, payment systems and AI-powered applications.",
     description:
       "I design, build and ship production software in TypeScript, Node.js, React, PHP and Laravel, and I stay with it after launch: monitoring, fixes and steady improvement.",
-    primary_label: "Discuss your project",
+    primary_label: "Get in touch",
     primary_href: "/contact#contact-form",
     secondary_label: "Explore my work",
     secondary_href: "/projects",

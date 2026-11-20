@@ -27,7 +27,7 @@ export const siteConfig = {
   responseTime: "Within one working day.",
   availability: {
     status: "available" as const,
-    message: "Open to remote backend roles and Laravel project work",
+    message: "Open to full-time and remote roles, and to project work.",
   },
   expertise: [
     "Payments & SaaS",

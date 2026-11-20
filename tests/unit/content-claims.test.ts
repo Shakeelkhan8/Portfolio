@@ -5,7 +5,6 @@ import {
   DEFAULT_SEO_TITLE,
 } from "@/lib/db/fallback/settings";
 import { getSeedPayload } from "@/lib/seed/content-data";
-import * as serviceCatalog from "@/content/service-catalog";
 import { impact } from "@/content/impact";
 import { heroStats, homeAbout } from "@/content/home-about";
 import { livePlatforms } from "@/content/live-platforms";
@@ -52,7 +51,6 @@ const publicText = JSON.stringify({
   seed: getSeedPayload(),
   site: siteConfig,
   seo: [DEFAULT_SEO_TITLE, DEFAULT_SEO_DESCRIPTION],
-  services: serviceCatalog,
   impact,
   heroStats,
   homeAbout,
