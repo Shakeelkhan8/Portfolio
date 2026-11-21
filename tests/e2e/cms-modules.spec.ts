@@ -4,7 +4,10 @@ test.describe("Phase 9 CMS surfaces", () => {
   test("home page shows featured projects and experience", async ({ page }) => {
     await page.goto("/");
     await expect(
-      page.getByRole("heading", { name: /case studies|selected work/i }),
+      // .first(): the case studies come before the "Selected work" cards.
+      page
+        .getByRole("heading", { name: /case studies|selected projects|selected work/i })
+        .first(),
     ).toBeVisible();
     await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
     await page
@@ -68,16 +71,17 @@ test.describe("Phase 9 CMS surfaces", () => {
     await page.waitForLoadState("networkidle");
     const stack = page.locator("#tech-stack");
     await stack.scrollIntoViewIfNeeded();
-    const all = stack.getByRole("button", { name: "All", exact: true });
+    // Each filter shows its count, so the accessible name is e.g. "All 73".
+    const all = stack.getByRole("button", { name: /^All \d+$/ });
     await expect(all).toHaveAttribute("aria-pressed", "true");
 
     const groups = stack.getByRole("group", { name: "Filter the tech stack" });
     const firstGroup = groups.getByRole("button").nth(1);
-    const allCount = await stack.locator("ul[aria-live] > li").count();
+    const allCount = await stack.locator("[data-tech-tile]").count();
     await firstGroup.click();
     await expect(firstGroup).toHaveAttribute("aria-pressed", "true");
     await expect(all).toHaveAttribute("aria-pressed", "false");
-    expect(await stack.locator("ul[aria-live] > li").count()).toBeLessThan(
+    expect(await stack.locator("[data-tech-tile]").count()).toBeLessThan(
       allCount,
     );
   });
@@ -92,7 +96,9 @@ test.describe("Phase 9 CMS surfaces", () => {
     await expect(
       section.getByRole("heading", { level: 3, name: "HUM News" }),
     ).toBeVisible();
-    const link = section.getByRole("link", { name: /Visit humnews\.pk/ });
+    const link = section.getByRole("link", {
+      name: /Visit the HUM News live site/,
+    });
     await expect(link).toHaveAttribute("href", "https://humnews.pk/");
     await expect(link).toHaveAttribute("target", "_blank");
   });
