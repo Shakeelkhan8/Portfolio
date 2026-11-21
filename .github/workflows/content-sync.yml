@@ -1,0 +1,173 @@
+# Syncs the repo's content seed into the live CMS database after each
+# production deploy, then refreshes the public pages. Replaces the manual
+# dry run → apply → Admin "Refresh public pages" routine.
+#
+# Order: Vercel finishes the Production deployment → this job runs → drift
+# check → apply (backup kept as an artifact) → POST /api/revalidate on the
+# site, checked to reach the deployed commit.
+#
+# Drift check (compare-and-swap): the live database must still match the
+# PREVIOUS commit's seed. If it doesn't, someone changed that content in Admin
+# (or an earlier sync never ran), and syncing would overwrite it, so the job
+# stops instead and opens an issue. Run "dry-run", read it, then
+# "apply-reviewed" from the Actions tab to resolve it.
+#
+# Safe to re-run: the sync is idempotent (a second run finds no changes) and
+# runs never overlap (concurrency group). Any failure opens or updates one
+# issue labelled content-sync, so the owner is notified.
+#
+# Needs: secrets NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+# CONTENT_REVALIDATE_SECRET; variables SUPABASE_PROJECT_REF, SITE_URL; and
+# CONTENT_REVALIDATE_SECRET set in Vercel (Production). To turn it off:
+# Actions → Content sync → Disable workflow.
+
+name: Content sync
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "dry-run shows the plan. apply-reviewed writes it without the drift check: only after reading a dry run."
+        type: choice
+        options: [dry-run, apply-reviewed]
+        default: dry-run
+
+concurrency:
+  group: content-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    name: Sync content and refresh pages
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Secrets are set only on the steps that use them, never on install.
+    env:
+      MODE: ${{ inputs.mode || 'deploy' }}
+      SHA: ${{ github.event.deployment.sha || github.sha }}
+      PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      SITE_URL: ${{ vars.SITE_URL }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+    steps:
+      - name: Check configuration
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CONTENT_REVALIDATE_SECRET: ${{ secrets.CONTENT_REVALIDATE_SECRET }}
+        run: |
+          missing=()
+          for name in NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY CONTENT_REVALIDATE_SECRET PROJECT_REF SITE_URL; do
+            [ -n "${!name}" ] || missing+=("$name")
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing secrets or variables: ${missing[*]}"
+            exit 1
+          fi
+
+      - name: Checkout the deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+          fetch-depth: 2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The previous commit's seed, exported by that commit's own code.
+      - name: Export the previous seed
+        if: env.MODE == 'deploy'
+        run: |
+          prev="$RUNNER_TEMP/prev"
+          git worktree add --detach "$prev" HEAD^
+          cp scripts/export-seed.ts "$prev/scripts/export-seed.ts"
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$prev/node_modules"
+          (cd "$prev" && "$GITHUB_WORKSPACE/node_modules/.bin/tsx" scripts/export-seed.ts) > "$RUNNER_TEMP/baseline.json"
+
+      - name: Sync
+        id: sync
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          args=(--result="$RUNNER_TEMP/result.txt")
+          case "$MODE" in
+            deploy) args+=(--apply --confirm="$PROJECT_REF" --baseline="$RUNNER_TEMP/baseline.json") ;;
+            apply-reviewed) args+=(--apply --confirm="$PROJECT_REF") ;;
+            dry-run) ;;
+          esac
+          pnpm content:sync "${args[@]}"
+          echo "result=$(cat "$RUNNER_TEMP/result.txt")" >> "$GITHUB_OUTPUT"
+
+      - name: Keep the backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-sync-backup-${{ github.run_id }}
+          path: .content-sync-backups/
+          if-no-files-found: ignore
+          retention-days: 90
+
+      # Retries until the site's alias serves the deployed commit.
+      - name: Refresh public pages
+        if: steps.sync.outputs.result == 'applied'
+        env:
+          CONTENT_REVALIDATE_SECRET: ${{ secrets.CONTENT_REVALIDATE_SECRET }}
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            body=$(curl -fsS -X POST -H "Authorization: Bearer $CONTENT_REVALIDATE_SECRET" "${SITE_URL%/}/api/revalidate")
+            commit=$(echo "$body" | jq -r '.commit // empty')
+            if [ "$MODE" != "deploy" ] || [ "$commit" = "$SHA" ]; then
+              echo "Refreshed public pages (commit ${commit:-unknown})."
+              exit 0
+            fi
+            if [ -z "$commit" ]; then
+              echo "::warning::The site did not report its commit; refreshed without checking it."
+              exit 0
+            fi
+            echo "Site serves $commit, waiting for $SHA (attempt $attempt)."
+            sleep 20
+          done
+          echo "::error::The site never served $SHA; pages may still show old content."
+          exit 1
+
+      - name: Report a failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          result=$(cat "$RUNNER_TEMP/result.txt" 2>/dev/null || echo "error")
+          body="Content sync for \`${SHA:0:7}\` stopped (result: **$result**, mode: $MODE).
+
+          Details and the plan: $RUN_URL
+
+          - **blocked**: the live content no longer matches the previous seed. Read the run summary, then run *Content sync* with **dry-run** and, if it is right, **apply-reviewed**.
+          - **error**: check the log. The backup artifact on the run can restore the rows (\`pnpm content:sync --restore=FILE --confirm=REF\`)."
+          gh label create content-sync --color B60205 --description "Content sync workflow" --force
+          open=$(gh issue list --label content-sync --state open --json number --jq '.[0].number // empty')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --title "Content sync needs a review" --label content-sync --body "$body"
+          fi

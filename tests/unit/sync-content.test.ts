@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { siteConfig } from "@/config/site";
+import { getSeedPayload } from "@/lib/seed/content-data";
 import {
+  decideSync,
   hasChanges,
   planFromBackup,
+  seedChanged,
   planFromSeed,
   SCOPES,
   type Snapshot,
@@ -137,5 +140,66 @@ describe("content sync", () => {
 
   it("refuses to run against a database that was never seeded", () => {
     expect(() => planFromSeed({})).toThrow(/Seed the database first/);
+  });
+});
+
+describe("unattended sync decision (drift check)", () => {
+  const oldSeed = getSeedPayload();
+  /** A database the old seed was synced into. */
+  const synced = () => afterApply(liveSnapshot(), planFromSeed(liveSnapshot(), oldSeed));
+  /** The next commit adds one skill. */
+  const newSeed = () => {
+    const seed = structuredClone(oldSeed);
+    seed.skillGroups[0].skills.push("Rust");
+    return seed;
+  };
+  const decide = (db: Snapshot, next: typeof oldSeed) =>
+    decideSync(planFromSeed(db, next), {
+      plans: planFromSeed(db, oldSeed),
+      seedChanged: seedChanged(db, oldSeed, next),
+    });
+  const editInAdmin = (db: Snapshot) => {
+    const edited = structuredClone(db);
+    edited.skills[0] = { ...edited.skills[0], name: "Edited in Admin" };
+    return edited;
+  };
+
+  it("applies when the database still matches the previous seed", () => {
+    expect(decide(synced(), newSeed())).toBe("apply");
+  });
+
+  it("blocks when an Admin edit would be overwritten", () => {
+    expect(decide(editInAdmin(synced()), newSeed())).toBe("blocked");
+  });
+
+  it("leaves Admin edits alone when the commit didn't change the seed", () => {
+    expect(decide(editInAdmin(synced()), oldSeed)).toBe("unchanged");
+  });
+
+  it("does nothing when the database already matches the new seed", () => {
+    const db = afterApply(synced(), planFromSeed(synced(), newSeed()));
+    expect(decide(db, newSeed())).toBe("noop");
+  });
+
+  it("blocks when an earlier sync never ran", () => {
+    // The live database is still on the 2026-11-03 content.
+    expect(decide(liveSnapshot(), newSeed())).toBe("blocked");
+  });
+
+  it("treats a re-export of the same content as unchanged", () => {
+    // The seed stamps projects with the export time, so the JSON differs.
+    const reExported = structuredClone(oldSeed);
+    for (const project of reExported.projects) {
+      project.published_at = "2030-01-01T00:00:00.000Z";
+    }
+    expect(JSON.stringify(reExported)).not.toBe(JSON.stringify(oldSeed));
+    expect(seedChanged(synced(), oldSeed, reExported)).toBe(false);
+    expect(decide(editInAdmin(synced()), reExported)).toBe("unchanged");
+  });
+
+  it("applies without a drift check after a person reviewed the dry run", () => {
+    expect(decideSync(planFromSeed(editInAdmin(synced()), newSeed()), null)).toBe(
+      "apply",
+    );
   });
 });

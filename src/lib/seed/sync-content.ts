@@ -2,6 +2,9 @@ import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSeedPayload, getSkillCategorySlug } from "@/lib/seed/content-data";
 
+/** The seed as plain data; a JSON export of an older commit's seed has this shape. */
+export type SeedPayload = ReturnType<typeof getSeedPayload>;
+
 /**
  * Brings the live CMS content in line with the seed (src/content, src/config)
  * without a destructive re-seed.
@@ -19,8 +22,11 @@ import { getSeedPayload, getSkillCategorySlug } from "@/lib/seed/content-data";
  * that are not in the seed are deleted. Running it twice is a no-op.
  *
  * Restore uses the same reconcile with the backup's rows as the target.
+ * After each production deploy, .github/workflows/content-sync.yml runs it
+ * unattended, guarded by `decideSync`.
  * Public pages cache CMS data with no expiry, so nothing visitors see changes
- * until "Refresh public pages" runs in Admin → Settings.
+ * until "Refresh public pages" runs in Admin → Settings (the workflow calls
+ * POST /api/revalidate, which does the same).
  */
 
 type Row = Record<string, unknown>;
@@ -293,9 +299,15 @@ async function select(
   return (data ?? []) as Row[];
 }
 
-/** Reads every row the sync owns. This is also the backup. */
-export async function readSnapshot(supabase: Client): Promise<Snapshot> {
-  const seedSlugs = getSeedPayload().projects.map((project) => project.slug);
+/**
+ * Reads every row the sync owns for `seed` (seeded projects are matched by
+ * slug). This is also the backup.
+ */
+export async function readSnapshot(
+  supabase: Client,
+  seed: SeedPayload = getSeedPayload(),
+): Promise<Snapshot> {
+  const seedSlugs = seed.projects.map((project) => project.slug);
   const snapshot: Snapshot = {
     site_settings: await select(supabase, "site_settings"),
     seo_defaults: await select(supabase, "seo_defaults"),
@@ -340,8 +352,10 @@ export async function readSnapshot(supabase: Client): Promise<Snapshot> {
 }
 
 /** Target rows from the seed, with parent ids resolved against `current`. */
-export function planFromSeed(current: Snapshot): TablePlan[] {
-  const seed = getSeedPayload();
+export function planFromSeed(
+  current: Snapshot,
+  seed: SeedPayload = getSeedPayload(),
+): TablePlan[] {
   const plans: TablePlan[] = [];
   const plan = (table: string, desired: Row[]) => {
     const result = planTable(table, current[table] ?? [], desired);
@@ -543,6 +557,52 @@ export function hasChanges(plans: TablePlan[]) {
   return plans.some(
     (plan) => plan.inserts.length || plan.updates.length || plan.deletes.length,
   );
+}
+
+/**
+ * Whether `next` changes anything the sync owns compared with `previous`:
+ * sync `previous` into a copy of the database, then plan `next` against it.
+ * Comparing the seeds as JSON would not work: the seed stamps projects with
+ * the current time (published_at, which the sync doesn't own), so two exports
+ * of the same content never match.
+ */
+export function seedChanged(
+  previousSnapshot: Snapshot,
+  previous: SeedPayload,
+  next: SeedPayload,
+): boolean {
+  const synced: Snapshot = { ...previousSnapshot };
+  for (const plan of planFromSeed(previousSnapshot, previous)) {
+    synced[plan.table] = plan.target;
+  }
+  return hasChanges(planFromSeed(synced, next));
+}
+
+export type SyncDecision = "noop" | "unchanged" | "apply" | "blocked";
+
+/**
+ * Whether an unattended sync may write (compare-and-swap on the content).
+ *
+ * - noop: the database already matches the new seed.
+ * - unchanged: this commit didn't change the seed, so there is nothing of
+ *   the repo's to sync; the database is left as it is, Admin edits included
+ *   (as before this workflow existed).
+ * - blocked: `baseline` (the previous commit's seed planned against the same
+ *   database) is not empty, so the database no longer matches what the repo
+ *   last said: someone changed it in Admin, or an earlier sync never ran.
+ *   Applying `next` would overwrite that, so a person reviews it instead.
+ * - apply: the database matched the previous seed; move it to the new one.
+ *
+ * `baseline` null means a person already reviewed a dry run.
+ */
+export function decideSync(
+  next: TablePlan[],
+  baseline: { plans: TablePlan[]; seedChanged: boolean } | null,
+): SyncDecision {
+  if (!hasChanges(next)) return "noop";
+  if (!baseline) return "apply";
+  if (!baseline.seedChanged) return "unchanged";
+  return hasChanges(baseline.plans) ? "blocked" : "apply";
 }
 
 const preview = (row: Row) => {
