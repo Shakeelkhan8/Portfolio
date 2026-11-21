@@ -3,13 +3,15 @@ import type { SkillGroup } from "@/types";
 /**
  * Tech stack groups (CMS skill categories via content:sync). Each item is
  * verified from the CV, a repository, or the user's own confirmation
- * (mobile and security items, 2026-11-19). The user asked to keep every
- * earlier skill (2026-11-19), so the previous groups' items all live on here.
+ * (mobile and security items, 2026-11-19; Python, GraphQL, MongoDB, JWT /
+ * OAuth 2.0, Kubernetes, Nginx and RabbitMQ / Kafka, 2026-11-21). The user
+ * asked to keep every earlier skill (2026-11-19) and to drop iOS (Swift)
+ * (2026-11-21).
  */
 export const skillGroups: SkillGroup[] = [
   {
     category: "Languages",
-    skills: ["TypeScript", "JavaScript", "PHP 8.4", "Go", "SQL"],
+    skills: ["TypeScript", "JavaScript", "PHP 8.4", "Python", "Go", "SQL"],
   },
   {
     category: "Backend",
@@ -19,8 +21,10 @@ export const skillGroups: SkillGroup[] = [
       "Express",
       "Laravel",
       "REST APIs",
+      "GraphQL",
       "WebSockets",
       "Queues and scheduled jobs",
+      "RabbitMQ / Kafka",
       "Idempotent webhooks",
       "Multi-tenancy",
       "RBAC",
@@ -42,7 +46,7 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     category: "Mobile",
-    skills: ["React Native", "Flutter", "iOS (Swift)"],
+    skills: ["React Native", "Flutter"],
   },
   {
     category: "Data",
@@ -50,6 +54,7 @@ export const skillGroups: SkillGroup[] = [
       "PostgreSQL",
       "MySQL",
       "Redis",
+      "MongoDB",
       "Prisma",
       "Supabase",
       "Row-level security",
@@ -76,6 +81,7 @@ export const skillGroups: SkillGroup[] = [
     category: "Security",
     skills: [
       "Secure development",
+      "JWT / OAuth 2.0",
       "OWASP web app audits",
       "Code security reviews",
       "Server hardening",
@@ -97,6 +103,8 @@ export const skillGroups: SkillGroup[] = [
     category: "DevOps and testing",
     skills: [
       "Docker",
+      "Kubernetes",
+      "Nginx",
       "GitHub Actions",
       "AWS (EC2, S3, RDS)",
       "Vercel",

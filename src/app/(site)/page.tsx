@@ -12,6 +12,7 @@ import { AboutSnapshot } from "@/components/home/about-snapshot";
 import { LivePlatformsGrid } from "@/components/home/live-platforms-grid";
 import { StackSection } from "@/components/home/stack-section";
 import { livePlatforms } from "@/content/live-platforms";
+import { withTechIcons } from "@/lib/tech-icons";
 import { PrinciplesGrid } from "@/components/home/principles-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { SideProjectCard } from "@/components/home/side-project-card";
@@ -149,8 +150,8 @@ export default async function Home() {
       <Section spacing="sm" className="relative" id="live-platforms">
         <Container>
           <SectionHeader
-            title="Live platforms"
-            description="Production websites I've worked on, and my part in each."
+            title="Selected work"
+            description="Media and broadcast platforms I've worked on, and my part in each."
           />
           <LivePlatformsGrid items={livePlatforms} />
         </Container>
@@ -163,7 +164,7 @@ export default async function Home() {
               title="Tech stack"
               description="What I build with, across web, mobile, data, security and delivery."
             />
-            <StackSection groups={skillGroups} />
+            <StackSection groups={withTechIcons(skillGroups)} />
           </Container>
         </Section>
       ) : null}
