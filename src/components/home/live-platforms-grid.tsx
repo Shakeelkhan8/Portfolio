@@ -90,7 +90,7 @@ export function LivePlatformsGrid({ items }: { items: LivePlatform[] }) {
             <span className="label-mono self-start rounded-full border border-foreground/20 px-2.5 py-1 text-foreground/80">
               Live site
             </span>
-            <p className="label-mono mt-4 text-foreground/50">{item.category}</p>
+            <p className="label-mono mt-4 text-foreground/60">{item.category}</p>
             <h3 className="mt-2 font-heading text-heading font-semibold text-foreground">
               {item.name}
             </h3>
@@ -116,7 +116,7 @@ export function LivePlatformsGrid({ items }: { items: LivePlatform[] }) {
                 <span className="size-2 rounded-full bg-foreground/15" />
                 <span className="size-2 rounded-full bg-foreground/15" />
                 <span className="size-2 rounded-full bg-foreground/15" />
-                <span className="label-mono ml-auto truncate text-[10px] text-foreground/45">
+                <span className="label-mono ml-auto truncate text-[10px] text-foreground/60">
                   Official site · {hostOf(item.url)}
                 </span>
               </div>

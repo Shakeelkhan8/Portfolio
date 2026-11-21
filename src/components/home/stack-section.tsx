@@ -108,7 +108,7 @@ export function StackSection({ groups }: { groups: TechGroup[] }) {
               )}
             >
               {name}
-              <span className={cn("tabular-nums", selected ? "text-background/60" : "text-foreground/40")}>
+              <span className={cn("tabular-nums", selected ? "text-background/70" : "text-foreground/60")}>
                 {count}
               </span>
             </button>
