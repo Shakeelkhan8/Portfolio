@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { siteConfig } from "@/config/site";
 import { getSeedPayload } from "@/lib/seed/content-data";
+import { seedJson } from "../../scripts/seed-json";
 import {
   decideSync,
   hasChanges,
@@ -8,6 +9,7 @@ import {
   seedChanged,
   planFromSeed,
   SCOPES,
+  type SeedPayload,
   type Snapshot,
   type TablePlan,
 } from "@/lib/seed/sync-content";
@@ -144,20 +146,32 @@ describe("content sync", () => {
 });
 
 describe("unattended sync decision (drift check)", () => {
-  const oldSeed = getSeedPayload();
-  /** A database the old seed was synced into. */
-  const synced = () => afterApply(liveSnapshot(), planFromSeed(liveSnapshot(), oldSeed));
-  /** The next commit adds one skill. */
-  const newSeed = () => {
-    const seed = structuredClone(oldSeed);
-    seed.skillGroups[0].skills.push("Rust");
-    return seed;
+  /** Three seed versions: v1, then v2 adds a skill, then v3 adds another. */
+  const v1 = getSeedPayload();
+  const addSkill = (seed: SeedPayload, name: string) => {
+    const next = structuredClone(seed);
+    next.skillGroups[0].skills.push(name);
+    return next;
   };
-  const decide = (db: Snapshot, next: typeof oldSeed) =>
-    decideSync(planFromSeed(db, next), {
-      plans: planFromSeed(db, oldSeed),
-      seedChanged: seedChanged(db, oldSeed, next),
+  const v2 = addSkill(v1, "Rust");
+  const v3 = addSkill(v2, "Elixir");
+
+  /** A seed as the workflow gets it: exported to JSON by an older commit. */
+  const exported = (seed: SeedPayload) => JSON.parse(seedJson(seed)) as SeedPayload;
+  const syncedTo = (seed: SeedPayload) =>
+    afterApply(liveSnapshot(), planFromSeed(liveSnapshot(), seed));
+
+  /**
+   * The workflow's call: `next` is the deployed seed, `versions` the recent
+   * seed versions newest first (versions[0] = the previous commit).
+   */
+  const decide = (db: Snapshot, next: SeedPayload, versions: SeedPayload[]) => {
+    const baselines = versions.map(exported);
+    return decideSync(planFromSeed(db, next), {
+      versions: baselines.map((seed) => planFromSeed(db, seed)),
+      seedChanged: seedChanged(db, baselines[0], next),
     });
+  };
   const editInAdmin = (db: Snapshot) => {
     const edited = structuredClone(db);
     edited.skills[0] = { ...edited.skills[0], name: "Edited in Admin" };
@@ -165,40 +179,59 @@ describe("unattended sync decision (drift check)", () => {
   };
 
   it("applies when the database still matches the previous seed", () => {
-    expect(decide(synced(), newSeed())).toBe("apply");
+    expect(decide(syncedTo(v1), v2, [v1])).toBe("apply");
+  });
+
+  it("catches up when an earlier sync was missed", () => {
+    // v2's sync never ran, so the database is still on v1.
+    expect(decide(syncedTo(v1), v3, [v2, v1])).toBe("apply");
+  });
+
+  it("catches up a missed sync even when this commit changed no content", () => {
+    expect(decide(syncedTo(v1), v2, [v2, v1])).toBe("apply");
   });
 
   it("blocks when an Admin edit would be overwritten", () => {
-    expect(decide(editInAdmin(synced()), newSeed())).toBe("blocked");
+    expect(decide(editInAdmin(syncedTo(v1)), v3, [v2, v1])).toBe("blocked");
   });
 
   it("leaves Admin edits alone when the commit didn't change the seed", () => {
-    expect(decide(editInAdmin(synced()), oldSeed)).toBe("unchanged");
+    expect(decide(editInAdmin(syncedTo(v2)), v2, [v2, v1])).toBe("unchanged");
   });
 
   it("does nothing when the database already matches the new seed", () => {
-    const db = afterApply(synced(), planFromSeed(synced(), newSeed()));
-    expect(decide(db, newSeed())).toBe("noop");
+    expect(decide(syncedTo(v2), v2, [v1])).toBe("noop");
   });
 
-  it("blocks when an earlier sync never ran", () => {
+  it("blocks when the database matches none of the recent versions", () => {
     // The live database is still on the 2026-11-03 content.
-    expect(decide(liveSnapshot(), newSeed())).toBe("blocked");
+    expect(decide(liveSnapshot(), v3, [v2, v1])).toBe("blocked");
   });
 
   it("treats a re-export of the same content as unchanged", () => {
     // The seed stamps projects with the export time, so the JSON differs.
-    const reExported = structuredClone(oldSeed);
+    const reExported = structuredClone(v2);
     for (const project of reExported.projects) {
       project.published_at = "2030-01-01T00:00:00.000Z";
     }
-    expect(JSON.stringify(reExported)).not.toBe(JSON.stringify(oldSeed));
-    expect(seedChanged(synced(), oldSeed, reExported)).toBe(false);
-    expect(decide(editInAdmin(synced()), reExported)).toBe("unchanged");
+    expect(JSON.stringify(reExported)).not.toBe(JSON.stringify(v2));
+    expect(seedChanged(syncedTo(v2), v2, reExported)).toBe(false);
+    expect(decide(editInAdmin(syncedTo(v2)), reExported, [v2])).toBe("unchanged");
+  });
+
+  it("keeps an unset owned field through the JSON export", () => {
+    // JSON.stringify drops undefined keys. Seed rows like testimonials pass
+    // straight through, so the sync would stop comparing that column and
+    // miss an Admin edit to it.
+    const seed = structuredClone(v1);
+    (seed.testimonials[0] as Record<string, unknown>).author_company = undefined;
+    const db = syncedTo(v1);
+    expect(hasChanges(planFromSeed(db, seed))).toBe(true);
+    expect(hasChanges(planFromSeed(db, exported(seed)))).toBe(true);
   });
 
   it("applies without a drift check after a person reviewed the dry run", () => {
-    expect(decideSync(planFromSeed(editInAdmin(synced()), newSeed()), null)).toBe(
+    expect(decideSync(planFromSeed(editInAdmin(syncedTo(v1)), v2), null)).toBe(
       "apply",
     );
   });

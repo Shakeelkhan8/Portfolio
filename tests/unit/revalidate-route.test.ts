@@ -42,6 +42,8 @@ describe("POST /api/revalidate", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ revalidated: true, commit: "abc123" });
     expect(revalidateAllPublicContent).toHaveBeenCalledTimes(1);
+    // Expired at once, so the next visitor gets the new content.
+    expect(revalidateAllPublicContent).toHaveBeenCalledWith({ immediate: true });
   });
 
   it("rejects a wrong or missing secret without refreshing", async () => {

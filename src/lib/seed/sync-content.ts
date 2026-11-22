@@ -583,26 +583,31 @@ export type SyncDecision = "noop" | "unchanged" | "apply" | "blocked";
 /**
  * Whether an unattended sync may write (compare-and-swap on the content).
  *
- * - noop: the database already matches the new seed.
- * - unchanged: this commit didn't change the seed, so there is nothing of
- *   the repo's to sync; the database is left as it is, Admin edits included
- *   (as before this workflow existed).
- * - blocked: `baseline` (the previous commit's seed planned against the same
- *   database) is not empty, so the database no longer matches what the repo
- *   last said: someone changed it in Admin, or an earlier sync never ran.
- *   Applying `next` would overwrite that, so a person reviews it instead.
- * - apply: the database matched the previous seed; move it to the new one.
+ * `versions` holds recent seed versions planned against the live database,
+ * newest first (versions[0] is the previous commit). An empty plan means the
+ * database is exactly that version: nobody edited it, it may only be behind
+ * because a sync was missed (several commits in one push, a cancelled or
+ * skipped run), so it is safe to move it to `next`. Comparing against the
+ * previous commit alone turned every missed sync into a false block.
  *
- * `baseline` null means a person already reviewed a dry run.
+ * - noop: the database already matches `next`.
+ * - apply: it matches a recent version, so no one has edited it.
+ * - blocked: it matches none (an Admin edit, or older than every version
+ *   checked) and this commit changed the seed, so applying would overwrite
+ *   that. A person reviews it.
+ * - unchanged: as blocked, but this commit didn't change the seed; the
+ *   database is left as it is, Admin edits included.
+ *
+ * `check` null means a person already reviewed a dry run.
  */
 export function decideSync(
   next: TablePlan[],
-  baseline: { plans: TablePlan[]; seedChanged: boolean } | null,
+  check: { versions: TablePlan[][]; seedChanged: boolean } | null,
 ): SyncDecision {
   if (!hasChanges(next)) return "noop";
-  if (!baseline) return "apply";
-  if (!baseline.seedChanged) return "unchanged";
-  return hasChanges(baseline.plans) ? "blocked" : "apply";
+  if (!check) return "apply";
+  if (check.versions.some((plans) => !hasChanges(plans))) return "apply";
+  return check.seedChanged ? "blocked" : "unchanged";
 }
 
 const preview = (row: Row) => {
