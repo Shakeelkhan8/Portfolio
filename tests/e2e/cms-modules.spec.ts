@@ -71,8 +71,7 @@ test.describe("Phase 9 CMS surfaces", () => {
     await page.waitForLoadState("networkidle");
     const stack = page.locator("#tech-stack");
     await stack.scrollIntoViewIfNeeded();
-    // Each filter shows its count, so the accessible name is e.g. "All 73".
-    const all = stack.getByRole("button", { name: /^All \d+$/ });
+    const all = stack.getByRole("button", { name: "All", exact: true });
     await expect(all).toHaveAttribute("aria-pressed", "true");
 
     const groups = stack.getByRole("group", { name: "Filter the tech stack" });

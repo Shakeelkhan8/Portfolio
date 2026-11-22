@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type CSSProperties } from "react";
 import {
   Boxes,
   Braces,
@@ -59,7 +59,12 @@ function TechGrid({ items }: { items: TechItem[] }) {
       {items.map((item) => (
         <li key={item.name} data-tech-tile="">
           <div className="group flex h-full min-h-[6.5rem] flex-col items-center justify-center gap-3 rounded-xl border border-foreground/8 bg-foreground/[0.025] px-2 py-4 text-center transition-colors duration-200 hover:border-foreground/25 hover:bg-foreground/[0.05]">
-            <span className="text-foreground/70 transition-colors duration-200 group-hover:text-foreground">
+            {/* On hover the icon takes the brand's own colour, or full
+                foreground when the brand has none readable on this page. */}
+            <span
+              className="text-foreground/70 transition-colors duration-200 group-hover:text-[var(--tile-hover)]"
+              style={{ "--tile-hover": item.brandColor ?? "var(--foreground)" } as CSSProperties}
+            >
               <TechIcon item={item} />
             </span>
             <span className="text-[0.8125rem] leading-tight font-medium text-pretty text-foreground/80">
@@ -89,10 +94,6 @@ export function StackSection({ groups }: { groups: TechGroup[] }) {
       <div role="group" aria-label="Filter the tech stack" className="flex flex-wrap gap-2">
         {[ALL, ...groups.map((group) => group.category)].map((name) => {
           const selected = name === active;
-          const count =
-            name === ALL
-              ? groups.reduce((sum, group) => sum + group.items.length, 0)
-              : groups.find((group) => group.category === name)?.items.length;
           return (
             <button
               key={name}
@@ -108,9 +109,6 @@ export function StackSection({ groups }: { groups: TechGroup[] }) {
               )}
             >
               {name}
-              <span className={cn("tabular-nums", selected ? "text-background/70" : "text-foreground/60")}>
-                {count}
-              </span>
             </button>
           );
         })}
