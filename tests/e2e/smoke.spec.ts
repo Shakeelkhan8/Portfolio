@@ -45,6 +45,28 @@ test.describe("Portfolio smoke tests", () => {
     );
   });
 
+  test("social rail shows on a laptop without covering any text", async ({
+    page,
+  }) => {
+    for (const width of [1100, 1239, 1240, 1440]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/");
+      const rail = page.getByRole("navigation", { name: "Profiles" });
+      await expect(rail, `rail at ${width}px`).toBeVisible();
+      const railRight = await rail.evaluate((el) => el.getBoundingClientRect().right);
+      const textLeft = await page
+        .locator("main h1, main h2, main p, footer p")
+        .evaluateAll((nodes) =>
+          Math.min(
+            ...nodes
+              .filter((node) => (node as HTMLElement).offsetParent)
+              .map((node) => node.getBoundingClientRect().left),
+          ),
+        );
+      expect(textLeft, `text clears the rail at ${width}px`).toBeGreaterThan(railRight + 8);
+    }
+  });
+
   test("home nav jumps to its sections and marks the current one", async ({
     page,
   }) => {
