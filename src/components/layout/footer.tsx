@@ -36,6 +36,15 @@ export function Footer({ site, navigation, resumeUrl = null, className }: Footer
             <p className="text-sm leading-relaxed text-muted-foreground">
               {site.title}
             </p>
+            {/* Every width: the side tab only shows from 1280px. */}
+            <AppLink
+              href={routes.terminal}
+              showExternalIcon={false}
+              className="inline-flex items-center gap-2 rounded-sm font-mono text-xs text-foreground/70 transition-colors hover:text-signal"
+            >
+              <span aria-hidden="true" className="text-signal">›_</span>
+              Open the terminal
+            </AppLink>
           </div>
 
           <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-12">
