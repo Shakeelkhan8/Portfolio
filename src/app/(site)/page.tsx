@@ -18,7 +18,7 @@ import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { SideProjectCard } from "@/components/home/side-project-card";
 import { WritingPreviewList } from "@/components/home/writing-preview-list";
 import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
-import { ContactCTA } from "@/components/home/contact-cta";
+import { ContactSection } from "@/components/home/contact-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import {
   getActiveResumeVersion,
@@ -62,7 +62,7 @@ function ViewAllLink({
 const MIN_ARTICLES_FOR_HOME = 4;
 
 export default async function Home() {
-  // HomeHero and ContactCTA are client components: their props reach the HTML.
+  // HomeHero and ContactSection's form are client components: their props reach the HTML.
   const rawSite = await getSiteConfig();
   const site = toPublicSiteConfig(rawSite);
   // Only the wa.me link reaches the page; the phone field itself stays private.
@@ -264,9 +264,13 @@ export default async function Home() {
         </Container>
       </Section>
 
-      <Section spacing="sm" className="relative">
+      <Section spacing="sm" className="relative scroll-mt-24" id="contact">
         <Container>
-          <ContactCTA site={site} whatsappHref={whatsappHref} />
+          <ContactSection
+            site={site}
+            whatsappHref={whatsappHref}
+            resumeUrl={activeResume?.fileUrl ?? null}
+          />
         </Container>
       </Section>
     </>

@@ -13,12 +13,15 @@ import {
   getPublicEmailLabel,
 } from "@/lib/contact/email-display";
 import { contactFormSchema } from "@/lib/validators/contact";
+import { cn } from "@/lib/utils";
 
 type FormState = "idle" | "loading" | "success" | "error";
 type FieldName = "name" | "email" | "message";
 type FieldErrors = Partial<Record<FieldName, string>>;
 
 const FIELD_ORDER: FieldName[] = ["name", "email", "message"];
+/** Matches the textarea's maxLength and the API's limit. */
+const MESSAGE_MAX = 5000;
 
 /**
  * Field errors for a payload, using the API's own schema so the browser and
@@ -49,12 +52,17 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-export function ContactForm() {
+/**
+ * `messageClassName` sizes the message box for its context: the textarea
+ * grows with its content (field-sizing), so `rows` alone sets no height.
+ */
+export function ContactForm({ messageClassName }: { messageClassName?: string } = {}) {
   const { site } = useSiteData();
   const formRef = useRef<HTMLFormElement>(null);
   const [state, setState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [messageLength, setMessageLength] = useState(0);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -97,6 +105,7 @@ export function ContactForm() {
       }
 
       form.reset();
+      setMessageLength(0);
       setState("success");
     } catch (error) {
       setState("error");
@@ -184,7 +193,10 @@ export function ContactForm() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="message">Message</Label>
-          <span className="text-xs text-muted-foreground">Max 5000 characters</span>
+          {/* Visual only; screen readers get the limit once via the hint. */}
+          <span aria-hidden="true" className="text-xs tabular-nums text-muted-foreground">
+            {messageLength}/{MESSAGE_MAX}
+          </span>
         </div>
         <Textarea
           id="message"
@@ -192,11 +204,18 @@ export function ContactForm() {
           required
           placeholder="Tell me about the role or the project, and how I can help."
           rows={6}
-          maxLength={5000}
+          maxLength={MESSAGE_MAX}
+          onChange={(event) => setMessageLength(event.target.value.length)}
           disabled={isLoading}
-          className="bg-background/50"
+          className={cn("bg-background/50", messageClassName)}
           {...fieldProps("message")}
+          aria-describedby={
+            fieldErrors.message ? "message-error message-limit" : "message-limit"
+          }
         />
+        <p id="message-limit" className="sr-only">
+          Up to {MESSAGE_MAX} characters.
+        </p>
         <FieldError id="message-error" message={fieldErrors.message} />
       </div>
 
