@@ -5,6 +5,7 @@ import { getNavigation } from "@/lib/db/queries/navigation";
 import { getActiveResumeVersion } from "@/lib/content";
 import { buildSearchIndex } from "@/lib/search";
 import { toPublicSiteConfig } from "@/lib/public-site";
+import { getWhatsAppHref } from "@/lib/contact/whatsapp";
 
 export default async function SiteLayout({
   children,
@@ -31,6 +32,8 @@ export default async function SiteLayout({
         navigation={navigation}
         searchIndex={searchIndex}
         resumeUrl={activeResume?.fileUrl ?? null}
+        // Only the wa.me link reaches the page; the phone field stays private.
+        whatsappHref={getWhatsAppHref(site.phone)}
       >
         {children}
       </SiteShell>

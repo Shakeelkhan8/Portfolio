@@ -33,7 +33,8 @@ test.describe("Portfolio smoke tests", () => {
   });
 
   test("navigation to about page works", async ({ page }) => {
-    await page.goto("/");
+    // Pages other than home use the Admin-managed nav of page links.
+    await page.goto("/projects");
     await page
       .getByRole("navigation", { name: "Main navigation" })
       .getByRole("link", { name: "About" })
@@ -42,6 +43,23 @@ test.describe("Portfolio smoke tests", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
       "About",
     );
+  });
+
+  test("home nav jumps to its sections and marks the current one", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const nav = page.getByRole("navigation", { name: "Main navigation" });
+    await expect(nav.getByRole("link", { name: "Resume" })).toHaveAttribute(
+      "href",
+      "/resume",
+    );
+    const experience = nav.getByRole("link", { name: "Experience" });
+    await expect(experience).toHaveAttribute("href", "#experience");
+    await experience.click();
+    await expect(page).toHaveURL(/#experience$/);
+    await expect(experience).toHaveAttribute("aria-current", "location");
   });
 
   test("projects page lists case studies", async ({ page }) => {

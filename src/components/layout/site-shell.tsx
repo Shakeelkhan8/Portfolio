@@ -7,6 +7,7 @@ import { MainContent } from "@/components/layout/main-content";
 import { SkipLink } from "@/components/layout/skip-link";
 import { AmbientBackground } from "@/components/motion/ambient-background";
 import { MobileTabBar } from "@/components/navigation/mobile-tab-bar";
+import { SocialRail } from "@/components/layout/social-rail";
 import { SoundProvider } from "@/components/providers/sound-provider";
 import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import type { SearchResult } from "@/types";
@@ -18,6 +19,8 @@ type SiteShellProps = {
   searchIndex: SearchResult[];
   /** Active CMS resume PDF for the footer, or null. */
   resumeUrl?: string | null;
+  /** Server-derived wa.me link for the social rail, or null. */
+  whatsappHref?: string | null;
 };
 
 export function SiteShell({
@@ -26,6 +29,7 @@ export function SiteShell({
   navigation,
   searchIndex,
   resumeUrl = null,
+  whatsappHref = null,
 }: SiteShellProps) {
   return (
     <SoundProvider>
@@ -34,6 +38,7 @@ export function SiteShell({
         <CommandMenuProvider>
           <SkipLink />
           <Header site={site} navigation={navigation} />
+          <SocialRail navigation={navigation} whatsappHref={whatsappHref} />
           <MainContent>{children}</MainContent>
           <Footer site={site} navigation={navigation} resumeUrl={resumeUrl} />
           <MobileTabBar site={site} navigation={navigation} />

@@ -9,23 +9,18 @@ import { AiSection } from "@/components/home/ai-section";
 import { impact } from "@/content/impact";
 import { heroStats } from "@/content/home-about";
 import { AboutSnapshot } from "@/components/home/about-snapshot";
-import { LivePlatformsGrid } from "@/components/home/live-platforms-grid";
 import { StackSection } from "@/components/home/stack-section";
-import { livePlatforms } from "@/content/live-platforms";
 import { withTechIcons } from "@/lib/tech-icons";
-import { PrinciplesGrid } from "@/components/home/principles-grid";
 import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
 import { SideProjectCard } from "@/components/home/side-project-card";
 import { WritingPreviewList } from "@/components/home/writing-preview-list";
 import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
 import { ContactSection } from "@/components/home/contact-section";
-import { TestimonialsSection } from "@/components/home/testimonials-section";
 import {
   getActiveResumeVersion,
   getArticles,
   getCtaSection,
   getExperience,
-  getFeaturedTestimonials,
   getPrimaryEducation,
   getProjects,
   getSectionHeader,
@@ -69,13 +64,10 @@ export default async function Home() {
   const whatsappHref = getWhatsAppHref(rawSite.phone);
   const [
     heroCta,
-    principlesHeader,
     projectsHeader,
     sideProjectsHeader,
     writingHeader,
     experienceHeader,
-    testimonialsHeader,
-    testimonials,
     projects,
     experience,
     articles,
@@ -84,13 +76,10 @@ export default async function Home() {
     skillGroups,
   ] = await Promise.all([
     getCtaSection("home_hero"),
-    getSectionHeader("home", "philosophy"),
     getSectionHeader("home", "projects"),
     getSectionHeader("home", "side_projects"),
     getSectionHeader("home", "writing"),
     getSectionHeader("home", "experience"),
-    getSectionHeader("home", "testimonials"),
-    getFeaturedTestimonials(),
     getProjects(),
     getExperience(),
     getArticles(),
@@ -117,43 +106,35 @@ export default async function Home() {
         />
       </Section>
 
+      {/*
+        Seven sections in a fixed order, each an anchor for the home nav
+        (src/components/navigation/home-section-nav.tsx): About, Experience,
+        Tech stack, Work, Writing (once there are enough posts), Contact.
+        Testimonials and "How I work" live on /about (2026-11-22).
+      */}
       <Section spacing="sm" className="relative" id="about">
         <Container>
           <AboutSnapshot education={education} />
+          <div className="mt-16 sm:mt-20">
+            <SectionHeader
+              title="Impact"
+              description="What the work changed, in numbers I can back up."
+            />
+            <ImpactSection items={impact} />
+          </div>
         </Container>
       </Section>
 
-      <Section spacing="sm" className="relative">
+      <Section spacing="sm" className="relative" id="experience">
         <Container>
           <SectionHeader
-            title="Impact"
-            description="What the work changed, in numbers I can back up."
-          />
-          <ImpactSection items={impact} />
-        </Container>
-      </Section>
-
-      <Section spacing="sm" className="relative">
-        <Container>
-          <SectionHeader
-            title={projectsHeader?.title ?? "Case studies"}
+            title={experienceHeader?.title ?? "Experience"}
             description={
-              projectsHeader?.description ??
-              "Live systems I've built and run: what the problem was, what I decided, and what it cost."
+              experienceHeader?.description ??
+              "What I'm doing now, and what came before."
             }
-            action={<ViewAllLink href={routes.projects} />}
           />
-          <ProjectPreviewGrid limit={2} staggered />
-        </Container>
-      </Section>
-
-      <Section spacing="sm" className="relative" id="live-platforms">
-        <Container>
-          <SectionHeader
-            title="Selected work"
-            description="Media and broadcast platforms I've worked on, and my part in each."
-          />
-          <LivePlatformsGrid items={livePlatforms} />
+          <ExperienceSnapshot experience={experience} />
         </Container>
       </Section>
 
@@ -169,78 +150,57 @@ export default async function Home() {
         </Section>
       ) : null}
 
-      {testimonials.length > 0 ? (
-        <Section spacing="sm" className="relative">
-          <Container>
-            {/*
-              The statement follows the count, not the CMS: "Trusted by people
-              I've worked with" over a single quote would overstate it. With
-              one, it speaks for one client; from two, it switches.
-            */}
-            <SectionHeader
-              title={testimonialsHeader?.title ?? "Testimonials"}
-              description={
-                testimonials.length >= 2
-                  ? "Trusted by people I've worked with."
-                  : "In a client's words."
-              }
-            />
-            <TestimonialsSection
-              testimonials={testimonials}
-              upworkUrl={site.links.upwork}
-            />
-          </Container>
-        </Section>
-      ) : null}
-
-      <Section spacing="sm" className="relative">
-        <Container>
-          <SectionHeader
-            title="AI integration"
-            description="Practical AI integrations for real business applications."
-          />
-          <AiSection />
-        </Container>
-      </Section>
-
-      {sideProjects.length > 0 ? (
+      <div id="work">
         <Section spacing="sm" className="relative">
           <Container>
             <SectionHeader
-              title={sideProjectsHeader?.title ?? "Side projects"}
+              title={projectsHeader?.title ?? "Case studies"}
               description={
-                sideProjectsHeader?.description ??
-                "Things I build in my own time, mostly to solve problems I have."
+                projectsHeader?.description ??
+                "Live systems I've built and run: what the problem was, what I decided, and what it cost."
               }
+              action={<ViewAllLink href={routes.projects} />}
             />
-            <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {sideProjects.map((project, index) => (
-                <SideProjectCard
-                  key={project.slug}
-                  project={project}
-                  delay={(index % 3) * 0.06}
-                />
-              ))}
-            </div>
+            <ProjectPreviewGrid limit={2} staggered />
           </Container>
         </Section>
-      ) : null}
 
-      <Section spacing="sm" className="relative">
-        <Container>
-          <SectionHeader
-            title={principlesHeader?.title ?? "How I work"}
-            description={
-              principlesHeader?.description ??
-              "Rules I hold myself to on every system I build."
-            }
-          />
-          <PrinciplesGrid principles={site.philosophy} />
-        </Container>
-      </Section>
+        {sideProjects.length > 0 ? (
+          <Section spacing="sm" className="relative">
+            <Container>
+              <SectionHeader
+                title={sideProjectsHeader?.title ?? "Side projects"}
+                description={
+                  sideProjectsHeader?.description ??
+                  "Things I build in my own time, mostly to solve problems I have."
+                }
+              />
+              <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {sideProjects.map((project, index) => (
+                  <SideProjectCard
+                    key={project.slug}
+                    project={project}
+                    delay={(index % 3) * 0.06}
+                  />
+                ))}
+              </div>
+            </Container>
+          </Section>
+        ) : null}
+
+        <Section spacing="sm" className="relative">
+          <Container>
+            <SectionHeader
+              title="AI integration"
+              description="Practical AI integrations for real business applications."
+            />
+            <AiSection />
+          </Container>
+        </Section>
+      </div>
 
       {showWriting ? (
-        <Section spacing="sm" className="relative">
+        <Section spacing="sm" className="relative" id="writing">
           <Container>
             <SectionHeader
               title={writingHeader?.title ?? "Latest Writing"}
@@ -251,20 +211,7 @@ export default async function Home() {
         </Section>
       ) : null}
 
-      <Section spacing="sm" className="relative">
-        <Container>
-          <SectionHeader
-            title={experienceHeader?.title ?? "Experience"}
-            description={
-              experienceHeader?.description ??
-              "What I'm doing now, and what came before."
-            }
-          />
-          <ExperienceSnapshot experience={experience} />
-        </Container>
-      </Section>
-
-      <Section spacing="sm" className="relative scroll-mt-24" id="contact">
+      <Section spacing="sm" className="relative" id="contact">
         <Container>
           <ContactSection
             site={site}

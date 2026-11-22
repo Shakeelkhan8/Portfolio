@@ -1,4 +1,6 @@
 import { DecisionHighlight } from "@/components/about/decision-highlight";
+import { PrinciplesGrid } from "@/components/home/principles-grid";
+import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { SectionHeader } from "@/components/layout/section-header";
@@ -9,16 +11,24 @@ import { Text } from "@/components/typography/text";
 import { Badge } from "@/components/ui/badge";
 import {
   getAboutContent,
+  getFeaturedTestimonials,
+  getSectionHeader,
   getSiteConfig,
   getSkillGroups,
 } from "@/lib/content";
 
 export default async function AboutPage() {
-  const [site, about, skillGroups] = await Promise.all([
-    getSiteConfig(),
-    getAboutContent(),
-    getSkillGroups(),
-  ]);
+  // "How I work" and the testimonials moved here from the home page
+  // (2026-11-22); their labels are still the home section headers in Admin.
+  const [site, about, skillGroups, principlesHeader, testimonialsHeader, testimonials] =
+    await Promise.all([
+      getSiteConfig(),
+      getAboutContent(),
+      getSkillGroups(),
+      getSectionHeader("home", "philosophy"),
+      getSectionHeader("home", "testimonials"),
+      getFeaturedTestimonials(),
+    ]);
 
   return (
     <>
@@ -46,6 +56,21 @@ export default async function AboutPage() {
       </Section>
 
       <DecisionHighlight />
+
+      {site.philosophy.length > 0 ? (
+        <Section spacing="none" className="pb-16 pt-10 sm:pb-20 sm:pt-14">
+          <Container>
+            <SectionHeader
+              title={principlesHeader?.title ?? "How I work"}
+              description={
+                principlesHeader?.description ??
+                "Rules I hold myself to on every system I build."
+              }
+            />
+            <PrinciplesGrid principles={site.philosophy} />
+          </Container>
+        </Section>
+      ) : null}
 
       <Section spacing="none" className="pb-16 pt-10 sm:pb-20 sm:pt-14">
         <Container>
@@ -89,6 +114,29 @@ export default async function AboutPage() {
           </Reveal>
         </Container>
       </Section>
+
+      {testimonials.length > 0 ? (
+        <Section spacing="none" className="pb-16 pt-2 sm:pb-20 sm:pt-4">
+          <Container>
+            {/*
+              The statement follows the count, not the CMS: "Trusted by people
+              I've worked with" over a single quote would overstate it.
+            */}
+            <SectionHeader
+              title={testimonialsHeader?.title ?? "Testimonials"}
+              description={
+                testimonials.length >= 2
+                  ? "Trusted by people I've worked with."
+                  : "In a client's words."
+              }
+            />
+            <TestimonialsSection
+              testimonials={testimonials}
+              upworkUrl={site.links.upwork}
+            />
+          </Container>
+        </Section>
+      ) : null}
 
       {site.languagesVisible !== false && site.languages.length > 0 ? (
         <Section spacing="none" className="pb-16 pt-2 sm:pb-20 sm:pt-4">
