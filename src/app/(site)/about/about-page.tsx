@@ -130,10 +130,7 @@ export default async function AboutPage() {
                   : "In a client's words."
               }
             />
-            <TestimonialsSection
-              testimonials={testimonials}
-              upworkUrl={site.links.upwork}
-            />
+            <TestimonialsSection testimonials={testimonials} />
           </Container>
         </Section>
       ) : null}

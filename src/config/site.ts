@@ -15,7 +15,6 @@ export const siteConfig = {
   links: {
     github: "https://github.com/Shakeelkhan8",
     linkedin: "https://www.linkedin.com/in/shakeelkhan8",
-    upwork: "https://www.upwork.com/freelancers/~01414f35cd2f50292d",
   },
   githubUsername: "Shakeelkhan8",
   languages: [

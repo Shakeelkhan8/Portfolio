@@ -1,8 +1,7 @@
 /**
  * "Work with me" offers, shown on the contact page and in the closing section
  * of the home page. Entry offer first, then recurring work, then the premium
- * specialty; the six fixed-price packages stay on Upwork
- * (`siteConfig.links.upwork`), which is where their prices are kept.
+ * specialty. (Not shown on the site since 2026-11-20; kept as seed data.)
  *
  * Source: plans/company/company-profile.md, section 2. Two offers there are
  * deliberately left out until they can be delivered or are cleared:
@@ -32,7 +31,7 @@ export const defaultServices = [
   {
     title: "Fixed-price projects",
     description:
-      "AI features with OpenAI or Claude, Laravel and PHP upgrades, store sync, bug fixes, slow queries, and tests for code that has none. From $60, with packages and reviews on Upwork.",
+      "AI features with OpenAI or Claude, Laravel and PHP upgrades, store sync, bug fixes, slow queries, and tests for code that has none.",
     icon: "Rocket",
   },
 ] as const;

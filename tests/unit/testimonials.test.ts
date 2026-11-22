@@ -4,8 +4,8 @@ import { parseTestimonialSource } from "@/lib/testimonials";
 describe("parseTestimonialSource", () => {
   it("splits the verification out of the company line", () => {
     expect(
-      parseTestimonialSource("Client, Sep 2025 (verified on Upwork)"),
-    ).toEqual({ company: "Client, Sep 2025", verifiedOn: "Upwork" });
+      parseTestimonialSource("Client, Sep 2025 (verified on LinkedIn)"),
+    ).toEqual({ company: "Client, Sep 2025", verifiedOn: "LinkedIn" });
   });
 
   it("is case-insensitive and keeps the platform's own capitalisation", () => {
@@ -23,9 +23,9 @@ describe("parseTestimonialSource", () => {
   });
 
   it("handles a verification with no company, and empty input", () => {
-    expect(parseTestimonialSource("(verified on Upwork)")).toEqual({
+    expect(parseTestimonialSource("(verified on LinkedIn)")).toEqual({
       company: null,
-      verifiedOn: "Upwork",
+      verifiedOn: "LinkedIn",
     });
     expect(parseTestimonialSource(null)).toEqual({ company: null, verifiedOn: null });
     expect(parseTestimonialSource("  ")).toEqual({ company: null, verifiedOn: null });

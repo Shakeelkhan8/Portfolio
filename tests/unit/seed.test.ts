@@ -27,21 +27,19 @@ describe("seed content payload", () => {
     expect(payload.privacyPage.slug).toBe("privacy");
   });
 
-  it("ships only verified testimonials and no certifications", () => {
+  it("ships only real testimonials and no certifications", () => {
     // The seed used to ship a sample testimonial and certification. Anything
-    // seeded can reach the public site, so only testimonials that can be
-    // checked (each names where) belong here.
+    // seeded can reach the public site, so only real client quotes belong here.
     const payload = getSeedPayload();
 
     expect(payload.testimonials.map((item) => item.author_name)).toEqual([
       "Hamza I.",
     ]);
-    expect(
-      payload.testimonials.every((item) =>
-        item.author_company.includes("verified on"),
-      ),
-    ).toBe(true);
     expect(payload.certifications).toEqual([]);
+  });
+
+  it("mentions Upwork nowhere (removed from the portfolio 2026-11-22)", () => {
+    expect(JSON.stringify(getSeedPayload())).not.toMatch(/upwork/i);
   });
 
   it("features three projects in Work and labels side projects", () => {

@@ -1,9 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { UpworkIcon } from "@/components/shared/brand-icons";
 
 const PNG_SIGNATURE = "89504e470d0a1a0a";
 
@@ -36,11 +33,4 @@ describe("brand assets", () => {
     ]);
   });
 
-  it("Upwork footer icon is the filled Upwork mark, matching GitHub and LinkedIn", () => {
-    const markup = renderToStaticMarkup(createElement(UpworkIcon));
-
-    expect(markup).toContain('fill="currentColor"');
-    expect(markup).not.toContain("stroke=");
-    expect(markup).toContain('d="M18.561 13.158');
-  });
 });

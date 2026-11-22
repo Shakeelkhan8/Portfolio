@@ -32,7 +32,6 @@ const ctx: MetadataContext = {
     links: {
       github: "https://github.com/test",
       linkedin: "https://linkedin.com/in/test",
-      upwork: "",
     },
     githubUsername: "test",
     languages: [],

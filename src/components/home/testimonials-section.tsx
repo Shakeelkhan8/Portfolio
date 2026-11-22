@@ -9,8 +9,6 @@ import type { TestimonialRecord } from "@/types/cms";
 
 type TestimonialsSectionProps = {
   testimonials: TestimonialRecord[];
-  /** Profile where verified reviews can be checked (the Upwork link). */
-  upworkUrl?: string | null;
 };
 
 function getInitials(name: string) {
@@ -23,16 +21,9 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-function Attribution({
-  item,
-  upworkUrl,
-}: {
-  item: TestimonialRecord;
-  upworkUrl?: string | null;
-}) {
+function Attribution({ item }: { item: TestimonialRecord }) {
   const { company, verifiedOn } = parseTestimonialSource(item.authorCompany);
   const detail = [item.authorRole, company].filter(Boolean).join(" · ");
-  const verifiedHref = verifiedOn?.toLowerCase() === "upwork" ? upworkUrl : null;
 
   return (
     <figcaption className="flex items-start gap-3">
@@ -62,22 +53,10 @@ function Attribution({
           </Text>
         ) : null}
         {verifiedOn ? (
-          verifiedHref ? (
-            <AppLink
-              href={verifiedHref}
-              showExternalIcon
-              aria-label={`Verified on ${verifiedOn}: see the review on the profile`}
-              className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-success/25 bg-success-muted/40 px-2.5 py-1 text-xs font-medium text-success transition-colors hover:border-success/50"
-            >
-              <BadgeCheck aria-hidden="true" className="size-3.5" />
-              Verified on {verifiedOn}
-            </AppLink>
-          ) : (
-            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-success/25 bg-success-muted/40 px-2.5 py-1 text-xs font-medium text-success">
-              <BadgeCheck aria-hidden="true" className="size-3.5" />
-              Verified on {verifiedOn}
-            </span>
-          )
+          <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-success/25 bg-success-muted/40 px-2.5 py-1 text-xs font-medium text-success">
+            <BadgeCheck aria-hidden="true" className="size-3.5" />
+            Verified on {verifiedOn}
+          </span>
         ) : null}
       </span>
     </figcaption>
@@ -87,10 +66,8 @@ function Attribution({
 /** The lead quote, set large in the display face with room around it. */
 function PullQuote({
   item,
-  upworkUrl,
 }: {
   item: TestimonialRecord;
-  upworkUrl?: string | null;
 }) {
   return (
     <Reveal>
@@ -107,7 +84,7 @@ function PullQuote({
           </p>
         </blockquote>
         <div className="border-t border-foreground/10 pt-5 md:self-end md:border-t-0 md:border-l md:pt-0 md:pl-6">
-          <Attribution item={item} upworkUrl={upworkUrl} />
+          <Attribution item={item} />
         </div>
       </figure>
     </Reveal>
@@ -122,12 +99,11 @@ function PullQuote({
  * One quote is a pull-quote in the display face: one real voice, given room,
  * carries more weight than a small paragraph in a grid. From two quotes on,
  * the first stays the pull-quote and the rest follow in a ruled grid. A
- * review verified on Upwork gets a badge linking to the profile, so a
+ * review verified on a platform gets a badge naming it, so a
  * reader can check it.
  */
 export function TestimonialsSection({
   testimonials,
-  upworkUrl,
 }: TestimonialsSectionProps) {
   if (!testimonials.length) {
     return null;
@@ -137,7 +113,7 @@ export function TestimonialsSection({
 
   return (
     <div>
-      <PullQuote item={lead!} upworkUrl={upworkUrl} />
+      <PullQuote item={lead!} />
 
       {rest.length > 0 ? (
         <ul className="mt-14 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
@@ -151,7 +127,7 @@ export function TestimonialsSection({
                     </Text>
                   </blockquote>
                   <div className="mt-6">
-                    <Attribution item={item} upworkUrl={upworkUrl} />
+                    <Attribution item={item} />
                   </div>
                 </figure>
               </Reveal>
@@ -172,15 +148,6 @@ export function TestimonialsSection({
             className="size-4 transition-transform duration-300 group-hover:translate-x-1"
           />
         </AppLink>
-        {upworkUrl ? (
-          <AppLink
-            href={upworkUrl}
-            showExternalIcon
-            className="link-draw text-sm font-medium text-muted-foreground hover:text-foreground"
-          >
-            Reviews on my Upwork profile
-          </AppLink>
-        ) : null}
       </div>
     </div>
   );
