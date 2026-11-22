@@ -8,6 +8,7 @@ import { SkipLink } from "@/components/layout/skip-link";
 import { AmbientBackground } from "@/components/motion/ambient-background";
 import { MobileTabBar } from "@/components/navigation/mobile-tab-bar";
 import { SocialRail } from "@/components/layout/social-rail";
+import { TerminalTab } from "@/components/layout/terminal-tab";
 import { SoundProvider } from "@/components/providers/sound-provider";
 import type { NavigationData, PublicSiteConfig } from "@/types/cms";
 import type { SearchResult } from "@/types";
@@ -39,6 +40,7 @@ export function SiteShell({
           <SkipLink />
           <Header site={site} navigation={navigation} />
           <SocialRail navigation={navigation} whatsappHref={whatsappHref} />
+          <TerminalTab />
           <MainContent>{children}</MainContent>
           <Footer site={site} navigation={navigation} resumeUrl={resumeUrl} />
           <MobileTabBar site={site} navigation={navigation} />
