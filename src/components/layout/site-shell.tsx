@@ -7,7 +7,7 @@ import { MainContent } from "@/components/layout/main-content";
 import { SkipLink } from "@/components/layout/skip-link";
 import { AmbientBackground } from "@/components/motion/ambient-background";
 import { MobileTabBar } from "@/components/navigation/mobile-tab-bar";
-import { SocialRail } from "@/components/layout/social-rail";
+import { RAIL_CLEARANCE, SocialRail } from "@/components/layout/social-rail";
 import { TerminalTab } from "@/components/layout/terminal-tab";
 import { SoundProvider } from "@/components/providers/sound-provider";
 import type { NavigationData, PublicSiteConfig } from "@/types/cms";
@@ -41,8 +41,13 @@ export function SiteShell({
           <Header site={site} navigation={navigation} />
           <SocialRail navigation={navigation} whatsappHref={whatsappHref} />
           <TerminalTab />
-          <MainContent>{children}</MainContent>
-          <Footer site={site} navigation={navigation} resumeUrl={resumeUrl} />
+          <MainContent className={RAIL_CLEARANCE}>{children}</MainContent>
+          <Footer
+            site={site}
+            navigation={navigation}
+            resumeUrl={resumeUrl}
+            className={RAIL_CLEARANCE}
+          />
           <MobileTabBar site={site} navigation={navigation} />
           <CommandPalette searchIndex={searchIndex} />
           <CommandPaletteShortcuts />
