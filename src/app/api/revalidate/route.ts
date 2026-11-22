@@ -3,8 +3,8 @@ import { revalidateAllPublicContent } from "@/lib/db/revalidate";
 import { checkRevalidateAuth } from "@/lib/security/revalidate-secret";
 
 /**
- * Clears every public cache, the same as Admin → Settings → "Refresh public
- * pages". Called by the content sync workflow after it writes to the
+ * Clears every public cache, like Admin → Settings → "Refresh public pages",
+ * but expired at once rather than marked stale. Called by the content sync workflow after it writes to the
  * database (.github/workflows/content-sync.yml). Safe to call twice: it only
  * marks caches stale.
  *
@@ -23,7 +23,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  revalidateAllPublicContent();
+  // Expire, not stale: the caller has just changed the content.
+  revalidateAllPublicContent({ immediate: true });
   return NextResponse.json({
     revalidated: true,
     commit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,

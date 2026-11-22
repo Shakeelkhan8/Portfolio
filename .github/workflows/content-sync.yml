@@ -6,19 +6,22 @@
 # check → apply (backup kept as an artifact) → POST /api/revalidate on the
 # site, checked to reach the deployed commit.
 #
-# Drift check (compare-and-swap): the live database must still match the
-# PREVIOUS commit's seed. If it doesn't, someone changed that content in Admin
-# (or an earlier sync never ran), and syncing would overwrite it, so the job
-# stops instead and opens an issue. Run "dry-run", read it, then
-# "apply-reviewed" from the Actions tab to resolve it.
+# Drift check (compare-and-swap): the live database must match one of the
+# last few versions of the seed (the previous commit first, then the commits
+# that last changed it). If it does, nobody edited it in Admin; it may only be
+# behind because a sync was missed, and this run catches it up. If it matches
+# none, syncing would overwrite an Admin edit, so the run stops and opens an
+# issue (or, when this commit didn't change the seed, skips with a warning).
+# Resolve with "dry-run" then "apply-reviewed" from the Actions tab.
 #
-# Safe to re-run: the sync is idempotent (a second run finds no changes) and
-# runs never overlap (concurrency group). Any failure opens or updates one
-# issue labelled content-sync, so the owner is notified.
+# Safe to re-run: the sync is idempotent, the refresh runs whenever the
+# database matches the seed (applied or already in sync), and production runs
+# never overlap (job concurrency). Any failure opens or updates one issue
+# labelled content-sync, so the owner is notified.
 #
 # Needs: secrets SUPABASE_SERVICE_ROLE_KEY, CONTENT_REVALIDATE_SECRET;
-# variables SUPABASE_PROJECT_REF, SITE_URL; and
-# CONTENT_REVALIDATE_SECRET set in Vercel (Production). To turn it off:
+# variables SUPABASE_PROJECT_REF, SITE_URL; and the same
+# CONTENT_REVALIDATE_SECRET in Vercel (Production). To turn it off:
 # Actions → Content sync → Disable workflow.
 
 name: Content sync
@@ -28,14 +31,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "dry-run shows the plan. apply-reviewed writes it without the drift check: only after reading a dry run."
+        description: "dry-run shows the plan and what the automatic run would decide (any branch). apply-reviewed writes it without the drift check (main only): only after reading a dry run."
         type: choice
         options: [dry-run, apply-reviewed]
         default: dry-run
-
-concurrency:
-  group: content-sync
-  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -48,8 +47,16 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event.deployment_status.state == 'success' &&
        github.event.deployment.environment == 'Production')
+    # On the job, not the workflow: Preview deployments also start runs, and
+    # at workflow level their (skipped) runs would cancel a pending
+    # production sync. A newer production sync still replaces an older
+    # pending one; the multi-version drift check then catches up the missed
+    # content.
+    concurrency:
+      group: content-sync
+      cancel-in-progress: false
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     # Secrets are set only on the steps that use them, never on install.
     env:
       MODE: ${{ inputs.mode || 'deploy' }}
@@ -60,12 +67,18 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://${{ vars.SUPABASE_PROJECT_REF }}.supabase.co
       SITE_URL: ${{ vars.SITE_URL }}
       NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+      # How many recent seed versions the drift check accepts.
+      SEED_VERSIONS: 10
     steps:
       - name: Check configuration
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CONTENT_REVALIDATE_SECRET: ${{ secrets.CONTENT_REVALIDATE_SECRET }}
         run: |
+          if [ "$MODE" = "apply-reviewed" ] && [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::error::apply-reviewed writes this branch's content to the live site, so it only runs from main (this run: $GITHUB_REF)."
+            exit 1
+          fi
           missing=()
           for name in SUPABASE_SERVICE_ROLE_KEY CONTENT_REVALIDATE_SECRET PROJECT_REF SITE_URL; do
             [ -n "${!name}" ] || missing+=("$name")
@@ -79,7 +92,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ env.SHA }}
-          fetch-depth: 2
+          # Full history: the drift check needs older seed versions.
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -96,26 +110,52 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # The previous commit's seed, exported by that commit's own code.
-      - name: Export the previous seed
-        if: env.MODE == 'deploy'
+      # Each version is exported by that commit's own code. The previous
+      # commit must export; an older one that can't (its code predates the
+      # exporter's imports) is skipped with a warning.
+      - name: Export recent seed versions
+        if: env.MODE != 'apply-reviewed'
         run: |
-          prev="$RUNNER_TEMP/prev"
-          git worktree add --detach "$prev" HEAD^
-          cp scripts/export-seed.ts "$prev/scripts/export-seed.ts"
-          ln -s "$GITHUB_WORKSPACE/node_modules" "$prev/node_modules"
-          (cd "$prev" && "$GITHUB_WORKSPACE/node_modules/.bin/tsx" scripts/export-seed.ts) > "$RUNNER_TEMP/baseline.json"
+          dir="$RUNNER_TEMP/versions"
+          mkdir -p "$dir"
+          : > "$RUNNER_TEMP/baseline-args"
+          mapfile -t commits < <({ git rev-parse HEAD^; git log --format=%H -n "$SEED_VERSIONS" HEAD^ -- src/content src/config src/lib/seed; } | awk '!seen[$0]++' | head -n "$SEED_VERSIONS")
+          for i in "${!commits[@]}"; do
+            c="${commits[$i]}"
+            prev="$RUNNER_TEMP/prev-$i"
+            out="$dir/$(printf %02d "$i")-${c:0:7}.json"
+            git worktree add --detach --quiet "$prev" "$c"
+            cp scripts/export-seed.ts scripts/seed-json.ts "$prev/scripts/"
+            ln -s "$GITHUB_WORKSPACE/node_modules" "$prev/node_modules"
+            if (cd "$prev" && "$GITHUB_WORKSPACE/node_modules/.bin/tsx" scripts/export-seed.ts) > "$out"; then
+              echo "--baseline=$out" >> "$RUNNER_TEMP/baseline-args"
+            elif [ "$i" -eq 0 ]; then
+              echo "::error::Could not export the previous commit's seed (${c:0:7})."
+              exit 1
+            else
+              echo "::warning::Skipped seed version ${c:0:7}: its code could not be exported."
+              rm -f "$out"
+            fi
+          done
+          echo "Exported $(wc -l < "$RUNNER_TEMP/baseline-args") seed versions."
 
       - name: Sync
         id: sync
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
+          versions=()
+          if [ -f "$RUNNER_TEMP/baseline-args" ]; then mapfile -t versions < "$RUNNER_TEMP/baseline-args"; fi
           args=(--result="$RUNNER_TEMP/result.txt")
           case "$MODE" in
-            deploy) args+=(--apply --confirm="$PROJECT_REF" --baseline="$RUNNER_TEMP/baseline.json") ;;
+            deploy)
+              if [ ${#versions[@]} -eq 0 ]; then
+                echo "::error::No seed versions to check against; refusing to write."
+                exit 1
+              fi
+              args+=(--apply --confirm="$PROJECT_REF" "${versions[@]}") ;;
             apply-reviewed) args+=(--apply --confirm="$PROJECT_REF") ;;
-            dry-run) ;;
+            dry-run) args+=("${versions[@]}") ;;
           esac
           pnpm content:sync "${args[@]}"
           echo "result=$(cat "$RUNNER_TEMP/result.txt")" >> "$GITHUB_OUTPUT"
@@ -133,27 +173,46 @@ jobs:
           if-no-files-found: ${{ steps.sync.outputs.result == 'applied' && 'error' || 'ignore' }}
           retention-days: 90
 
-      # Retries until the site's alias serves the deployed commit.
+      # Runs whenever the database matches the seed (just applied, or already
+      # in sync), even if the backup upload failed, so a re-run also clears a
+      # cache that an earlier failed refresh left stale. Network errors and
+      # 5xx are retried; 401/503 are configuration errors and fail at once.
+      # In deploy mode it retries until the site serves the deployed commit.
       - name: Refresh public pages
-        if: steps.sync.outputs.result == 'applied'
+        if: >-
+          always() && env.MODE != 'dry-run' &&
+          (steps.sync.outputs.result == 'applied' || steps.sync.outputs.result == 'noop')
         env:
           CONTENT_REVALIDATE_SECRET: ${{ secrets.CONTENT_REVALIDATE_SECRET }}
         run: |
+          url="${SITE_URL%/}/api/revalidate"
+          body="$RUNNER_TEMP/revalidate.json"
           for attempt in 1 2 3 4 5 6; do
-            body=$(curl -fsS -X POST -H "Authorization: Bearer $CONTENT_REVALIDATE_SECRET" "${SITE_URL%/}/api/revalidate")
-            commit=$(echo "$body" | jq -r '.commit // empty')
-            if [ "$MODE" != "deploy" ] || [ "$commit" = "$SHA" ]; then
-              echo "Refreshed public pages (commit ${commit:-unknown})."
-              exit 0
-            fi
-            if [ -z "$commit" ]; then
-              echo "::warning::The site did not report its commit; refreshed without checking it."
-              exit 0
-            fi
-            echo "Site serves $commit, waiting for $SHA (attempt $attempt)."
+            code=$(curl -sS -o "$body" -w '%{http_code}' -X POST -H "Authorization: Bearer $CONTENT_REVALIDATE_SECRET" "$url") || code=000
+            case "$code" in
+              200)
+                commit=$(jq -r '.commit // empty' "$body")
+                if [ "$MODE" != "deploy" ] || [ "$commit" = "$SHA" ]; then
+                  echo "Refreshed public pages (commit ${commit:-unknown})."
+                  exit 0
+                fi
+                if [ -z "$commit" ]; then
+                  echo "::warning::The site did not report its commit; refreshed without checking it."
+                  exit 0
+                fi
+                echo "Attempt $attempt: site serves ${commit:0:7}, waiting for ${SHA:0:7}." ;;
+              401)
+                echo "::error::The site rejected CONTENT_REVALIDATE_SECRET (401): GitHub and Vercel hold different values."
+                exit 1 ;;
+              503)
+                echo "::error::CONTENT_REVALIDATE_SECRET is not set on the site (503). Set it in Vercel and redeploy."
+                exit 1 ;;
+              *)
+                echo "Attempt $attempt: HTTP $code, retrying." ;;
+            esac
             sleep 20
           done
-          echo "::error::The site never served $SHA; pages may still show old content."
+          echo "::error::The pages were not refreshed for ${SHA:0:7}; they may still show old content."
           exit 1
 
       - name: Report a failure
@@ -168,7 +227,8 @@ jobs:
 
           Details and the plan: $RUN_URL
 
-          - **blocked**: the live content no longer matches the previous seed. Read the run summary, then run *Content sync* with **dry-run** and, if it is right, **apply-reviewed**.
+          - **blocked**: the live content matches none of the recent seed versions, so it was edited in Admin. Read the run summary, then run *Content sync* with **dry-run** and, if it is right, **apply-reviewed**.
+          - **applied** or **noop**: the database is right; the page refresh or the backup upload failed. Fix the cause in the log, then re-run this workflow: it refreshes again.
           - **error**: check the log. The backup artifact on the run can restore the rows (\`pnpm content:sync --restore=FILE --confirm=REF\`)."
           gh label create content-sync --color B60205 --description "Content sync workflow" --force
           open=$(gh issue list --label content-sync --state open --json number --jq '.[0].number // empty')

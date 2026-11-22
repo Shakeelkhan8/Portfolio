@@ -48,9 +48,18 @@ export function revalidateAfterProjectChange(options?: {
  * Every public cache tag plus every public route. CMS queries cache with no
  * expiry, so content written outside the admin panel (scripts/sync-content.ts)
  * stays invisible until this runs.
+ *
+ * By default tags go stale ("max"): the next visitor still gets the cached
+ * copy while it rebuilds. `immediate` expires them instead ({ expire: 0 }),
+ * so the next request waits for fresh data; Next.js recommends that for
+ * callers outside a Server Action, such as the content sync's POST
+ * /api/revalidate right after a deploy.
  */
-export function revalidateAllPublicContent() {
-  revalidateContent(...Object.values(CACHE_TAGS));
+export function revalidateAllPublicContent(options?: { immediate?: boolean }) {
+  const profile = options?.immediate ? { expire: 0 } : "max";
+  for (const tag of Object.values(CACHE_TAGS)) {
+    revalidateTag(tag, profile);
+  }
   revalidatePublicPages();
   revalidatePath(DEFAULT_OG_IMAGE_PATH);
 }

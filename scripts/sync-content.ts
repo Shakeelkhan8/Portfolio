@@ -23,10 +23,12 @@ import {
  *   (none)                 dry run: print the plan, write nothing
  *   --apply --confirm=REF  write the plan (backup first)
  *   --restore=FILE --confirm=REF  put rows back from a backup
- *   --baseline=FILE        drift check against an older commit's seed (JSON
- *                          from scripts/export-seed.ts); blocks with exit 3
- *                          when the database no longer matches it; skips
- *                          when the seed itself didn't change
+ *   --baseline=FILE ...    drift check: recent seed versions (JSON from
+ *                          scripts/export-seed.ts), newest first, the first
+ *                          being the previous commit. Applies if the
+ *                          database matches any of them; otherwise blocks
+ *                          (exit 3 when writing) or, if this commit didn't
+ *                          change the seed, skips. See decideSync.
  *   --result=FILE          write noop | unchanged | dry-run | blocked | applied
  * In GitHub Actions the plan is also added to the job summary.
  */
@@ -54,10 +56,14 @@ function getProjectRef(url: string): string {
   return match[1];
 }
 
-function getFlag(name: string): string | undefined {
+function getFlags(name: string): string[] {
   return process.argv
-    .find((arg) => arg.startsWith(`--${name}=`))
-    ?.slice(name.length + 3);
+    .filter((arg) => arg.startsWith(`--${name}=`))
+    .map((arg) => arg.slice(name.length + 3));
+}
+
+function getFlag(name: string): string | undefined {
+  return getFlags(name)[0];
 }
 
 async function main() {
@@ -71,7 +77,7 @@ async function main() {
   );
   const projectRef = getProjectRef(url);
   const restorePath = getFlag("restore");
-  const baselinePath = restorePath ? undefined : getFlag("baseline");
+  const baselinePaths = restorePath ? [] : getFlags("baseline");
   const resultPath = getFlag("result");
   const write = process.argv.includes("--apply") || Boolean(restorePath);
 
@@ -94,26 +100,36 @@ async function main() {
   for (const line of describePlans(plans)) console.log(line);
   console.log("");
 
-  let baseline: { plans: TablePlan[]; seedChanged: boolean } | null = null;
-  if (baselinePath) {
-    const seed = JSON.parse(readFileSync(baselinePath, "utf8")) as SeedPayload;
-    const snapshot = await readSnapshot(supabase, seed);
-    baseline = {
-      plans: planFromSeed(snapshot, seed),
-      seedChanged: seedChanged(snapshot, seed, getSeedPayload()),
-    };
+  let check: { versions: TablePlan[][]; seedChanged: boolean } | null = null;
+  if (baselinePaths.length) {
+    const versions: TablePlan[][] = [];
+    let changed = true;
+    for (const [index, path] of baselinePaths.entries()) {
+      const seed = JSON.parse(readFileSync(path, "utf8")) as SeedPayload;
+      // Each version is matched against the rows it owns (its project slugs).
+      const snapshot = await readSnapshot(supabase, seed);
+      versions.push(planFromSeed(snapshot, seed));
+      if (index === 0) changed = seedChanged(snapshot, seed, getSeedPayload());
+    }
+    check = { versions, seedChanged: changed };
+    const match = versions.findIndex((version) => !hasChanges(version));
+    console.log(
+      match === -1
+        ? `Live content matches none of the ${versions.length} recent seed versions.`
+        : `Live content matches seed version ${match + 1} of ${versions.length} (${baselinePaths[match]})${match ? ": a sync was missed, catching up" : ""}.`,
+    );
   }
-  const baselinePlans = baseline?.plans ?? null;
+  const baselinePlans = check?.versions[0] ?? null;
   const decision: SyncDecision = restorePath
     ? hasChanges(plans)
       ? "apply"
       : "noop"
-    : decideSync(plans, baseline);
+    : decideSync(plans, check);
 
   if (decision === "noop" || decision === "unchanged") {
     if (decision === "unchanged") {
       const message =
-        "Skipped: this commit didn't change the seed. The live content differs from it (Admin edits, or a sync that never ran) and is left as is.";
+        "Skipped: this commit didn't change the seed, and the live content matches none of the recent seed versions (edited in Admin), so it is left as is.";
       console.log(process.env.GITHUB_ACTIONS ? `::warning::${message}` : message);
     }
     report(resultPath, decision, plans);
@@ -121,13 +137,15 @@ async function main() {
   }
 
   if (decision === "blocked") {
-    console.log("Blocked: the live content no longer matches the previous");
-    console.log("commit's seed, so this sync would overwrite these changes");
-    console.log("(made in Admin, or by a sync that never ran):");
+    console.log("Blocked: the live content matches none of the recent seed");
+    console.log("versions, so this sync would overwrite these changes (made in");
+    console.log("Admin, or older than every version checked). Against the");
+    console.log("previous commit's seed:");
     for (const line of describePlans(baselinePlans ?? [])) console.log(line);
     console.log("Review them, then run the sync by hand or from the workflow.");
     report(resultPath, "blocked", plans, baselinePlans);
-    process.exitCode = 3;
+    // Only a run that meant to write fails; a dry run just reports it.
+    if (write) process.exitCode = 3;
     return;
   }
 
