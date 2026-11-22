@@ -120,13 +120,17 @@ jobs:
           pnpm content:sync "${args[@]}"
           echo "result=$(cat "$RUNNER_TEMP/result.txt")" >> "$GITHUB_OUTPUT"
 
+      # The folder starts with a dot, which upload-artifact skips unless
+      # include-hidden-files is on. A run that applied must have a backup,
+      # so a missing one fails the job instead of passing silently.
       - name: Keep the backup
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: content-sync-backup-${{ github.run_id }}
           path: .content-sync-backups/
-          if-no-files-found: ignore
+          include-hidden-files: true
+          if-no-files-found: ${{ steps.sync.outputs.result == 'applied' && 'error' || 'ignore' }}
           retention-days: 90
 
       # Retries until the site's alias serves the deployed commit.
