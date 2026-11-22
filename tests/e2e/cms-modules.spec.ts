@@ -4,7 +4,6 @@ test.describe("Phase 9 CMS surfaces", () => {
   test("home page shows featured projects and experience", async ({ page }) => {
     await page.goto("/");
     await expect(
-      // .first(): the case studies come before the "Selected work" cards.
       page
         .getByRole("heading", { name: /case studies|selected projects|selected work/i })
         .first(),
@@ -85,23 +84,6 @@ test.describe("Phase 9 CMS surfaces", () => {
     );
   });
 
-  test("live platforms link out to the live sites", async ({ page }) => {
-    await page.goto("/");
-    // Let hydration finish first: the home page swaps DOM nodes while it
-    // hydrates, and scrolling a node mid-swap fails with "not attached".
-    await page.waitForLoadState("networkidle");
-    const section = page.locator("#live-platforms");
-    await section.scrollIntoViewIfNeeded();
-    await expect(
-      section.getByRole("heading", { level: 3, name: "HUM News" }),
-    ).toBeVisible();
-    const link = section.getByRole("link", {
-      name: /Visit the HUM News live site/,
-    });
-    await expect(link).toHaveAttribute("href", "https://humnews.pk/");
-    await expect(link).toHaveAttribute("target", "_blank");
-  });
-
   test("home contact cards link to email, LinkedIn and WhatsApp", async ({
     page,
   }) => {
@@ -137,6 +119,19 @@ test.describe("Phase 9 CMS surfaces", () => {
     const message = section.getByLabel("Message");
     await message.fill("Hello there");
     await expect(section.getByText("11/5000")).toBeVisible();
+  });
+
+  test("home has its seven sections in order", async ({ page }) => {
+    await page.goto("/");
+    const ids = await page
+      .locator("main [id]")
+      .evaluateAll((nodes) => nodes.map((node) => node.id));
+    const order = ["about", "experience", "tech-stack", "work", "contact"];
+    const found = order.map((id) => ids.indexOf(id));
+    expect(found.every((index) => index >= 0)).toBe(true);
+    expect([...found].sort((a, b) => a - b)).toEqual(found);
+    // These moved to /about, and the HUM cards were removed.
+    expect(ids).not.toContain("live-platforms");
   });
 
   test("footer links to the resume", async ({ page }) => {

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { AppLink } from "@/components/shared/app-link";
 import { SoundToggle } from "@/components/shared/sound-toggle";
 import { NavBar } from "@/components/navigation/nav-bar";
+import { HomeSectionNav } from "@/components/navigation/home-section-nav";
 import { Container } from "@/components/layout/container";
 import { routes } from "@/config/navigation";
 import type { NavigationData, PublicSiteConfig } from "@/types/cms";
@@ -20,7 +21,8 @@ export function Header({ site, navigation, className }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   // The home hero sets the name as its headline, so the wordmark waits until
   // the page scrolls: the name shows once in the first screen, not twice.
-  const hideWordmark = usePathname() === routes.home && !scrolled;
+  const onHome = usePathname() === routes.home;
+  const hideWordmark = onHome && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -63,7 +65,8 @@ export function Header({ site, navigation, className }: HeaderProps) {
         </AppLink>
 
         <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
-          <NavBar navigation={navigation} />
+          {/* Home jumps between its sections; other pages use the Admin nav. */}
+          {onHome ? <HomeSectionNav /> : <NavBar navigation={navigation} />}
           <div
             className="mx-1 hidden h-5 w-px bg-border/80 md:block"
             aria-hidden="true"

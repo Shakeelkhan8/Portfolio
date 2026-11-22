@@ -1,14 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Home page testimonials. Content comes from the CMS, so the assertions
- * follow whatever is published rather than a fixed number of quotes.
+ * Testimonials, on /about since 2026-11-22 (they were on the home page).
+ * Content comes from the CMS, so the assertions follow whatever is
+ * published rather than a fixed number of quotes.
  */
 test.describe("Testimonials", () => {
   test("heading matches the number of quotes, and the CTA works", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/about");
     // The label is CMS-managed ("Testimonials", "What people say"); the
     // statement is chosen by the page from the number of quotes.
     const heading = page.getByRole("heading", {
@@ -34,7 +35,7 @@ test.describe("Testimonials", () => {
   test("a review verified on Upwork links to the Upwork profile", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/about");
     const badge = page.getByRole("link", { name: /verified on upwork/i }).first();
     // count() doesn't wait, and the link joins the accessibility tree just
     // after load; give it a moment before deciding there is none.
