@@ -16,8 +16,8 @@
 # runs never overlap (concurrency group). Any failure opens or updates one
 # issue labelled content-sync, so the owner is notified.
 #
-# Needs: secrets NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
-# CONTENT_REVALIDATE_SECRET; variables SUPABASE_PROJECT_REF, SITE_URL; and
+# Needs: secrets SUPABASE_SERVICE_ROLE_KEY, CONTENT_REVALIDATE_SECRET;
+# variables SUPABASE_PROJECT_REF, SITE_URL; and
 # CONTENT_REVALIDATE_SECRET set in Vercel (Production). To turn it off:
 # Actions → Content sync → Disable workflow.
 
@@ -55,17 +55,19 @@ jobs:
       MODE: ${{ inputs.mode || 'deploy' }}
       SHA: ${{ github.event.deployment.sha || github.sha }}
       PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+      # Built from the project ref, not the NEXT_PUBLIC_SUPABASE_URL secret:
+      # the sync accepts only the bare https://<ref>.supabase.co form.
+      NEXT_PUBLIC_SUPABASE_URL: https://${{ vars.SUPABASE_PROJECT_REF }}.supabase.co
       SITE_URL: ${{ vars.SITE_URL }}
       NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
     steps:
       - name: Check configuration
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           CONTENT_REVALIDATE_SECRET: ${{ secrets.CONTENT_REVALIDATE_SECRET }}
         run: |
           missing=()
-          for name in NEXT_PUBLIC_SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY CONTENT_REVALIDATE_SECRET PROJECT_REF SITE_URL; do
+          for name in SUPABASE_SERVICE_ROLE_KEY CONTENT_REVALIDATE_SECRET PROJECT_REF SITE_URL; do
             [ -n "${!name}" ] || missing+=("$name")
           done
           if [ ${#missing[@]} -gt 0 ]; then
@@ -107,7 +109,6 @@ jobs:
       - name: Sync
         id: sync
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           args=(--result="$RUNNER_TEMP/result.txt")
