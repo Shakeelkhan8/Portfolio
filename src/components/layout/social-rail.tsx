@@ -3,7 +3,6 @@ import {
   GitHubIcon,
   LinkedInIcon,
   MailIcon,
-  UpworkIcon,
 } from "@/components/shared/brand-icons";
 import type { NavigationData } from "@/types/cms";
 
@@ -13,7 +12,6 @@ type IconComponent = (props: { className?: string }) => React.ReactNode;
 const ICONS: Record<string, IconComponent | undefined> = {
   GitHub: GitHubIcon,
   LinkedIn: LinkedInIcon,
-  Upwork: UpworkIcon,
   Email: MailIcon,
 };
 

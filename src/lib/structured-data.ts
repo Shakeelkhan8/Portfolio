@@ -34,7 +34,7 @@ export function getPersonSchema(site: SiteConfig) {
     email: site.email,
     url: site.url,
     // Professional profiles, so search engines connect them to this person.
-    // Upwork is left out: the portfolio no longer sells packaged services
+    // Freelance marketplaces are left out: the portfolio no longer sells packaged services
     // (2026-11-19).
     sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
     knowsAbout: site.expertise,

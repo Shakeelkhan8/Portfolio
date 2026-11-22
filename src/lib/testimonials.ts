@@ -2,9 +2,9 @@
  * Where a testimonial was verified, read from its company line.
  *
  * The CMS has no "source" column; verified reviews carry it in the company
- * text, e.g. "Client, Sep 2025 (verified on Upwork)". Splitting it out lets
- * the page show a proper "Verified on Upwork" badge, linked to the profile
- * where the review can be checked, without a schema change. Text without a
+ * text, e.g. "Client, Mar 2026 (verified on LinkedIn)". Splitting it out
+ * lets the page show a "Verified on …" badge without a schema change. Text
+ * without a
  * "(verified on X)" suffix is returned unchanged with no source.
  */
 export function parseTestimonialSource(company: string | null | undefined): {

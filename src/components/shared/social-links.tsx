@@ -2,7 +2,6 @@ import {
   GitHubIcon,
   LinkedInIcon,
   MailIcon,
-  UpworkIcon,
 } from "@/components/shared/brand-icons";
 import type { NavigationData } from "@/types/cms";
 import { cn } from "@/lib/utils";
@@ -11,7 +10,6 @@ import { AppLink } from "@/components/shared/app-link";
 const iconMap = {
   GitHub: GitHubIcon,
   LinkedIn: LinkedInIcon,
-  Upwork: UpworkIcon,
   Email: MailIcon,
 } as const;
 

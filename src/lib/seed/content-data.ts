@@ -203,13 +203,6 @@ export function getSeedPayload() {
         display_order: 1,
       },
       {
-        platform: "upwork",
-        label: "Upwork",
-        url: siteConfig.links.upwork,
-        icon: "briefcase",
-        display_order: 2,
-      },
-      {
         platform: "email",
         label: "Email",
         url: `mailto:${siteConfig.email}`,

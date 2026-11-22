@@ -17,8 +17,6 @@ export type SiteConfig = {
   links: {
     github: string;
     linkedin: string;
-    /** Upwork profile; empty when the CMS has no "upwork" social link. */
-    upwork: string;
   };
   githubUsername: string;
   languages: Array<{ name: string; level: string }>;

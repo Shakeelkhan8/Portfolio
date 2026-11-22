@@ -32,17 +32,4 @@ test.describe("Testimonials", () => {
     await expect(cta).toHaveAttribute("href", "/contact#contact-form");
   });
 
-  test("a review verified on Upwork links to the Upwork profile", async ({
-    page,
-  }) => {
-    await page.goto("/about");
-    const badge = page.getByRole("link", { name: /verified on upwork/i }).first();
-    // count() doesn't wait, and the link joins the accessibility tree just
-    // after load; give it a moment before deciding there is none.
-    await badge.waitFor({ timeout: 5000 }).catch(() => {});
-    test.skip((await badge.count()) === 0, "No Upwork-verified testimonial published");
-
-    await expect(badge).toHaveAttribute("href", /^https:\/\/www\.upwork\.com\//);
-    await expect(badge).toHaveAttribute("target", "_blank");
-  });
 });

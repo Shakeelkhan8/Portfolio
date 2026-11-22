@@ -28,9 +28,8 @@ describe("root schema graph", () => {
     expect(json).not.toContain("PostalAddress");
   });
 
-  // sameAs is how search engines tie the profiles to one person. Upwork is
-  // configured but deliberately left out since services were removed.
-  it("lists the professional profiles in sameAs, without Upwork", () => {
+  // sameAs is how search engines tie the profiles to one person.
+  it("lists the professional profiles in sameAs", () => {
     const person = getRootSchemaGraph(site)["@graph"].find(
       (node) => node["@type"] === "Person",
     );
