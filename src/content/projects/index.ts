@@ -3,10 +3,10 @@ import type { Project } from "@/types";
 /**
  * Seed and fallback projects. Order here is display order.
  *
- * Professional work is `featured: true`. Side projects carry the
- * `SIDE_PROJECT_TAG` tag and render in their own section on the home page
- * (see `src/lib/projects.ts`), which keeps the split editable from the CMS
- * without a schema change.
+ * `featured: true` marks the large rows at the top of the home page's Work
+ * section (Dispatch, Keystone, AI Mentor Health, chosen 2026-11-22); the
+ * rest are the smaller cards under them. Side projects also carry the
+ * `SIDE_PROJECT_TAG` tag, shown as a label. Both are editable in Admin.
  */
 export const projects: Project[] = [
   {
@@ -79,98 +79,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "enterprise-reporting-automation",
-    title: "Enterprise Reporting Automation",
-    summary:
-      "A backend that generates Hum Network's operational reports automatically, replacing a manual Excel process.",
-    problem:
-      "Hum Network's operations team compiled Excel reports by hand from several data sources, which cost more than 100 hours a month.",
-    role: "Backend developer",
-    context: "Hum Network Limited · Sep 2023 – Oct 2025",
-    stack: [
-      "Laravel",
-      "PHP",
-      "MySQL",
-      "WebSockets",
-      "Excel and PDF generation",
-    ],
-    tags: ["Automation", "Enterprise", "Integrations"],
-    featured: true,
-    links: [],
-    metrics: [{ label: "Hours saved", value: "100+ a month" }],
-    overview:
-      "The system pulls data from internal databases and external JSON APIs and produces structured Excel and PDF reports on demand. It also feeds Ross XPression for live TV graphics workflows, and keeps related internal apps in sync over WebSockets.",
-    challenges: [
-      "Turning inconsistent hand-made Excel formats into one reliable pipeline.",
-      "Proving the automated reports matched the manual ones before switching over.",
-      "Feeding live TV data workflows through Ross XPression.",
-    ],
-    architecture:
-      "A Laravel backend reads from internal databases and external JSON APIs, normalises the data into report templates, and renders Excel and PDF output. WebSocket and Socket.IO connections keep related internal applications updated in real time.",
-    decisions: [
-      {
-        decision:
-          "Fixed report templates instead of free-form Excel generation",
-        rationale:
-          "Templates keep output consistent and make it straightforward to compare against the old manual reports.",
-        tradeoff: "Ad-hoc changes to a report need a template change.",
-      },
-    ],
-    results: [
-      "More than 100 operational hours saved each month.",
-      "Real-time data sync across internal applications over WebSockets.",
-    ],
-    lessons: [
-      "Replacing a manual process means running both side by side until stakeholders see they match.",
-    ],
-  },
-  {
-    slug: "isp-management-system",
-    title: "ISP Management System",
-    summary:
-      "Billing, subscriptions and a customer portal for small internet service providers: a freelance build from 2023 that ran in production.",
-    problem:
-      "Small ISPs in Pakistan had no affordable software for customer billing, subscription plans, bandwidth tracking and self-service.",
-    role: "Freelance developer: design, build and deploy",
-    context: "Freelance · 2023",
-    stack: ["Laravel", "PHP", "MySQL", "Blade"],
-    tags: ["Billing", "Full-stack", "SaaS"],
-    featured: true,
-    links: [],
-    metrics: [],
-    overview:
-      "A full-stack platform for small ISPs: billing and invoicing, subscription plans, bandwidth usage tracking, and a self-service portal for customers. I built it on my own as a freelance project in 2023, and it ran in production.",
-    challenges: [
-      "Permissions that keep ISP staff, agents and customers in separate scopes.",
-      "Billing cycles that stay correct when a customer changes plan mid-cycle.",
-      "A customer portal simple enough for people who aren't technical.",
-    ],
-    architecture:
-      "A single Laravel application on MySQL, with Blade templates for both the admin and customer sides. Role-based access separates ISP staff, agents and end customers.",
-    decisions: [
-      {
-        decision: "A monolith instead of separate services",
-        rationale:
-          "A small system for small ISPs. Operational simplicity was worth more than anything a distributed design would add.",
-        tradeoff:
-          "Growing far beyond that load would need a scaling plan later.",
-      },
-      {
-        decision: "Role-based access with scoped permissions",
-        rationale:
-          "Staff, agents and customers each need their own permission scope.",
-        tradeoff: "The permission matrix grows with every new role.",
-      },
-    ],
-    results: [
-      "Ran in production.",
-      "Billing that stays correct when a customer changes plan mid-cycle, with subscriptions and customer self-service in the same system.",
-    ],
-    lessons: [
-      "On a small production system, build admin tooling early. Support requests come from the edge cases you didn't plan for.",
-    ],
-  },
-  {
     slug: "keystone",
     title: "Keystone",
     summary:
@@ -187,7 +95,7 @@ export const projects: Project[] = [
       "Docker",
     ],
     tags: ["Side project", "Billing", "Networking"],
-    featured: false,
+    featured: true,
     links: [],
     metrics: [],
     overview:
@@ -249,7 +157,7 @@ export const projects: Project[] = [
       "GitHub Actions",
     ],
     tags: ["Side project", "AI", "SaaS"],
-    featured: false,
+    featured: true,
     links: [
       {
         label: "Code on GitHub",
@@ -308,6 +216,229 @@ export const projects: Project[] = [
       "A Docker image and Render blueprint run the whole app in demo mode with no API keys.",
     ],
     lessons: [],
+  },
+  {
+    slug: "reconciliation-engine",
+    title: "Reconciliation Engine",
+    summary:
+      "Matches courier and card-processor settlement files against the orders they pay for, records every match in a ledger that can't be edited, and proposes fixes for the leftovers for a person to approve.",
+    problem:
+      "A business that collects cash on delivery gets settlement files from couriers and card processors, and someone has to tick off every line against the orders it covers. The awkward lines (missing references, combined parcels, returns) are where money quietly goes missing.",
+    role: "Solo project: design and build",
+    context: "Side project · 2026 · v0.1 built, not deployed · Private repo",
+    stack: [
+      "TypeScript",
+      "NestJS",
+      "PostgreSQL",
+      "Prisma",
+      "BullMQ",
+      "Redis",
+      "OpenAI",
+      "OpenTelemetry",
+      "Docker",
+    ],
+    tags: ["Side project", "Data pipelines", "AI"],
+    featured: false,
+    links: [],
+    metrics: [
+      { label: "Wrong matches on a 400-line labelled test set", value: "0" },
+      { label: "Exceptions with the right order in the top 5 candidates", value: "133 of 133" },
+      { label: "Harmful actions by the rules-only exception desk", value: "0" },
+    ],
+    overview:
+      "Settlement files in three formats are ingested idempotently, so uploading the same file twice changes nothing. A conservative three-pass matcher pairs each line with an expected payment and posts the match to a double-entry ledger; anything it isn't sure about goes to an exception queue instead of being guessed. An exception desk ranks candidate orders and proposes one action from a closed list, first with rules and optionally with an OpenAI model, and a person accepts or rejects each proposal. The inputs are synthetic formats invented for the project; it runs locally with Docker Compose and isn't deployed.",
+    challenges: [
+      "Matching lines that have no reference, or one parcel covering two orders, without ever guessing.",
+      "Correcting a wrong match without editing history.",
+      "Letting a model help with exceptions without letting it do anything the normal flow couldn't.",
+    ],
+    architecture:
+      "A NestJS API takes uploads and hands ingestion and matching to BullMQ workers. PostgreSQL holds the ledger, with its zero-sum and append-only rules enforced by the database itself, and row-level security limits the API's database role to the current tenant's rows. Outbound webhooks are written in the same transaction as the change they describe and delivered at least once with signatures. OpenTelemetry follows one upload from the request through the queue, every SQL statement and the webhook it produces.",
+    decisions: [
+      {
+        decision: "A matcher that never guesses",
+        rationale:
+          "It matches on reference and amount, then on amount and date only when exactly one candidate exists, then combined parcels only when the amounts add up exactly. Everything else becomes an exception for a person.",
+        tradeoff:
+          "About half of a messy file is matched automatically; the rest waits in a queue.",
+      },
+      {
+        decision: "Reversals instead of edits",
+        rationale:
+          "Unmatching a line posts a mirror-image entry to the ledger and reopens its orders, so the books always show what happened and when.",
+        tradeoff: "The ledger grows with every correction.",
+      },
+      {
+        decision: "The model proposes, the normal flow decides",
+        rationale:
+          "The LLM desk picks one action from a closed list through structured outputs, and every answer is checked against what the resolve flow could run. Anything invalid becomes 'needs a person', and nothing is applied until someone accepts it.",
+        tradeoff:
+          "No action happens without a review, and the rules-only desk is the baseline the model has to beat.",
+      },
+    ],
+    results: [
+      "On a seeded test set of 400 lines with 12 kinds of faults, the matcher made no wrong matches and sent 200 lines to exceptions.",
+      "The right order was among the five candidates for all 133 exceptions that have one, and first for 91.7%.",
+      "Unit tests and end-to-end tests against real PostgreSQL and Redis run in CI.",
+    ],
+    lessons: [],
+    futureImprovements: [
+      "Real courier and processor integrations; today's formats are synthetic.",
+      "A tolerance band for short and over payments, and more than one currency per tenant.",
+      "User accounts and roles instead of one API key per tenant.",
+    ],
+  },
+  {
+    slug: "vantage",
+    title: "Vantage",
+    summary:
+      "A job-hunting engine: it pulls postings from company job boards, removes duplicates, filters out what doesn't fit without spending anything, and has Claude score only what's left.",
+    problem:
+      "Job boards optimise for volume. Fifty loosely matching listings a day isn't a pipeline, it's a chore, and paying a model to read every one of them would cost more than it saves.",
+    role: "Solo project: design and build",
+    context: "Side project · 2026 · Private repo",
+    stack: [
+      "Laravel 13",
+      "PHP 8.4",
+      "PostgreSQL",
+      "Redis",
+      "Horizon",
+      "Livewire",
+      "Claude API",
+      "Docker",
+    ],
+    tags: ["Side project", "AI", "Data pipelines"],
+    featured: false,
+    links: [],
+    metrics: [
+      { label: "Postings filtered out before any model call", value: "About 9 in 10" },
+    ],
+    overview:
+      "Postings come in through adapters behind one source contract: company ATS boards (Greenhouse, Lever, Ashby, Workable), aggregator APIs, parsed job-alert emails and manual paste. They're deduplicated, then a free first stage filters on work authorisation, seniority, stack, salary floor, age and a blocklist in plain SQL and PHP. Only what survives is scored against a candidate profile with Claude, and the result is a short, reasoned shortlist and a digest.",
+    challenges: [
+      "Keeping the model bill small when the input is hundreds of postings a day.",
+      "Scoring the same role once when it's syndicated across several boards.",
+      "Adding new sources without touching the pipeline.",
+    ],
+    architecture:
+      "A Laravel app with Horizon queues, PostgreSQL and Redis, run in Docker and deployable to one VPS with Caddy for TLS. Each source is an adapter behind a single contract. Scoring runs through the Batch API and is cached on the posting's fingerprint and the profile version.",
+    decisions: [
+      {
+        decision: "Filter for free first, score second",
+        rationale:
+          "Most postings fail a simple rule, so deterministic SQL and PHP remove them before any model is called.",
+        tradeoff: "A rule that's too strict can drop a good role before a model ever sees it.",
+      },
+      {
+        decision: "Batch scoring, cached on fingerprint and profile version",
+        rationale:
+          "Batch calls cost half as much, and the cache means a role posted on five boards, or a re-run, is scored once.",
+        tradeoff: "Scores arrive in batches rather than instantly.",
+      },
+      {
+        decision: "A spending ceiling checked before dispatch",
+        rationale:
+          "The monthly limit is enforced before a batch is sent, not discovered when the bill arrives.",
+        tradeoff: "Scoring pauses once the limit is reached.",
+      },
+    ],
+    results: [
+      "About nine in ten postings never reach a model.",
+      "Tests run in CI on every push.",
+    ],
+    lessons: [],
+  },
+  {
+    slug: "enterprise-reporting-automation",
+    title: "Enterprise Reporting Automation",
+    summary:
+      "A backend that generates Hum Network's operational reports automatically, replacing a manual Excel process.",
+    problem:
+      "Hum Network's operations team compiled Excel reports by hand from several data sources, which cost more than 100 hours a month.",
+    role: "Backend developer",
+    context: "Hum Network Limited · Sep 2023 – Oct 2025",
+    stack: [
+      "Laravel",
+      "PHP",
+      "MySQL",
+      "WebSockets",
+      "Excel and PDF generation",
+    ],
+    tags: ["Automation", "Enterprise", "Integrations"],
+    featured: false,
+    links: [],
+    metrics: [{ label: "Hours saved", value: "100+ a month" }],
+    overview:
+      "The system pulls data from internal databases and external JSON APIs and produces structured Excel and PDF reports on demand. It also feeds Ross XPression for live TV graphics workflows, and keeps related internal apps in sync over WebSockets.",
+    challenges: [
+      "Turning inconsistent hand-made Excel formats into one reliable pipeline.",
+      "Proving the automated reports matched the manual ones before switching over.",
+      "Feeding live TV data workflows through Ross XPression.",
+    ],
+    architecture:
+      "A Laravel backend reads from internal databases and external JSON APIs, normalises the data into report templates, and renders Excel and PDF output. WebSocket and Socket.IO connections keep related internal applications updated in real time.",
+    decisions: [
+      {
+        decision:
+          "Fixed report templates instead of free-form Excel generation",
+        rationale:
+          "Templates keep output consistent and make it straightforward to compare against the old manual reports.",
+        tradeoff: "Ad-hoc changes to a report need a template change.",
+      },
+    ],
+    results: [
+      "More than 100 operational hours saved each month.",
+      "Real-time data sync across internal applications over WebSockets.",
+    ],
+    lessons: [
+      "Replacing a manual process means running both side by side until stakeholders see they match.",
+    ],
+  },
+  {
+    slug: "isp-management-system",
+    title: "ISP Management System",
+    summary:
+      "Billing, subscriptions and a customer portal for small internet service providers: a freelance build from 2023 that ran in production.",
+    problem:
+      "Small ISPs in Pakistan had no affordable software for customer billing, subscription plans, bandwidth tracking and self-service.",
+    role: "Freelance developer: design, build and deploy",
+    context: "Freelance · 2023",
+    stack: ["Laravel", "PHP", "MySQL", "Blade"],
+    tags: ["Billing", "Full-stack", "SaaS"],
+    featured: false,
+    links: [],
+    metrics: [],
+    overview:
+      "A full-stack platform for small ISPs: billing and invoicing, subscription plans, bandwidth usage tracking, and a self-service portal for customers. I built it on my own as a freelance project in 2023, and it ran in production.",
+    challenges: [
+      "Permissions that keep ISP staff, agents and customers in separate scopes.",
+      "Billing cycles that stay correct when a customer changes plan mid-cycle.",
+      "A customer portal simple enough for people who aren't technical.",
+    ],
+    architecture:
+      "A single Laravel application on MySQL, with Blade templates for both the admin and customer sides. Role-based access separates ISP staff, agents and end customers.",
+    decisions: [
+      {
+        decision: "A monolith instead of separate services",
+        rationale:
+          "A small system for small ISPs. Operational simplicity was worth more than anything a distributed design would add.",
+        tradeoff:
+          "Growing far beyond that load would need a scaling plan later.",
+      },
+      {
+        decision: "Role-based access with scoped permissions",
+        rationale:
+          "Staff, agents and customers each need their own permission scope.",
+        tradeoff: "The permission matrix grows with every new role.",
+      },
+    ],
+    results: [
+      "Ran in production.",
+      "Billing that stays correct when a customer changes plan mid-cycle, with subscriptions and customer self-service in the same system.",
+    ],
+    lessons: [
+      "On a small production system, build admin tooling early. Support requests come from the edge cases you didn't plan for.",
+    ],
   },
   {
     slug: "portfolio",
