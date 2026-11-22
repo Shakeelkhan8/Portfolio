@@ -224,6 +224,9 @@ test.describe("Phase 9 CMS surfaces", () => {
     // JS path (browsers without ::details-content): opened for the print,
     // closed again afterwards.
     const details = page.locator("details").first();
+    // The listener is attached on hydration; firing before it is in place
+    // made this flaky (2 of 3 runs failed locally on 2026-11-22).
+    await page.waitForLoadState("networkidle");
     await page.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
     await expect(details).toHaveAttribute("open", "");
     await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
