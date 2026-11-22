@@ -5,6 +5,7 @@ import { ArchitectureStrip } from "@/components/architecture/architecture-strip"
 import { Reveal } from "@/components/motion/reveal";
 import { AppLink } from "@/components/shared/app-link";
 import { routes } from "@/config/navigation";
+import { projectContext } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 import type { ArchitectureDiagramData, Project } from "@/types";
 
@@ -25,18 +26,6 @@ const SCREENSHOTS: Record<string, Array<{ src: string; alt: string }>> = {
     },
   ],
 };
-
-/** The status part of a project's context ("Elityx · In production · …"). */
-const STATUS = /production|paused|not deployed|open source/i;
-
-function contextParts(project: Project) {
-  const parts = project.context.split(" · ").filter(Boolean);
-  return {
-    who: parts[0] ?? "",
-    status: parts.find((part) => STATUS.test(part)) ?? null,
-    rest: parts.slice(1).filter((part) => !STATUS.test(part)),
-  };
-}
 
 /** A public code link, if the project has one (private repos have none). */
 function codeLink(project: Project) {
@@ -115,7 +104,7 @@ function FeaturedRow({
   diagram?: ArchitectureDiagramData;
   index: number;
 }) {
-  const { who, status, rest } = contextParts(project);
+  const { who, status, rest } = projectContext(project);
   const code = codeLink(project);
   const metric = project.metrics[0];
   const hardest = project.challenges[0];
@@ -226,7 +215,7 @@ function WorkCard({
   diagram?: ArchitectureDiagramData;
   index: number;
 }) {
-  const { who, status, rest } = contextParts(project);
+  const { who, status, rest } = projectContext(project);
   const metric = project.metrics[0];
 
   return (

@@ -31,10 +31,20 @@ type SocialRailProps = {
 
 /**
  * A fixed vertical pill of profile links on the left edge, like the
- * benchmark portfolio. Only on wide screens (1320px+), where it clears the
- * 1120px content column; phones have the bottom tab bar instead. Links come
- * from Admin → Social links, plus WhatsApp when a number is set.
+ * benchmark portfolio. Shown from 1024px (laptops); phones and tablets have
+ * the bottom tab bar instead. The rail ends 72px from the edge, so between
+ * 1024px and 1240px, where the content's own margin is narrower than that,
+ * SiteShell pads the page by RAIL_CLEARANCE (2026-11-22; it was 1320px+
+ * only and hidden on the user's laptop). Links come from Admin → Social
+ * links, plus WhatsApp when a number is set.
  */
+/**
+ * Page padding while the rail overlaps the content's margin (1024–1239px).
+ * One class with both bounds: as "lg:pl-14 min-[1240px]:pl-0", Tailwind
+ * emitted the arbitrary min-[1240px] rule before lg, so lg always won.
+ */
+export const RAIL_CLEARANCE = "lg:max-[1240px]:pl-14";
+
 export function SocialRail({ navigation, whatsappHref = null }: SocialRailProps) {
   const links = [
     ...navigation.socialNav.map((item) => ({
@@ -50,7 +60,7 @@ export function SocialRail({ navigation, whatsappHref = null }: SocialRailProps)
   return (
     <nav
       aria-label="Profiles"
-      className="fixed top-1/2 left-5 z-40 hidden -translate-y-1/2 min-[1320px]:block"
+      className="fixed top-1/2 left-5 z-40 hidden -translate-y-1/2 lg:block"
     >
       <ul className="flex flex-col items-center gap-1 rounded-full bg-foreground/90 px-1.5 py-3 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_12px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur">
         {links.map(({ title, href, Icon }) => {
