@@ -11,13 +11,13 @@ import { heroStats } from "@/content/home-about";
 import { AboutSnapshot } from "@/components/home/about-snapshot";
 import { StackSection } from "@/components/home/stack-section";
 import { withTechIcons } from "@/lib/tech-icons";
-import { ProjectPreviewGrid } from "@/components/home/project-preview-grid";
-import { SideProjectCard } from "@/components/home/side-project-card";
+import { WorkSection } from "@/components/home/work-section";
 import { WritingPreviewList } from "@/components/home/writing-preview-list";
 import { ExperienceSnapshot } from "@/components/home/experience-snapshot";
 import { ContactSection } from "@/components/home/contact-section";
 import {
   getActiveResumeVersion,
+  getArchitectureDiagramsBySlugs,
   getArticles,
   getCtaSection,
   getExperience,
@@ -27,7 +27,6 @@ import {
   getSkillGroups,
   getSiteConfig,
 } from "@/lib/content";
-import { isSideProject } from "@/lib/projects";
 import { toPublicSiteConfig } from "@/lib/public-site";
 import { getWhatsAppHref } from "@/lib/contact/whatsapp";
 import { routes } from "@/config/navigation";
@@ -64,8 +63,6 @@ export default async function Home() {
   const whatsappHref = getWhatsAppHref(rawSite.phone);
   const [
     heroCta,
-    projectsHeader,
-    sideProjectsHeader,
     writingHeader,
     experienceHeader,
     projects,
@@ -76,8 +73,6 @@ export default async function Home() {
     skillGroups,
   ] = await Promise.all([
     getCtaSection("home_hero"),
-    getSectionHeader("home", "projects"),
-    getSectionHeader("home", "side_projects"),
     getSectionHeader("home", "writing"),
     getSectionHeader("home", "experience"),
     getProjects(),
@@ -87,7 +82,9 @@ export default async function Home() {
     getPrimaryEducation(),
     getSkillGroups(),
   ]);
-  const sideProjects = projects.filter(isSideProject);
+  const diagrams = await getArchitectureDiagramsBySlugs(
+    projects.map((project) => project.slug),
+  );
   // A writing section with one or two short posts reads as unfinished, so it
   // stays off the home page (and out of the default nav) until there are more.
   const showWriting = articles.length >= MIN_ARTICLES_FOR_HOME;
@@ -151,42 +148,19 @@ export default async function Home() {
       ) : null}
 
       <div id="work">
+        {/*
+          Fixed copy, not the Admin "projects" header: the section was
+          rebuilt around featured rows (src/components/home/work-section.tsx).
+        */}
         <Section spacing="sm" className="relative">
           <Container>
             <SectionHeader
-              title={projectsHeader?.title ?? "Case studies"}
-              description={
-                projectsHeader?.description ??
-                "Live systems I've built and run: what the problem was, what I decided, and what it cost."
-              }
-              action={<ViewAllLink href={routes.projects} />}
+              title="Work"
+              description="What I've built, what was hard about it, and how I solved it."
             />
-            <ProjectPreviewGrid limit={2} staggered />
+            <WorkSection projects={projects} diagrams={diagrams} />
           </Container>
         </Section>
-
-        {sideProjects.length > 0 ? (
-          <Section spacing="sm" className="relative">
-            <Container>
-              <SectionHeader
-                title={sideProjectsHeader?.title ?? "Side projects"}
-                description={
-                  sideProjectsHeader?.description ??
-                  "Things I build in my own time, mostly to solve problems I have."
-                }
-              />
-              <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {sideProjects.map((project, index) => (
-                  <SideProjectCard
-                    key={project.slug}
-                    project={project}
-                    delay={(index % 3) * 0.06}
-                  />
-                ))}
-              </div>
-            </Container>
-          </Section>
-        ) : null}
 
         <Section spacing="sm" className="relative">
           <Container>

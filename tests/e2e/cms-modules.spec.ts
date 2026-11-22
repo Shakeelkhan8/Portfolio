@@ -4,15 +4,17 @@ test.describe("Phase 9 CMS surfaces", () => {
   test("home page shows featured projects and experience", async ({ page }) => {
     await page.goto("/");
     await expect(
-      page
-        .getByRole("heading", { name: /case studies|selected projects|selected work/i })
-        .first(),
+      page.getByRole("heading", { level: 2, name: /^Work/ }),
     ).toBeVisible();
     await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
-    await page
-      .getByRole("link", { name: /Dispatch Management SaaS/i })
-      .scrollIntoViewIfNeeded();
-    await expect(page.getByText("Dispatch Management SaaS")).toBeVisible();
+    // The title also appears in its button's label and its diagram, so
+    // match the heading itself.
+    const dispatch = page.getByRole("heading", {
+      level: 3,
+      name: "Dispatch Management SaaS",
+    });
+    await dispatch.scrollIntoViewIfNeeded();
+    await expect(dispatch).toBeVisible();
   });
 
   test("home hero shows availability under the headline, not beside the name", async ({
@@ -119,6 +121,30 @@ test.describe("Phase 9 CMS surfaces", () => {
     const message = section.getByLabel("Message");
     await message.fill("Hello there");
     await expect(section.getByText("11/5000")).toBeVisible();
+  });
+
+  test("home Work section: featured rows with proof, then more work", async ({
+    page,
+  }) => {
+    // Content comes from the CMS, so this checks structure, not which projects.
+    await page.goto("/#work");
+    await page.waitForLoadState("networkidle");
+    const work = page.locator("#work");
+    const rows = work.locator("ol > li article");
+    expect(await rows.count()).toBeGreaterThan(0);
+    const first = rows.first();
+    await first.scrollIntoViewIfNeeded();
+    await expect(first.getByRole("heading", { level: 3 })).toBeVisible();
+    await expect(
+      first.getByRole("link", { name: /Read the case study/ }),
+    ).toHaveAttribute("href", /^\/projects\/[a-z0-9-]+$/);
+    // Every "More work" card opens its case study.
+    const cards = work.getByRole("link", { name: /^Read case study: / });
+    for (const href of await cards.evaluateAll((links) =>
+      links.map((link) => link.getAttribute("href")),
+    )) {
+      expect(href).toMatch(/^\/projects\/[a-z0-9-]+$/);
+    }
   });
 
   test("home has its seven sections in order", async ({ page }) => {
