@@ -108,9 +108,11 @@ function TechIcon({ item }: { item: TechItem }) {
 }
 
 /**
- * Each tile reacts on hover in its brand's colour (--glow): the border,
- * a soft glow, a wash from the top and a small lift (not under reduced
- * motion), with the logo turning from grey to its original colours.
+ * On hover the logo turns from grey to its original colours, which carries
+ * the effect; the tile answers quietly in the brand's colour (--glow): a
+ * faint border tint, a light wash from the top and a 2px lift (not under
+ * reduced motion). An outer glow was removed (2026-11-22): with five
+ * effects at once the hover read as "too much".
  */
 function TechGrid({ items }: { items: TechItem[] }) {
   return (
@@ -118,12 +120,12 @@ function TechGrid({ items }: { items: TechItem[] }) {
       {items.map((item) => (
         <li key={item.name} data-tech-tile="">
           <div
-            className="group relative flex h-full min-h-[6.5rem] flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-foreground/8 bg-gradient-to-b from-foreground/[0.04] to-foreground/[0.01] px-2 py-4 text-center transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-[color-mix(in_oklab,var(--glow)_55%,transparent)] hover:shadow-[0_12px_32px_-16px_var(--glow)] motion-safe:hover:-translate-y-0.5"
+            className="group relative flex h-full min-h-[6.5rem] flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-foreground/8 bg-gradient-to-b from-foreground/[0.04] to-foreground/[0.01] px-2 py-4 text-center transition-[border-color,transform] duration-300 ease-out hover:border-[color-mix(in_oklab,var(--glow)_30%,transparent)] motion-safe:hover:-translate-y-0.5"
             style={{ "--glow": item.glow } as CSSProperties}
           >
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,color-mix(in_oklab,var(--glow)_18%,transparent),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,color-mix(in_oklab,var(--glow)_6%,transparent),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             />
             <span className="relative flex h-8 items-center justify-center">
               <TechIcon item={item} />
