@@ -19,7 +19,7 @@ describe("seed content payload", () => {
     const payload = getSeedPayload();
 
     expect(payload.siteSettings.site_name).toBe("Shakeel Khan");
-    expect(payload.projects).toHaveLength(6);
+    expect(payload.projects).toHaveLength(8);
     expect(payload.articles).toHaveLength(2);
     expect(payload.experience).toHaveLength(6);
     expect(payload.skillGroups).toHaveLength(9);
@@ -44,7 +44,7 @@ describe("seed content payload", () => {
     expect(payload.certifications).toEqual([]);
   });
 
-  it("splits professional work from side projects", () => {
+  it("features three projects in Work and labels side projects", () => {
     const payload = getSeedPayload();
     const side = payload.projects.filter((project) =>
       project.tags.includes("Side project"),
@@ -54,12 +54,15 @@ describe("seed content payload", () => {
     expect(side.map((project) => project.slug)).toEqual([
       "keystone",
       "ai-mentor-health",
+      "reconciliation-engine",
+      "vantage",
       "portfolio",
     ]);
+    // The large rows at the top of the home Work section (2026-11-22).
     expect(featured.map((project) => project.slug)).toEqual([
       "dispatch-management-saas",
-      "enterprise-reporting-automation",
-      "isp-management-system",
+      "keystone",
+      "ai-mentor-health",
     ]);
   });
 
