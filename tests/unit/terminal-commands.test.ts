@@ -48,7 +48,7 @@ const data: TerminalData = {
 
 /** Everything a result would print, as plain text. */
 function printed(result: CommandResult): string {
-  const lines: Line[] = result.type === "clear" ? [] : result.lines;
+  const lines: Line[] = result.type === "clear" || result.type === "welcome" ? [] : result.lines;
   return lines
     .map((line) => {
       if (line.kind === "text") return line.text;
@@ -60,7 +60,7 @@ function printed(result: CommandResult): string {
 }
 
 function links(result: CommandResult) {
-  return result.type === "clear"
+  return result.type === "clear" || result.type === "welcome"
     ? []
     : result.lines.flatMap((line) => (line.kind === "link" ? [line.href] : []));
 }
@@ -124,6 +124,11 @@ describe("terminal commands", () => {
   it("resume links the page and the PDF", () => {
     expect(links(runCommand("resume", data))).toEqual(["/resume", "/files/resume.pdf"]);
     expect(links(runCommand("resume", { ...data, resumePdf: null }))).toEqual(["/resume"]);
+  });
+
+  it("neofetch brings the welcome screen back", () => {
+    expect(runCommand("neofetch", data)).toEqual({ type: "welcome" });
+    expect(runCommand("welcome", data)).toEqual({ type: "welcome" });
   });
 
   it("clear clears and exit goes back to the site", () => {

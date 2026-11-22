@@ -16,7 +16,9 @@ test.describe("Terminal", () => {
 
     await input.fill("projects");
     await input.press("Enter");
-    const firstSlug = (await log.locator("dt").first().textContent())?.trim() ?? "";
+    // Scope to the last output: the welcome screen has its own <dl>.
+    const firstSlug =
+      (await log.locator(":scope > div").last().locator("dt").first().textContent())?.trim() ?? "";
     expect(firstSlug).toMatch(/^[a-z0-9-]+$/);
 
     // Tab completes a unique project prefix.
@@ -41,6 +43,13 @@ test.describe("Terminal", () => {
     await input.fill("clear");
     await input.press("Enter");
     await expect(log.locator("p")).toHaveCount(0);
+  });
+
+  test("opens on the welcome screen", async ({ page }) => {
+    await page.goto("/terminal");
+    const log = page.getByRole("log", { name: "Terminal output" });
+    await expect(log.getByText("Role", { exact: true })).toBeVisible();
+    await expect(log.getByRole("button", { name: "projects" })).toBeVisible();
   });
 
   test("quick-command buttons work without typing", async ({ page }) => {

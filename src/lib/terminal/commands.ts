@@ -38,6 +38,8 @@ export type Line =
 
 export type CommandResult =
   | { type: "print"; lines: Line[] }
+  /** Show the welcome screen (system-info style) again. */
+  | { type: "welcome" }
   | { type: "clear" }
   | { type: "navigate"; href: string; lines: Line[] };
 
@@ -52,6 +54,7 @@ export const COMMANDS = [
   { name: "experience", usage: "experience", description: "Where I've worked" },
   { name: "contact", usage: "contact", description: "How to reach me" },
   { name: "resume", usage: "resume", description: "The full resume" },
+  { name: "neofetch", usage: "neofetch", description: "The welcome screen again" },
   { name: "clear", usage: "clear", description: "Clear the screen" },
   { name: "exit", usage: "exit", description: "Back to the main site" },
 ] as const;
@@ -74,6 +77,7 @@ const ALIASES: Record<string, string> = {
   gui: "exit",
   quit: "exit",
   work: "projects",
+  welcome: "neofetch",
 };
 
 const text = (value: string, tone?: "muted" | "accent" | "error"): Line =>
@@ -216,6 +220,9 @@ export function runCommand(input: string, data: TerminalData): CommandResult {
         { kind: "link", label: "Open the resume", href: "/resume" },
         ...(data.resumePdf ? [{ kind: "link", label: "Download the PDF", href: data.resumePdf } as Line] : []),
       );
+
+    case "neofetch":
+      return { type: "welcome" };
 
     case "clear":
       return { type: "clear" };
