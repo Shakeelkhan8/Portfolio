@@ -116,6 +116,29 @@ test.describe("Phase 9 CMS surfaces", () => {
     await expect(cards.locator('a[href^="https://wa.me/"]')).toHaveCount(1);
   });
 
+  test("home contact section has the form beside the contact routes", async ({
+    page,
+  }) => {
+    await page.goto("/#contact");
+    await page.waitForLoadState("networkidle");
+    const section = page.locator("#contact");
+    await section.scrollIntoViewIfNeeded();
+    await expect(
+      section.getByRole("heading", { level: 2, name: /Contact.*Let's talk/ }),
+    ).toBeVisible();
+    await expect(section.getByRole("form", { name: "Contact form" })).toBeVisible();
+    await expect(
+      section.getByRole("navigation", { name: "Other ways in" }).getByRole("link", {
+        name: /Read the resume/,
+      }),
+    ).toHaveAttribute("href", "/resume");
+
+    // The counter follows what is typed.
+    const message = section.getByLabel("Message");
+    await message.fill("Hello there");
+    await expect(section.getByText("11/5000")).toBeVisible();
+  });
+
   test("footer links to the resume", async ({ page }) => {
     await page.goto("/about");
     await expect(

@@ -6,6 +6,8 @@ type ContactCardsProps = {
   linkedin: string;
   /** Server-derived wa.me link (src/lib/contact/whatsapp.ts), or null. */
   whatsappHref: string | null;
+  /** "row": three across from sm (default); "stack": one per row. */
+  layout?: "row" | "stack";
 };
 
 function LinkedInIcon({ className }: { className?: string }) {
@@ -21,7 +23,12 @@ function LinkedInIcon({ className }: { className?: string }) {
  * single link. Cards without data are left out, so the row never shows an
  * empty card.
  */
-export function ContactCards({ email, linkedin, whatsappHref }: ContactCardsProps) {
+export function ContactCards({
+  email,
+  linkedin,
+  whatsappHref,
+  layout = "row",
+}: ContactCardsProps) {
   const cards = [
     email
       ? {
@@ -58,7 +65,10 @@ export function ContactCards({ email, linkedin, whatsappHref }: ContactCardsProp
   if (cards.length === 0) return null;
 
   return (
-    <ul aria-label="Contact details" className="grid gap-4 sm:grid-cols-3">
+    <ul
+      aria-label="Contact details"
+      className={layout === "stack" ? "grid gap-3" : "grid gap-4 sm:grid-cols-3"}
+    >
       {cards.map((card) => (
         <li key={card.key}>
           <a
