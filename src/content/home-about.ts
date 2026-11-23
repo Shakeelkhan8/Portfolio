@@ -12,11 +12,16 @@ export type HomeStat = {
   label: string;
 };
 
-/** The ruled line along the bottom of the hero. */
+/**
+ * The ruled line along the bottom of the hero. "5+ years" counts from the
+ * first internship (Jan 2021); full-time work started Oct 2022. The user
+ * chose it on 2026-11-23 knowing that (see content-claims.test.ts).
+ */
 export const heroStats: HomeStat[] = [
-  { value: "Since 2021", label: "practical delivery" },
-  { value: "Full stack", label: "database to UI to servers" },
-  { value: "Live systems", label: "real money, real users" },
+  // The user's chosen wording (2026-11-23).
+  { value: "5+ years", label: "of practical delivery" },
+  { value: "Full stack", label: "to infrastructure" },
+  { value: "Reliable systems", label: "in real use" },
 ];
 
 export const homeAbout = {
@@ -28,7 +33,8 @@ export const homeAbout = {
     "I stay involved from planning and architecture through deployment, monitoring and steady improvement, and I write decisions down so the next engineer can carry on.",
   ],
   highlights: [
-    { value: "Since 2021", label: "Practical delivery" },
+    // Matches the hero's "5+ years" (2026-11-23).
+    { value: "5+ years", label: "Practical delivery" },
     { value: "Multidisciplinary", label: "Web, SaaS, mobile, DevOps, broadcast" },
     { value: "Full cycle", label: "Plan, build, deploy, support" },
   ] satisfies HomeStat[],

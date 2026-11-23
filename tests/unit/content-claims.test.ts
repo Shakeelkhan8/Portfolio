@@ -17,7 +17,10 @@ const unsupportedClaims: Array<[string, RegExp]> = [
   ["ZATCA work (0 of 48 commits)", /zatca/i],
   ["owning 80%+ of the backend", /80%\+/],
   ["sole or solo ownership of the platform", /\bsole\b|\balone\b/i],
-  ["a year count instead of 'since 2021 / since 2022'", /\d\+\s*years/i],
+  // The user chose "5+ years" for the hero on 2026-11-23, counting the
+  // Jan 2021 internship (full-time since Oct 2022). Any other count is
+  // still flagged.
+  ["a year count other than the hero's '5+ years'", /(?<!\d)(?!5\+)\d+\+\s*years/i],
   [
     "the ISP system in current daily use",
     /used daily|daily use|use (it )?every day/i,
