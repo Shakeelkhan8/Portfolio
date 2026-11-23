@@ -18,9 +18,10 @@ export type HomeStat = {
  * chose it on 2026-11-23 knowing that (see content-claims.test.ts).
  */
 export const heroStats: HomeStat[] = [
-  { value: "5+ years", label: "practical delivery" },
-  { value: "Full stack", label: "database to deployment" },
-  { value: "In production", label: "real users, real payments" },
+  // The user's chosen wording (2026-11-23).
+  { value: "5+ years", label: "of practical delivery" },
+  { value: "Full stack", label: "to infrastructure" },
+  { value: "Reliable systems", label: "in real use" },
 ];
 
 export const homeAbout = {
