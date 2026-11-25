@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "Contact",
     description:
-      "Contact Shakeel Khan about a Laravel or PHP project, a payment or API integration, an AI feature, an upgrade or a remote backend role. Replies within one working day.",
+      "Contact Shakeel Khan about a PHP/Laravel or full stack role, a SaaS or web app, an API integration, an AI feature or an upgrade. Replies within one working day.",
     path: routes.contact,
   });
 }

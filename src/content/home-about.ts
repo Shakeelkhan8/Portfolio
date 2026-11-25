@@ -23,7 +23,7 @@ export const homeAbout = {
   eyebrow: "About me",
   headline: ["Careful systems.", "Dependable delivery."],
   paragraphs: [
-    "I build and run digital products across full stack web development, SaaS platforms, payments and integrations, mobile apps, DevOps and live broadcast systems.",
+    "I build and run digital products across full stack web development, SaaS platforms, APIs and integrations, AI features, mobile apps, DevOps and live broadcast systems.",
     "Since 2021 my work has grown from hands-on development into owning core systems end to end: the financial engine of a multi-company logistics SaaS, its tenant isolation and integrations, and real-time data pipelines and newsroom tools for live TV. I've also run security audits and mentored the developers who build on my code.",
     "I stay involved from planning and architecture through deployment, monitoring and steady improvement, and I write decisions down so the next engineer can carry on.",
   ],

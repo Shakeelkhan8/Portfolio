@@ -3,7 +3,7 @@ export const siteConfig = {
   legalName: "Muhammad Shakeel",
   title: "Full Stack Developer & Software Engineer",
   description:
-    "Full stack developer and software engineer specialising in payments, integrations and multi-tenant SaaS on Laravel and PostgreSQL: payment gateways and webhooks, ledgers, tenant isolation, APIs and AI features.",
+    "Full stack developer and software engineer building SaaS platforms, web applications, APIs and integrations, and the AI features inside them, with PHP, Laravel, TypeScript, Node.js and React.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Pakistan",
   city: "Islamabad",
@@ -29,7 +29,8 @@ export const siteConfig = {
     message: "Open to full-time and remote roles, and to project work.",
   },
   expertise: [
-    "Payments & SaaS",
+    "SaaS & web apps",
+    "APIs & integrations",
     "DevOps",
     "Security audits",
     "Network & broadcast",
