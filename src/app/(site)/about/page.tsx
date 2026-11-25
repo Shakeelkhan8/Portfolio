@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata(ctx, {
     title: "About",
     description:
-      "About Shakeel Khan, a full stack developer and software engineer working on payments, integrations, multi-tenant SaaS and AI features, and how he works with clients.",
+      "About Shakeel Khan, a full stack developer and software engineer working in PHP/Laravel, TypeScript/Node.js and React on SaaS platforms, web applications, APIs and AI features, and how he works with clients.",
     path: routes.about,
   });
 }

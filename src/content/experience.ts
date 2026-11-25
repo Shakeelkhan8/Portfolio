@@ -106,4 +106,4 @@ export const accomplishments: Accomplishment[] = [
 ];
 
 export const resumeSummary =
-  "Laravel backend developer, building for the web since 2021 and full-time with PHP and Laravel since 2022. I build the parts that handle money and data: payment gateways and webhooks, ledgers, tenant isolation, APIs, integrations and AI features. Currently a full stack developer (backend focus) at Elityx on a logistics SaaS for the Saudi market.";
+  "Full stack software engineer, building for the web since 2021 and full-time with PHP and Laravel since 2022. I build SaaS platforms, web applications and APIs, and the integrations and AI features around them, in PHP/Laravel, TypeScript/Node.js and React. Currently a full stack developer (backend focus) at Elityx on a multi-tenant logistics SaaS for the Saudi market.";

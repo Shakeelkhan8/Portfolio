@@ -34,8 +34,8 @@ export default async function AboutPage() {
     <>
       <PageHeader
         title="About"
-        heading="I work on the parts of a product that move money."
-        description="Tenancy, payments, ledgers and the integrations around them, mostly in Laravel, PHP and PostgreSQL."
+        heading="I build software end to end, and stay with it after launch."
+        description="SaaS platforms, web applications, APIs and integrations, in PHP/Laravel, TypeScript/Node.js and React."
       >
         <AvailabilityBadge site={site} />
       </PageHeader>

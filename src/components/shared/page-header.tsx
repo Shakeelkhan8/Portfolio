@@ -9,8 +9,8 @@ type PageHeaderProps = {
   /** The page's name ("About"). The H1 on its own, or its label with `heading`. */
   title: string;
   /**
-   * A sentence that says something about the page ("I work on the parts of a
-   * product that move money."). When set, it is the large line of the H1 and
+   * A sentence that says something about the page ("I build software end to
+   * end, and stay with it after launch."). When set, it is the large line of the H1 and
    * `title` becomes the small label inside it (see docs/DESIGN.md).
    */
   heading?: string;
